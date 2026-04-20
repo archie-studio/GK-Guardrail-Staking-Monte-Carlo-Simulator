@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>退休規劃試算機 — GK動態提領 × 股票質押｜Archie Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0e0f11;
+  --surface: #16181c;
+  --surface2: #1e2126;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #e8e9eb;
+  --muted: #7a7f8a;
+  --green: #2ecc8a;
+  --green-dim: rgba(46,204,138,0.12);
+  --red: #f05c6e;
+  --red-dim: rgba(240,92,110,0.12);
+  --amber: #f0a030;
+  --amber-dim: rgba(240,160,48,0.12);
+  --blue: #5b9cf6;
+  --blue-dim: rgba(91,156,246,0.12);
+  --accent: #2ecc8a;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: rgba(14,15,17,0.92);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+}
+.logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+  color: var(--accent);
+  letter-spacing: .02em;
+}
+.logo span { color: var(--muted); font-size: .85rem; font-family: 'Noto Sans TC', sans-serif; margin-left: .5rem; }
+.version-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  border: 1px solid var(--border2);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+/* LAYOUT */
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.hero {
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+}
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 400;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+.hero h1 em { color: var(--accent); font-style: normal; }
+.hero p { color: var(--muted); font-size: .95rem; max-width: 520px; margin: 0 auto; }
+
+/* GRID */
+.grid-2 { display: grid; grid-template-columns: 380px 1fr; gap: 1.5rem; align-items: start; }
+@media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* PANEL */
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.panel-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  font-size: .8rem;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.panel-header .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.panel-body { padding: 1.25rem; }
+
+/* FORM */
+.field { margin-bottom: 1rem; }
+.field label {
+  display: block;
+  font-size: .8rem;
+  color: var(--muted);
+  margin-bottom: .35rem;
+  font-weight: 500;
+  letter-spacing: .02em;
+}
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.input-wrap { position: relative; }
+.input-wrap input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  padding: .6rem .85rem;
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  font-size: .9rem;
+  outline: none;
+  transition: border-color .2s;
+}
+.input-wrap input:focus { border-color: var(--accent); }
+.input-wrap .unit {
+  position: absolute;
+  right: .75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: .75rem;
+  pointer-events: none;
+}
+.section-divider {
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin: 1.25rem 0 .75rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border);
+}
+.toggle-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .6rem .85rem;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border2);
+  margin-bottom: .75rem;
+  cursor: pointer;
+}
+.toggle-field label { font-size: .85rem; color: var(--text); cursor: pointer; margin: 0; }
+.toggle { position: relative; width: 36px; height: 20px; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  transition: .2s;
+  cursor: pointer;
+}
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  background: var(--muted);
+  border-radius: 50%;
+  top: 2px; left: 2px;
+  transition: .2s;
+}
+.toggle input:checked + .toggle-slider { background: var(--green-dim); border-color: var(--green); }
+.toggle input:checked + .toggle-slider::before { background: var(--green); transform: translateX(16px); }
+
+/* TOOLTIP */
+.tip {
+  display: inline-block;
+  width: 14px; height: 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 50%;
+  color: var(--muted);
+  font-size: 10px;
+  text-align: center;
+  line-height: 13px;
+  cursor: help;
+  margin-left: 4px;
+  position: relative;
+}
+.tip:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  background: #2a2d35;
+  color: var(--text);
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  min-width: 180px;
+  max-width: 240px;
+  z-index: 999;
+  border: 1px solid var(--border2);
+  line-height: 1.5;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-weight: 400;
+}
+
+/* BTN */
+.btn-run {
+  width: 100%;
+  padding: .85rem;
+  background: var(--accent);
+  color: #0a1a12;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: .95rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: .05em;
+  transition: opacity .2s, transform .1s;
+  font-family: 'Noto Sans TC', sans-serif;
+  margin-top: .5rem;
+}
+.btn-run:hover { opacity: .9; }
+.btn-run:active { transform: scale(.98); }
+
+/* METRIC CARDS */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: .75rem;
+  margin-bottom: 1.5rem;
+}
+.metric {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+}
+.metric-label { font-size: .72rem; color: var(--muted); font-weight: 500; letter-spacing: .05em; text-transform: uppercase; margin-bottom: .3rem; }
+.metric-value { font-family: 'DM Mono', monospace; font-size: 1.4rem; font-weight: 500; }
+.metric-value.up { color: var(--green); }
+.metric-value.dn { color: var(--red); }
+.metric-value.wa { color: var(--amber); }
+.metric-sub { font-size: .72rem; color: var(--muted); margin-top: .2rem; }
+
+/* CHART */
+.chart-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.chart-title {
+  font-size: .78rem;
+  color: var(--muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 1rem;
+}
+.chart-inner { position: relative; height: 260px; }
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: .75rem;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .75rem;
+  color: var(--muted);
+}
+.legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* TABLE */
+.table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+thead { background: var(--surface2); }
+th {
+  padding: .7rem .9rem;
+  text-align: left;
+  font-weight: 500;
+  color: var(--muted);
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border2);
+}
+td {
+  padding: .7rem .9rem;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  font-family: 'DM Mono', monospace;
+  font-size: .82rem;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* BADGE */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: .7rem;
+  font-weight: 500;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+.badge-ok { background: var(--green-dim); color: var(--green); border: 1px solid rgba(46,204,138,0.2); }
+.badge-warn { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(240,160,48,0.2); }
+.badge-danger { background: var(--red-dim); color: var(--red); border: 1px solid rgba(240,92,110,0.2); }
+.badge-boom { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(91,156,246,0.2); }
+.badge-freeze { background: rgba(160,160,200,0.12); color: #aab; border: 1px solid rgba(160,160,200,0.2); }
+
+/* RULE LOG */
+.rule-log { display: grid; gap: .75rem; margin-bottom: 1.5rem; }
+.rule-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .9rem 1.1rem;
+  border-left: 3px solid var(--border2);
+}
+.rule-item.danger { border-left-color: var(--red); }
+.rule-item.boom { border-left-color: var(--blue); }
+.rule-item.freeze { border-left-color: var(--amber); }
+.rule-title { font-size: .82rem; font-weight: 500; margin-bottom: .3rem; display: flex; align-items: center; gap: .5rem; }
+.rule-desc { font-size: .8rem; color: var(--muted); line-height: 1.6; }
+
+/* MONTE CARLO */
+.mc-result {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.mc-success {
+  font-family: 'DM Serif Display', serif;
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: .25rem;
+}
+.mc-success.high { color: var(--green); }
+.mc-success.mid { color: var(--amber); }
+.mc-success.low { color: var(--red); }
+.progress-bar {
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: .75rem 0;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .8s ease;
+}
+
+/* EMPTY STATE */
+.empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--muted);
+}
+.empty-icon { font-size: 2.5rem; margin-bottom: 1rem; opacity: .4; }
+.empty p { font-size: .9rem; }
+
+/* DISCLAIMER */
+.disclaimer {
+  background: var(--amber-dim);
+  border: 1px solid rgba(240,160,48,0.15);
+  border-radius: var(--radius-sm);
+  padding: .85rem 1rem;
+  font-size: .78rem;
+  color: var(--amber);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+  text-align: center;
+  color: var(--muted);
+  font-size: .78rem;
+}
+footer a { color: var(--accent); text-decoration: none; }
+
+/* ANIMATE */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate { animation: fadeUp .4s ease both; }
+.animate:nth-child(2) { animation-delay: .05s; }
+.animate:nth-child(3) { animation-delay: .1s; }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">Archie Lab <span>退休規劃試算機</span></div>
+  <div class="version-badge">ver 1.0.0</div>
+</header>
+
+<div class="container">
+  <div class="hero">
+    <h1>GK動態提領 × <em>股票質押</em><br>退休規劃試算機</h1>
+    <p>結合 Guyton-Klinger 護欄法則與質押維持率控管，模擬你的退休資產10年走勢</p>
+  </div>
+
+  <div class="disclaimer">
+    ⚠️ 本試算僅供模擬參考，不構成任何投資建議。質押槓桿具高度波動風險，請審慎評估財務能力。
+  </div>
+
+  <div class="grid-2">
+
+    <!-- LEFT: INPUT PANEL -->
+    <div>
+      <div class="panel">
+        <div class="panel-header"><span class="dot"></span>基本設定</div>
+        <div class="panel-body">
+
+          <div class="field-row">
+            <div class="field">
+              <label>股票市值（萬元）</label>
+              <div class="input-wrap">
+                <input type="number" id="mv" value="1600" min="0">
+                <span class="unit">萬</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>目前負債（萬元）</label>
+              <div class="input-wrap">
+                <input type="number" id="debt" value="500" min="0">
+                <span class="unit">萬</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>現金備用（萬元）
+                <span class="tip" data-tip="建議備足1-2年生活費&#10;股災時暫停賣股靠現金撐">?</span>
+              </label>
+              <div class="input-wrap">
+                <input type="number" id="cash" value="150" min="0">
+                <span class="unit">萬</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>模擬年數</label>
+              <div class="input-wrap">
+                <input type="number" id="years" value="10" min="5" max="30">
+                <span class="unit">年</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-divider">GK 提領設定</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>初始提領率（%）
+                <span class="tip" data-tip="退休第一年提領比例&#10;4%法則（美國）&#10;台灣建議3~5%">?</span>
+              </label>
+              <div class="input-wrap">
+                <input type="number" id="withdrawRate" value="5" min="1" max="10" step="0.1">
+                <span class="unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>通膨率（%）</label>
+              <div class="input-wrap">
+                <input type="number" id="inflation" value="2.5" min="0" max="10" step="0.1">
+                <span class="unit">%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>GK上限護欄（%）
+                <span class="tip" data-tip="提領率超過此值&#10;觸發保本規則&#10;強制下調10%提領">?</span>
+              </label>
+              <div class="input-wrap">
+                <input type="number" id="upperGuard" value="6" min="1" max="15" step="0.1">
+                <span class="unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>GK下限護欄（%）
+                <span class="tip" data-tip="提領率低於此值&#10;觸發繁榮規則&#10;上調10%提領額">?</span>
+              </label>
+              <div class="input-wrap">
+                <input type="number" id="lowerGuard" value="4" min="1" max="10" step="0.1">
+                <span class="unit">%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-divider">質押設定</div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>質借利率（%）</label>
+              <div class="input-wrap">
+                <input type="number" id="pledgeRate" value="2.5" min="0" max="10" step="0.1">
+                <span class="unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>目標維持率（%）
+                <span class="tip" data-tip="維持率高於此值&#10;才會啟動質押借款&#10;建議300%以上">?</span>
+              </label>
+              <div class="input-wrap">
+                <input type="number" id="targetMR" value="300" min="150" max="500">
+                <span class="unit">%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>危險維持率（%）
+                <span class="tip" data-tip="維持率低於此值&#10;顯示紅色警告&#10;銀行可能要求補繳">?</span>
+              </label>
+              <div class="input-wrap">
+                <input type="number" id="dangerMR" value="140" min="100" max="200">
+                <span class="unit">%</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>預期年化報酬（%）</label>
+              <div class="input-wrap">
+                <input type="number" id="returnRate" value="8" min="-20" max="30" step="0.1">
+                <span class="unit">%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-divider">進階選項</div>
+
+          <label class="toggle-field" for="mc-toggle">
+            <span>啟用蒙地卡羅模擬（500次隨機情境）
+              <span class="tip" data-tip="根據0050歷史波動&#10;隨機模擬500種未來&#10;計算退休成功率">?</span>
+            </span>
+            <div class="toggle">
+              <input type="checkbox" id="mc-toggle">
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+
+          <label class="toggle-field" for="pledge-reinvest">
+            <span>質押空間再投入0050
+              <span class="tip" data-tip="維持率超標時&#10;借出空間的60%&#10;繼續買0050滾複利">?</span>
+            </span>
+            <div class="toggle">
+              <input type="checkbox" id="pledge-reinvest" checked>
+              <span class="toggle-slider"></span>
+            </div>
+          </label>
+
+          <button class="btn-run" onclick="runSim()">開始試算 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div id="results">
+      <div class="empty">
+        <div class="empty-icon">📊</div>
+        <p>填入左側參數後<br>點擊「開始試算」查看結果</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 <a href="#">Archie Lab</a> · 退休規劃試算機 v1.0.0 · 本工具僅供試算參考，不構成投資建議</p>
+</footer>
+
+<script>
+// ─── helpers ────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const fM = n => (Math.round(n * 10) / 10).toFixed(1);
+const fP = n => (Math.round(n * 10) / 10).toFixed(1) + '%';
+const fMo = n => (Math.round(n / 12 * 10) / 10).toFixed(1);
+
+function getInputs() {
+  return {
+    mv:           parseFloat($('mv').value)          || 1600,
+    debt:         parseFloat($('debt').value)         || 500,
+    cash:         parseFloat($('cash').value)         || 150,
+    years:        parseInt($('years').value)          || 10,
+    withdrawRate: parseFloat($('withdrawRate').value) / 100 || 0.05,
+    inflation:    parseFloat($('inflation').value)    / 100 || 0.025,
+    upperGuard:   parseFloat($('upperGuard').value)   / 100 || 0.06,
+    lowerGuard:   parseFloat($('lowerGuard').value)   / 100 || 0.04,
+    pledgeRate:   parseFloat($('pledgeRate').value)   / 100 || 0.025,
+    targetMR:     parseFloat($('targetMR').value)     / 100 || 3.0,
+    dangerMR:     parseFloat($('dangerMR').value)     / 100 || 1.4,
+    returnRate:   parseFloat($('returnRate').value)   / 100 || 0.08,
+    mcEnabled:    $('mc-toggle').checked,
+    reinvest:     $('pledge-reinvest').checked,
+  };
+}
+
+// ─── simulate one path ──────────────────────────────────────────────
+function simulatePath(p, returnOverrides) {
+  let mv = p.mv, debt = p.debt, cash = p.cash;
+  let wa = mv * p.withdrawRate;
+  let prevReturn = 0.1;
+  const rows = [];
+
+  for (let y = 0; y < p.years; y++) {
+    const ret = returnOverrides ? returnOverrides[y] : p.returnRate;
+    mv = mv * (1 + ret);
+
+    // GK logic
+    let gk = 'none', gkClass = 'ok';
+    let newWa = wa;
+    if (prevReturn >= 0) newWa = wa * (1 + p.inflation);
+
+    const curRate = newWa / mv;
+    if (curRate > p.upperGuard) {
+      newWa = newWa * 0.9; gk = '保本規則'; gkClass = 'danger';
+    } else if (curRate < p.lowerGuard) {
+      newWa = newWa * 1.1; gk = '繁榮規則'; gkClass = 'boom';
+    } else if (prevReturn < 0) {
+      gk = '通膨凍結'; gkClass = 'freeze';
+    }
+    wa = newWa;
+
+    // pledge
+    const mr = debt > 0 ? mv / debt : 999;
+    let pledgeAmt = 0, pledgeOp = '—';
+    if (mr >= p.targetMR && p.reinvest) {
+      const maxDebt = mv / p.targetMR;
+      const space = maxDebt - debt;
+      if (space > 5) {
+        pledgeAmt = space * 0.6;
+        debt += pledgeAmt;
+        mv += pledgeAmt;
+        pledgeOp = '+' + fM(pledgeAmt) + '萬→0050';
+      } else pledgeOp = '空間不足';
+    } else if (mr < p.targetMR && mr >= p.dangerMR) {
+      pledgeOp = '暫停質押';
+    } else if (mr < p.dangerMR) {
+      pledgeOp = '⚠ 維持率警戒';
+    }
+
+    // interest + withdraw added to debt
+    const interest = debt * p.pledgeRate;
+    debt += interest;
+
+    // cash management
+    if (mr < p.targetMR) {
+      cash = Math.max(0, cash - wa * 0.3);
+    } else {
+      cash = Math.min(p.cash, cash + 15);
+    }
+
+    const finalMR = debt > 0 ? mv / debt : 999;
+
+    rows.push({
+      y: y + 1,
+      ret,
+      mv: Math.round(mv * 10) / 10,
+      debt: Math.round(debt * 10) / 10,
+      mr: Math.round(finalMR * 100) / 100,
+      gk, gkClass,
+      wa: Math.round(wa * 10) / 10,
+      mo: Math.round(wa / 12 * 10) / 10,
+      pledgeAmt: Math.round(pledgeAmt * 10) / 10,
+      pledgeOp,
+      cash: Math.round(cash * 10) / 10,
+      interest: Math.round(interest * 10) / 10,
+      net: Math.round((mv - debt) * 10) / 10,
+      danger: finalMR < p.dangerMR
+    });
+
+    prevReturn = ret;
+  }
+  return rows;
+}
+
+// ─── monte carlo ────────────────────────────────────────────────────
+function runMonteCarlo(p) {
+  // 0050 historical stats: mean ~8%, stddev ~20%
+  const mean = p.returnRate;
+  const std = 0.20;
+  const runs = 500;
+  let successCount = 0;
+  const allNets = [];
+
+  for (let r = 0; r < runs; r++) {
+    const rets = [];
+    for (let y = 0; y < p.years; y++) {
+      // Box-Muller
+      const u1 = Math.random(), u2 = Math.random();
+      const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+      rets.push(mean + std * z);
+    }
+    const rows = simulatePath(p, rets);
+    const lastRow = rows[rows.length - 1];
+    if (!lastRow.danger && lastRow.net > 0) successCount++;
+    allNets.push(lastRow.net);
+  }
+
+  allNets.sort((a, b) => a - b);
+  return {
+    successRate: Math.round(successCount / runs * 100),
+    p10: allNets[Math.floor(runs * 0.1)],
+    p50: allNets[Math.floor(runs * 0.5)],
+    p90: allNets[Math.floor(runs * 0.9)],
+  };
+}
+
+// ─── chart ──────────────────────────────────────────────────────────
+let mainChart = null;
+function renderChart(rows) {
+  const labels = rows.map(r => `第${r.y}年`);
+  const ctx = $('mainChartCanvas');
+  if (mainChart) mainChart.destroy();
+  mainChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: '市值', data: rows.map(r => r.mv), borderColor: '#2ecc8a', backgroundColor: 'rgba(46,204,138,0.05)', tension: .35, pointRadius: 5, pointHoverRadius: 7 },
+        { label: '負債', data: rows.map(r => r.debt), borderColor: '#f05c6e', backgroundColor: 'rgba(240,92,110,0.05)', tension: .35, pointRadius: 5, borderDash: [5, 4] },
+        { label: '淨值', data: rows.map(r => r.net), borderColor: '#5b9cf6', backgroundColor: 'rgba(91,156,246,0.05)', tension: .35, pointRadius: 5 },
+        { label: '年提領', data: rows.map(r => r.wa), borderColor: '#f0a030', backgroundColor: 'transparent', tension: .35, pointRadius: 4, borderDash: [3, 3], yAxisID: 'y2' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y}萬` } } },
+      scales: {
+        x: { ticks: { color: '#7a7f8a', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { ticks: { color: '#7a7f8a', callback: v => v + '萬', font: { size: 11 } }, grid: { color: 'rgba(255,255,255,0.04)' }, title: { display: true, text: '資產（萬元）', color: '#7a7f8a', font: { size: 11 } } },
+        y2: { position: 'right', ticks: { color: '#f0a030', callback: v => v + '萬', font: { size: 11 } }, grid: { drawOnChartArea: false }, title: { display: true, text: '年提領（萬）', color: '#f0a030', font: { size: 11 } } }
+      }
+    }
+  });
+}
+
+// ─── render results ─────────────────────────────────────────────────
+function runSim() {
+  const p = getInputs();
+  const rows = simulatePath(p);
+  const last = rows[rows.length - 1];
+  const totalW = rows.reduce((s, r) => s + r.wa, 0);
+  const initW = p.mv * p.withdrawRate;
+  const dangerous = rows.filter(r => r.danger);
+
+  let mcHTML = '';
+  if (p.mcEnabled) {
+    const mc = runMonteCarlo(p);
+    const cls = mc.successRate >= 80 ? 'high' : mc.successRate >= 60 ? 'mid' : 'low';
+    const fillColor = mc.successRate >= 80 ? '#2ecc8a' : mc.successRate >= 60 ? '#f0a030' : '#f05c6e';
+    mcHTML = `
+    <div class="mc-result animate">
+      <div class="chart-title">蒙地卡羅模擬 — 500次隨機情境</div>
+      <div class="mc-success ${cls}">${mc.successRate}%</div>
+      <div style="font-size:.8rem;color:var(--muted);margin-bottom:.5rem">退休成功率（資產不歸零且維持率健康）</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${mc.successRate}%;background:${fillColor}"></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-top:.75rem">
+        <div style="text-align:center">
+          <div style="font-size:.7rem;color:var(--muted);margin-bottom:.25rem">最差10%</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1rem;color:var(--red)">${fM(mc.p10)}萬</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:.7rem;color:var(--muted);margin-bottom:.25rem">中位數</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1rem;color:var(--text)">${fM(mc.p50)}萬</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:.7rem;color:var(--muted);margin-bottom:.25rem">最好10%</div>
+          <div style="font-family:'DM Mono',monospace;font-size:1rem;color:var(--green)">${fM(mc.p90)}萬</div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // GK rule log
+  const triggered = rows.filter(r => r.gk !== 'none');
+  let ruleHTML = triggered.length === 0
+    ? `<div class="rule-item" style="color:var(--muted);font-size:.82rem">本次模擬未觸發任何 GK 規則。</div>`
+    : triggered.map(r => {
+      const cls = r.gkClass === 'danger' ? 'danger' : r.gkClass === 'boom' ? 'boom' : 'freeze';
+      const desc = r.gkClass === 'danger'
+        ? `當年提領率衝破上限護欄，代表市值相對提領金額縮水。GK法則強制將提領金額下調10%至每年 ${fM(r.wa)}萬（月 ${fMo(r.wa)}萬），保護資產不在低點過度耗損。`
+        : r.gkClass === 'boom'
+        ? `市值大幅成長，提領率跌破下限護欄。GK法則允許提領金額上調10%至每年 ${fM(r.wa)}萬（月 ${fMo(r.wa)}萬），牛市年份多享受退休生活。`
+        : `前一年投資組合虧損，今年提領金額凍結，不隨通膨調整，維持 ${fM(r.wa)}萬（月 ${fMo(r.wa)}萬），留給資產喘息空間。`;
+      return `<div class="rule-item ${cls}">
+        <div class="rule-title">第${r.y}年 <span class="badge badge-${r.gkClass === 'danger' ? 'danger' : r.gkClass === 'boom' ? 'boom' : 'freeze'}">${r.gk}</span></div>
+        <div class="rule-desc">${desc}</div>
+      </div>`;
+    }).join('');
+
+  // table rows
+  const tableRows = rows.map(r => {
+    const retColor = r.ret >= 0 ? 'color:var(--green)' : 'color:var(--red)';
+    const mrColor = r.mr >= p.targetMR ? 'color:var(--green)' : r.mr >= p.dangerMR ? 'color:var(--amber)' : 'color:var(--red)';
+    return `<tr>
+      <td style="color:var(--muted)">第${r.y}年</td>
+      <td style="${retColor}">${r.ret >= 0 ? '+' : ''}${(r.ret * 100).toFixed(1)}%</td>
+      <td>${fM(r.mv)}萬</td>
+      <td style="color:var(--red)">${fM(r.debt)}萬</td>
+      <td style="${mrColor}">${(r.mr * 100).toFixed(0)}%</td>
+      <td><span class="badge badge-${r.gkClass === 'danger' ? 'danger' : r.gkClass === 'boom' ? 'boom' : r.gkClass === 'freeze' ? 'freeze' : 'ok'}">${r.gk === 'none' ? '無觸發' : r.gk}</span></td>
+      <td style="color:var(--amber)">${fM(r.wa)}萬</td>
+      <td style="color:var(--green)">${fMo(r.wa)}萬</td>
+      <td style="color:var(--blue);font-size:.75rem">${r.pledgeOp}</td>
+      <td style="color:var(--muted)">${fM(r.interest)}萬</td>
+      <td style="color:var(--muted)">${fM(r.cash)}萬</td>
+    </tr>`;
+  }).join('');
+
+  const dangerWarn = dangerous.length > 0
+    ? `<div style="background:var(--red-dim);border:1px solid rgba(240,92,110,0.2);border-radius:var(--radius-sm);padding:.85rem 1rem;font-size:.8rem;color:var(--red);margin-bottom:1.5rem">
+        ⚠️ 第 ${dangerous.map(r => r.y).join('、')} 年維持率低於危險警戒線（${(p.dangerMR * 100).toFixed(0)}%），銀行可能要求補繳差額或強制賣股。建議提前準備現金緩衝。
+       </div>` : '';
+
+  $('results').innerHTML = `
+    ${dangerWarn}
+    ${mcHTML}
+
+    <!-- METRIC CARDS -->
+    <div class="metric-grid animate">
+      <div class="metric">
+        <div class="metric-label">第${p.years}年市值</div>
+        <div class="metric-value up">${fM(last.mv)}萬</div>
+        <div class="metric-sub">退休初 ${fM(p.mv)}萬</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">第${p.years}年淨值</div>
+        <div class="metric-value ${last.net > p.mv - p.debt ? 'up' : 'wa'}">${fM(last.net)}萬</div>
+        <div class="metric-sub">退休初淨值 ${fM(p.mv - p.debt)}萬</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">第${p.years}年維持率</div>
+        <div class="metric-value ${last.mr >= p.targetMR ? 'up' : last.mr >= p.dangerMR ? 'wa' : 'dn'}">${(last.mr * 100).toFixed(0)}%</div>
+        <div class="metric-sub">目標 ≥ ${(p.targetMR * 100).toFixed(0)}%</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">累計提領總額</div>
+        <div class="metric-value">${fM(totalW)}萬</div>
+        <div class="metric-sub">平均每年 ${fM(totalW / p.years)}萬</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">第${p.years}年月生活費</div>
+        <div class="metric-value up">${fMo(last.wa)}萬</div>
+        <div class="metric-sub">退休初 ${fMo(initW)}萬</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">GK規則觸發</div>
+        <div class="metric-value ${triggered.length > 0 ? 'wa' : 'up'}">${triggered.length}次</div>
+        <div class="metric-sub">${rows.filter(r=>r.gkClass==='danger').length}次保本 / ${rows.filter(r=>r.gkClass==='boom').length}次繁榮</div>
+      </div>
+    </div>
+
+    <!-- CHART -->
+    <div class="chart-wrap animate">
+      <div class="chart-title">資產走勢 — ${p.years}年模擬</div>
+      <div class="chart-inner"><canvas id="mainChartCanvas" role="img" aria-label="資產負債提領10年走勢圖"></canvas></div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#2ecc8a"></div>市值</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f05c6e"></div>負債</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#5b9cf6"></div>淨值</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f0a030"></div>年提領額</div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap animate">
+      <div style="padding:.9rem 1.1rem;border-bottom:1px solid var(--border);font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:500">逐年明細</div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>年份</th><th>報酬率</th><th>市值</th><th>負債</th><th>維持率</th>
+              <th>GK觸發</th><th>年提領</th><th>月生活費</th><th>質押操作</th><th>利息支出</th><th>現金備用</th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- GK RULE LOG -->
+    <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:500;margin-bottom:.75rem">GK 規則觸發說明</div>
+    <div class="rule-log animate">${ruleHTML}</div>
+
+    <!-- NOTES -->
+    <div style="font-size:.75rem;color:var(--muted);line-height:1.8;padding:.85rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:1.5rem">
+      <strong style="color:var(--text)">計算說明</strong><br>
+      • 每年年初市值按設定報酬率成長，GK規則在年底依提領率判斷<br>
+      • 利息 = 當年負債餘額 × 質借利率，計入負債<br>
+      • 質押再投入：維持率超過目標時，借出空間的60%買入0050<br>
+      • 現金備用：維持率低於目標時動用，高於目標時每年補回15萬<br>
+      • 蒙地卡羅：以設定報酬率為均值，標準差20%（參考0050歷史波動）隨機模擬500次
+    </div>
+  `;
+
+  // render chart after DOM ready
+  setTimeout(() => renderChart(rows), 50);
+}
+</script>
+</body>
+</html>
