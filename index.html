@@ -33,6 +33,9 @@ body {
 .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: #f0f0ff; color: #667eea; border: 1px solid #d4d4ff; border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 500; margin-bottom: 16px; }
 .hero h1 { font-size: clamp(22px, 4vw, 32px); font-weight: 700; line-height: 1.3; margin-bottom: 12px; }
 .hero h1 em { color: #667eea; font-style: normal; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero-desc { color: #6b7280; font-size: 15px; max-width: 560px; margin: 0 auto 20px; line-height: 1.7; }
+.hero-story { background: #f9fafb; border: 1px solid #e8eaed; border-radius: 12px; padding: 20px 24px; max-width: 680px; margin: 0 auto; text-align: left; font-size: 14px; color: #4b5563; line-height: 1.8; }
+.hero-story strong { color: #1a1d23; }
 
 /* ===== LAYOUT ===== */
 .main-wrap { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
@@ -105,6 +108,13 @@ th { padding: 12px; text-align: left; background: #fafafa; color: #6b7280; font-
 td { padding: 14px 12px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', monospace; vertical-align: top; }
 .narr { font-family: 'Noto Sans TC', sans-serif; font-size: 12px; color: #4b5563; max-width: 260px; line-height: 1.6; }
 
+/* SEO SECTION */
+.seo-section { background: #fff; border-top: 1px solid #e8eaed; padding: 48px 24px; margin-top: 48px; }
+.seo-inner { max-width: 800px; margin: 0 auto; }
+.seo-section h2 { font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #1a1d23; }
+.seo-section p { font-size: 14px; color: #4b5563; line-height: 1.85; margin-bottom: 16px; }
+.seo-section h3 { font-size: 16px; font-weight: 700; margin: 24px 0 10px; color: #1a1d23; }
+
 /* MISC */
 .tip { display: inline-flex; align-items: center; justify-content: center; width: 15px; height: 15px; background: #f3f4f6; border-radius: 50%; font-size: 10px; cursor: help; color: #9ca3af; }
 .tip:hover::after { content: attr(data-tip); position: absolute; left: 50%; bottom: 120%; transform: translateX(-50%); background: #1a1d23; color: #fff; padding: 8px; border-radius: 6px; width: 200px; z-index: 100; font-size: 12px; }
@@ -123,12 +133,17 @@ footer a { color: #667eea; text-decoration: none; }
     <div class="brand-icon">🏖️</div>
     <div class="brand-name">Archie Lab <span>投資工具系列</span></div>
   </a>
-  <span class="nav-badge">退休試算 Ver 1.1.0</span>
+  <span class="nav-badge">退休試算 Ver 1.1.1</span>
 </header>
 
 <section class="hero">
   <div class="hero-badge">🏖️ 退休規劃工具 · 阿奇專業版</div>
   <h1>當你終於來到<em>退休的起點</em><br>接下來的錢，怎麼領？</h1>
+  <p class="hero-desc">你花了幾十年累積資產，現在最重要的問題變了：不是「如何存更多」，而是「如何讓錢撐得夠久」。本工具結合 GK 動態提領護欄法則與股票質押策略，幫你科學規劃退休現金流。</p>
+  <div class="hero-story">
+    <strong>📖 工具說明：</strong>
+    Guyton-Klinger（GK）法則是目前退休規劃中最受認可的動態提領策略之一。核心概念是「股市好的年份多領、股市差的年份少領」，透過三條護欄規則自動調整，讓你的資產存活率大幅提升。搭配<strong>股票質押</strong>作為補充現金流，在不賣股的前提下靈活運用資產槓桿，是台灣存股族最值得研究的退休組合。
+  </div>
 </section>
 
 <div class="main-wrap">
@@ -245,8 +260,23 @@ footer a { color: #667eea; text-decoration: none; }
   <div id="results-area"></div>
 </div>
 
+<section class="seo-section">
+  <div class="seo-inner">
+    <h2>什麼是 GK 動態提領法則？</h2>
+    <p>Guyton-Klinger（GK）法則由美國財務規劃顧問 Jonathan Guyton 與電腦科學家 William Klinger 共同提出。核心精神是「空頭市場時退休金領少一點，多頭市場時退休金領多一點」，透過三條護欄規則自動觸發調整，讓退休資產的存活率大幅優於固定提領策略。</p>
+    <h3>為何搭配股票質押？</h3>
+    <p>台灣存股族常見的退休方式是「只領股息」，但這樣的現金流受限於殖利率，且需要賣股時往往在市場低點。搭配股票質押策略，可以在不賣股的前提下取得現金流，讓股票繼續參與複利成長。本工具同時計算質押維持率，確保在享受槓桿便利的同時，不會因市場波動而被迫斷頭。</p>
+    <h3>蒙地卡羅模擬是什麼？</h3>
+    <p>蒙地卡羅模擬不是預測「未來會怎樣」，而是問「在1000種可能的未來裡，你有幾%的機率安全退休」。本工具以0050歷史報酬為基礎（年化約12%，標準差約20%），隨機模擬500種不同的未來，統計有幾%的情境資產沒有歸零，讓你知道退休計劃的成功機率。</p>
+    <p style="margin-top:8px;font-size:12.5px;color:#9ca3af">⚠️ 本工具所有試算結果均為模擬數據，僅供參考，不構成投資建議。過去績效不代表未來表現。</p>
+  </div>
+</section>
+
 <footer>
-  <p>© 2026 Archie Studio · 退休規劃試算機 Ver 1.1.0 · <a href="#">質押複利計算機</a></p>
+  <div class="footer-inner">
+    <p>© 2026 Archie Studio · 退休規劃試算機 Ver 1.1.1 · <a href="#">質押複利計算機</a></p>
+    <p style="margin-top:6px;font-size:12px">本工具僅供試算參考，不構成任何投資建議。投資必定有風險，質押槓桿具備高度波動風險。</p>
+  </div>
 </footer>
 
 <script>
@@ -435,7 +465,7 @@ function exportExcel() {
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = `阿奇退休規劃_${CURRENT_SCENARIO}_Ver1.1.0.csv`;
+  link.download = `阿奇退休規劃_${CURRENT_SCENARIO}_Ver1.1.1.csv`;
   link.click();
 }
 </script>
