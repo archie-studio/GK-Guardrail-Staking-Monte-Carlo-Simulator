@@ -24,7 +24,7 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .hero { background: #fff; border-bottom: 1px solid #e8eaed; padding: 48px 16px; text-align: center; }
 .hero-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
 .hero h1 { font-size: clamp(26px, 5vw, 36px); font-weight: 700; color: #1a1d23; margin-bottom: 4px; }
-.hero h2 { font-size: 20px; font-weight: 500; color: #a5b4fc; margin-bottom: 12px; } /* 淺紫色副標題 */
+.hero h2 { font-size: 20px; font-weight: 500; color: #a5b4fc; margin-bottom: 12px; }
 .hero-desc { color: #6b7280; font-size: 15px; max-width: 800px; margin: 0 auto 24px; line-height: 1.8; text-align: justify; }
 .hero-story { background: #f9fafb; border: 1px solid #e8eaed; border-radius: 12px; padding: 24px; max-width: 800px; margin: 0 auto; text-align: left; font-size: 14.5px; color: #4b5563; line-height: 1.8; }
 .hero-story strong { color: #1a1d23; display: block; margin-bottom: 8px; font-size: 16px; }
@@ -114,6 +114,7 @@ td { padding: 14px 16px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono
 .seo-inner { max-width: 800px; margin: 0 auto; }
 .seo-section h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; color: #1a1d23; }
 .seo-section p { font-size: 15px; color: #4b5563; line-height: 1.8; margin-bottom: 24px; text-align: justify; }
+.seo-section h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: #1a1d23; }
 
 /* UTILS */
 .val-green { color: #10b981 !important; } .val-red { color: #ef4444 !important; } .val-amber { color: #f59e0b !important; }
@@ -261,9 +262,13 @@ footer { background: #1a1d23; color: #9ca3af; padding: 40px 16px; text-align: ce
 <section class="seo-section">
   <div class="seo-inner">
     <h2>什麼是 GK 動態提領法則？</h2>
-    <p>Guyton-Klinger（GK）法則透過三條護欄規則自動調整，讓退休資產在空頭市場時少領、多頭市場時多領，大幅優於固定提領策略。</p>
+    <p>Guyton-Klinger（GK）法則由美國財務規劃顧問 Jonathan Guyton 與電腦科學家 William Klinger 共同提出。核心精神是「空頭市場時退休金領少一點，多頭市場時退休金領多一點」，透過三條護欄規則自動觸發調整，讓退休資產的存活率大幅優於固定提領策略。</p>
+    
     <h3>為何搭配股票質押？</h3>
-    <p>在不賣股的前提下取得現金流，讓股票繼續參與複利成長。本工具同時計算質押維持率，確保在享受槓桿便利的同時，不會因市場波動而被迫斷頭。</p>
+    <p>台灣存股族常見的退休方式是「只領股息」，但這樣的現金流受限於殖利率，且需要賣股時往往在市場低點。搭配股票質押策略，可以在不賣股的前提下取得現金流，讓股票繼續參與複利成長。本工具同時計算質押維持率，確保在享受槓桿便利的同時，不會因市場波動而被迫斷頭。</p>
+    
+    <h3>蒙地卡羅模擬是什麼？</h3>
+    <p>蒙地卡羅模擬不是預測「未來會怎樣」，而是問「在1000種可能的未來裡，你有幾%的機率安全退休」。本工具以0050歷史報酬為基礎（年化約 12%，標準差約 20%），隨機模擬 1000 種不同的未來，統計有幾%的情境資產沒有歸零，讓你知道退休計劃的成功機率。</p>
   </div>
 </section>
 
@@ -461,7 +466,7 @@ function renderCharts(rows, totalW, finalNet) {
     data: {
       labels: ['累計總提領', '期末淨資產'],
       datasets: [{
-        data: [totalW, finalNet],
+        data: [totalW, finalNet > 0 ? finalNet : 0],
         backgroundColor: ['#f59e0b', '#6366f1'],
         borderWidth: 0
       }]
