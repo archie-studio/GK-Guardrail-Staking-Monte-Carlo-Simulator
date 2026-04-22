@@ -128,6 +128,13 @@ td { padding: 18px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', mo
 .btn-export { width: 100%; max-width: 500px; padding: 20px; background: linear-gradient(135deg, #1f2937 0%, #111827 100%); color: #fff; border: none; border-radius: 14px; font-size: 18px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: .2s; box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
 .btn-export:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
 
+/* ===== SEO SECTION (補回遺失的樣式) ===== */
+.seo-section { background: #fff; border-top: 1px solid #e8eaed; padding: 60px 16px; margin-top: 48px; }
+.seo-inner { max-width: 800px; margin: 0 auto; }
+.seo-section h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; color: #1a1d23; }
+.seo-section p { font-size: 15.5px; color: #4b5563; line-height: 1.85; margin-bottom: 28px; text-align: justify; }
+.seo-section h3 { font-size: 19px; font-weight: 700; margin: 36px 0 16px; color: #1a1d23; }
+
 /* FOOTER & UTILS */
 footer { background: #fff; border-top: 1px solid #e8eaed; color: #6b7280; padding: 60px 16px; text-align: center; font-size: 15px; }
 footer a { color: #667eea; text-decoration: none; font-weight: 700; transition: .2s; border-bottom: 1.5px solid transparent; }
@@ -391,7 +398,9 @@ function getP() {
     debt: parseFloat($('debt').value) || 0,
     cash: parseFloat($('cash').value) || 0,
     years: yrs,
-    withdrawRate: parseFloat($('withdrawRate').value)/100,
+    // 雖然 UI 沒有單次調整幅度，但在這裡固定帶入 10% 確保精算公式正常運作
+    adjRate: 0.10, 
+    withdrawRate: 0.05, // 初始提領率先固定為 5%，因為 UI 目前沒此欄位
     inflation: parseFloat($('inflation').value)/100,
     upperGuard: parseFloat($('upperGuard').value)/100,
     lowerGuard: parseFloat($('lowerGuard').value)/100,
@@ -425,16 +434,15 @@ function simPath(p, overrides) {
     let isImmune = (y > p.years - p.lateLifeYears);
     
     if (currentWR > p.upperGuard) {
-      if (!isImmune) { wa *= 0.9; gkRule = 'danger'; }
+      if (!isImmune) { wa *= (1 - p.adjRate); gkRule = 'danger'; }
       else { gkRule = 'immune'; }
     } else if (currentWR < p.lowerGuard) {
-      wa *= 1.1; gkRule = 'boom';
+      wa *= (1 + p.adjRate); gkRule = 'boom';
     }
     
     let opStr = "", logStr = "";
     
     if (p.isPledgeEnabled) {
-      // 預扣一年利息邏輯
       if (p.preDeduct && debt > 0) { debt += debt * p.pledgeRate; }
 
       let mr = debt > 0 ? mv / debt : 999;
@@ -456,7 +464,6 @@ function simPath(p, overrides) {
           }
         }
         
-        // 晴天補水
         if (mr > currentTargetMR + 1 && cash < initCash) {
           let refill = Math.min(initCash - cash, 15);
           cash += refill; debt += refill;
@@ -470,7 +477,6 @@ function simPath(p, overrides) {
         }
       }
       
-      // 如果沒有預扣利息，則在期末結算利息
       if (!p.preDeduct) { debt *= (1 + p.pledgeRate); }
       
       let finalMR = debt > 0 ? mv / debt : 999;
