@@ -3,120 +3,157 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合策略完全體 V1.4.1</title>
+<title>退休金動態提領精算機｜阿奇混合策略版 V1.3.3</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
-/* ===== UI 核心框架 - 嚴格遵守 Archie Lab 設計語彙 ===== */
+/* ===== RESET & BASE ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
 body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6f8; color: #1a1d23; min-height: 100vh; line-height: 1.6; }
 
-/* HEADER */
+/* ===== HEADER ===== */
 .site-header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 .header-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
-.brand-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: white; font-weight: bold; }
+.brand-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
 .brand-name { font-weight: 700; font-size: 15px; }
 
-/* HERO */
+/* ===== HERO ===== */
 .hero { background: #fff; border-bottom: 1px solid #e8eaed; padding: 80px 16px; text-align: center; }
-.hero h1 { font-size: clamp(36px, 8vw, 54px); font-weight: 800; color: #1a1d23; margin-bottom: 16px; letter-spacing: -1.5px; }
+.hero-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+.hero h1 { font-size: clamp(42px, 9vw, 60px); font-weight: 800; color: #1a1d23; margin-bottom: 16px; letter-spacing: -1.5px; }
+.hero h2 { font-size: 22px; font-weight: 600; color: #a78bfa; margin-bottom: 24px; display: flex; align-items: center; gap: 14px; }
 .version-tag { font-size: 14px; color: #9ca3af; font-weight: 500; background: #f3f4f6; padding: 4px 14px; border-radius: 20px; border: 1px solid #e5e7eb; }
-.hero-desc { color: #6b7280; font-size: 16px; max-width: 800px; margin: 16px auto 0; }
+.hero-desc { color: #6b7280; font-size: 16px; max-width: 800px; margin: 0 auto; line-height: 1.8; }
 
-/* LAYOUT & CARDS */
+/* ===== TOOLTIP ===== */
+.tip { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: #e5e7eb; border-radius: 50%; font-size: 10px; cursor: help; color: #6b7280; margin-left: 4px; position: relative; }
+.tip:hover::after { content: attr(data-tip); position: absolute; bottom: 135%; left: 50%; transform: translateX(-50%); background: #1a1d23; color: #fff; padding: 16px; border-radius: 10px; font-size: 13.5px; width: 300px; line-height: 1.6; z-index: 1000; box-shadow: 0 8px 24px rgba(0,0,0,0.25); font-weight: 400; text-align: left; white-space: normal; }
+
+/* ===== LAYOUT ===== */
 .main-wrap { max-width: 1100px; margin: 0 auto; padding: 32px 16px; }
 .card { background: #fff; border: 1px solid #e8eaed; border-radius: 16px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
-.card-header { padding: 18px 24px; border-bottom: 1px solid #f0f1f3; font-size: 16px; font-weight: 700; color: #374151; background: #fafafa; }
+.card-header { padding: 16px 20px; border-bottom: 1px solid #f0f1f3; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: #374151; background: #fafafa; }
 .card-body { padding: 32px 24px; }
+
+/* ===== PARAMS SECTIONS ===== */
 .param-section { border-bottom: 1px dashed #e5e7eb; padding-bottom: 32px; margin-bottom: 32px; }
+.param-section:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
 .section-label { font-size: 15px; font-weight: 700; color: #1a1d23; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
 .inputs-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 @media (max-width: 900px) { .inputs-row { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px) { .inputs-row { grid-template-columns: 1fr; } }
-.field label { display: block; font-size: 13px; font-weight: 700; color: #6b7280; margin-bottom: 8px; }
+
+.field label { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #6b7280; margin-bottom: 8px; }
 .input-wrap { position: relative; }
-.input-wrap input, .input-wrap select { width: 100%; border: 1.5px solid #e8eaed; border-radius: 10px; padding: 12px 16px; font-size: 15px; font-family: 'DM Mono', sans-serif; outline: none; transition: .2s; }
-.input-wrap input:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1); }
+.input-wrap input, .input-wrap select { width: 100%; border: 1.5px solid #e8eaed; border-radius: 10px; padding: 12px 16px; font-size: 15px; font-family: 'DM Mono', 'Noto Sans TC', sans-serif; outline: none; transition: .2s; background: #fff; appearance: none; }
+.input-wrap input.has-unit { padding-right: 38px; }
+.input-wrap input:focus, .input-wrap select:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.12); }
 .input-unit { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #9ca3af; pointer-events: none; }
 
-/* ENGINES TOGGLE */
-.engine-toggle-card { background: #f9fafb; border: 1.5px solid #e8eaed; border-radius: 16px; padding: 24px; margin-bottom: 24px; transition: .3s; }
+/* ENGINE TOGGLE CARDS */
+.engine-toggle-card { background: #f9fafb; border: 1.5 solid #e8eaed; border-radius: 16px; padding: 24px; margin-bottom: 24px; transition: .3s; }
 .engine-toggle-card.active { background: #f5f3ff; border-color: #ddd6fe; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.05); }
-.engine-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-.sw { position: relative; width: 42px; height: 24px; }
+.engine-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+.engine-content { margin-top: 24px; display: none; }
+.engine-toggle-card.active .engine-content { display: block; animation: fadeIn .4s ease; }
+
+.sw { position: relative; width: 42px; height: 24px; flex-shrink: 0; display: inline-block; vertical-align: middle; }
 .sw input { opacity: 0; width: 0; height: 0; }
-.sw-track { position: absolute; inset: 0; background: #d1d5db; border-radius: 12px; transition: .2s; }
-.sw-track::before { content: ''; position: absolute; width: 18px; height: 18px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: .2s; }
+.sw-track { position: absolute; inset: 0; background: #d1d5db; border-radius: 12px; transition: .2s; cursor: pointer; }
+.sw-track::before { content: ''; position: absolute; width: 18px; height: 18px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: .2s; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
 .sw input:checked + .sw-track { background: #667eea; }
 .sw input:checked + .sw-track::before { transform: translateX(18px); }
 
-/* DASHBOARD & BUTTONS */
+/* VOL PRESETS */
+.vol-presets { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
+.vol-preset { cursor: pointer; background: #fff; border: 1.5px solid #e8eaed; padding: 12px 16px; border-radius: 12px; transition: .2s; text-align: left; }
+.vol-preset:hover { border-color: #667eea; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102,126,234,0.1); }
+.vol-title { display: block; font-size: 14px; font-weight: 700; color: #1a1d23; margin-bottom: 2px; }
+.vol-sub { display: block; font-size: 12px; color: #9ca3af; font-weight: 500; }
+
+/* ACTION BUTTON */
+.btn-primary { width: 100%; padding: 22px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: none; border-radius: 14px; font-size: 22px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 20px rgba(102,126,234,0.3); transition: .2s; margin-top: 16px; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
+
+/* RESULTS DASHBOARD */
 .summary-box { background: #1a1d23; border-radius: 24px; padding: 36px; color: #fff; margin-bottom: 24px; }
-.summary-box h3 { font-size: 28px; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; font-weight: 800; }
+.summary-box h3 { font-size: 32px; margin-bottom: 28px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 24px; font-weight: 800; }
 .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
-.metric { background: rgba(255,255,255,0.06); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); }
-.metric-label { font-size: 13px; color: #9ca3af; margin-bottom: 8px; font-weight: 500; }
-.metric-value { font-family: 'DM Mono', monospace; font-size: 30px; font-weight: 600; }
-.tab-group { display: flex; gap: 10px; margin-bottom: 24px; overflow-x: auto; padding: 4px; }
-.tab-btn { padding: 12px 24px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; border: 1.5px solid #e5e7eb; background: #fff; color: #6b7280; transition: .2s; white-space: nowrap; }
-.tab-btn.active { background: #1a1d23; color: #fff; border-color: #1a1d23; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.metric { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; }
+.metric-label { font-size: 13px; color: #9ca3af; margin-bottom: 10px; font-weight: 600; letter-spacing: 0.5px; }
+.metric-value { font-family: 'DM Mono', monospace; font-size: 32px; font-weight: 500; }
 
-.btn-primary { width: 100%; padding: 22px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: none; border-radius: 16px; font-size: 22px; font-weight: 700; cursor: pointer; margin-top: 20px; transition: .3s; }
-.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(102,126,234,0.3); }
+.tab-group { display: flex; gap: 8px; margin-bottom: 24px; background: #e5e7eb; padding: 6px; border-radius: 14px; overflow-x: auto;}
+.tab-btn { padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; background: transparent; color: #4b5563; transition: .2s; white-space: nowrap;}
+.tab-btn.active { background: #fff; color: #1a1d23; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.tab-btn.active.p10 { color: #ef4444; }
+.tab-btn.active.p90 { color: #10b981; }
 
-/* EXPORT BUTTON - RESTORED PREMIUM UI */
-.export-wrap { margin-top: 40px; display: flex; justify-content: center; }
-.btn-export { padding: 18px 48px; background: #1a1d23; color: #fff; border: none; border-radius: 14px; font-size: 18px; font-weight: 700; cursor: pointer; transition: .2s; display: flex; align-items: center; gap: 12px; box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
-.btn-export:hover { background: #333; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+/* CHARTS */
+.charts-grid { display: grid; grid-template-columns: 2fr 1.1fr; gap: 24px; margin-bottom: 32px; }
+@media (max-width: 950px) { .charts-grid { grid-template-columns: 1fr; } }
+.chart-card { background: #fff; border: 1px solid #e8eaed; border-radius: 20px; padding: 28px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; min-height: 440px; }
+.chart-inner { height: 100%; width: 100%; position: relative; }
+.pie-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -55%); text-align: center; pointer-events: none; width: 60%; }
+.pie-val-label { font-size: 12px; color: #9ca3af; font-weight: 600; margin-bottom: 4px; }
+.pie-val-num { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 700; margin-bottom: 10px; }
 
-/* ANALYSIS CARD - RESTORED */
-.analysis-card { background: #fff; border: 1px solid #e8eaed; border-radius: 20px; padding: 40px; margin: 40px 0; border-left: 8px solid #667eea; }
-.analysis-card h4 { font-size: 24px; color: #1a1d23; margin-bottom: 28px; font-weight: 800; display: flex; align-items: center; gap: 12px; }
-.story-section { margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid #f0f1f3; }
-.story-section:last-child { border-bottom: none; }
-.story-title { font-weight: 700; color: #4f46e5; margin-bottom: 10px; font-size: 18px; }
-.story-body { font-size: 16px; color: #4b5563; line-height: 2.0; text-align: justify; }
+/* ANALYSIS REPORT */
+.analysis-card { background: linear-gradient(135deg, #f0f5ff 0%, #faf5ff 100%); border: 1px solid #d4d4ff; border-radius: 20px; padding: 40px; margin: 40px 0; }
+.analysis-card h4 { font-size: 24px; color: #4f46e5; margin-bottom: 28px; font-weight: 800; border-bottom: 2px solid #c7d2fe; padding-bottom: 14px;}
+.analysis-text { font-size: 16.5px; color: #374151; line-height: 2.0; text-align: justify; }
+.analysis-text p { margin-bottom: 24px; }
+.analysis-text strong { color: #1a1d23; font-size: 18px; display: inline-block; margin-bottom: 6px; }
 
-/* TABLE & BADGES */
-.table-card { background: #fff; border: 1px solid #e8eaed; border-radius: 20px; overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; min-width: 1000px; }
-th { padding: 18px 16px; background: #f9fafb; text-align: left; font-weight: 700; font-size: 14px; border-bottom: 2px solid #e5e7eb; color: #4b5563; }
-td { padding: 18px 16px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', monospace; font-size: 14.5px; vertical-align: middle; }
-.gk-badge { font-family: 'Noto Sans TC', sans-serif; font-weight: 700; font-size: 11px; padding: 4px 10px; border-radius: 6px; display: inline-block; }
+/* TABLE */
+.table-card { background: #fff; border: 1px solid #e8eaed; border-radius: 20px; overflow: hidden; margin-top: 32px; }
+.table-header { padding: 20px 24px; border-bottom: 1px solid #f0f1f3; font-weight: 800; color: #1a1d23; background: #fafafa; font-size: 17px;}
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; min-width: 1000px; }
+th { padding: 18px; text-align: left; background: #f9fafb; color: #4b5563; font-weight: 700; border-bottom: 2px solid #e5e7eb; white-space: nowrap; }
+td { padding: 18px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', monospace; vertical-align: middle; white-space: nowrap; }
+
+/* BADGES */
+.gk-badge { font-family: 'Noto Sans TC', sans-serif; font-weight: 700; font-size: 12px; padding: 4px 10px; border-radius: 6px; display: inline-block; }
 .badge-normal { background: #dcfce7; color: #166534; }
 .badge-danger { background: #fee2e2; color: #991b1b; }
 .badge-boom { background: #dbeafe; color: #1e40af; }
 .badge-immune { background: #fef3c7; color: #92400e; }
-.action-text { font-family: 'Noto Sans TC', sans-serif; font-size: 13.5px; color: #6b7280; font-weight: 400; }
 
-/* SEO SECTION - RESTORED */
-.seo-section { background: #fff; border-top: 1px solid #e8eaed; padding: 80px 24px; margin-top: 60px; }
-.seo-inner { max-width: 850px; margin: 0 auto; }
-.seo-section h2 { font-size: 26px; font-weight: 800; margin-bottom: 24px; color: #1a1d23; }
-.seo-section p { font-size: 16px; color: #4b5563; line-height: 1.9; margin-bottom: 32px; text-align: justify; }
-.seo-section h3 { font-size: 20px; font-weight: 800; margin: 48px 0 16px; color: #1a1d23; }
+/* SEO SECTION */
+.seo-section { background: #fff; border-top: 1px solid #e8eaed; padding: 60px 16px; margin-top: 48px; }
+.seo-inner { max-width: 800px; margin: 0 auto; }
+.seo-section h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; color: #1a1d23; }
+.seo-section p { font-size: 15.5px; color: #4b5563; line-height: 1.85; margin-bottom: 28px; text-align: justify; }
+.seo-section h3 { font-size: 19px; font-weight: 700; margin: 36px 0 16px; color: #1a1d23; }
 
-footer { text-align: center; padding: 60px; color: #9ca3af; font-size: 14px; background: white; border-top: 1px solid #eee; }
-.val-green { color: #10b981; } .val-red { color: #ef4444; } .val-amber { color: #f59e0b; }
-.fade-in { animation: fadeIn 0.6s ease-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* FOOTER */
+footer { background: #fff; border-top: 1px solid #e8eaed; color: #6b7280; padding: 60px 16px; text-align: center; font-size: 15px; }
+footer a { color: #667eea; text-decoration: none; font-weight: 700; transition: .2s; border-bottom: 1.5px solid transparent; }
+footer a:hover { color: #4f46e5; border-bottom-color: #4f46e5; }
+.val-green { color: #10b981 !important; } .val-red { color: #ef4444 !important; } .val-amber { color: #f59e0b !important; }
+.fade-in { animation: fadeIn .6s cubic-bezier(0.16, 1, 0.3, 1) both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
 <header class="site-header">
   <a href="#" class="header-brand">
-    <div class="brand-icon">GK</div>
-    <div class="brand-name">Archie Lab <span>退休精算 V1.4.1</span></div>
+    <div class="brand-icon" style="color:white; font-weight:bold;">GK</div>
+    <div class="brand-name">Archie Lab <span>投資工具系列</span></div>
   </a>
 </header>
 
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <span class="version-tag">ver 1.3.3 made by 阿奇 (Fix 1.4.1)</span>
-    <p class="hero-desc">針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。</p>
+    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.3.3 made by 阿奇</span></h2>
+    <div class="hero-desc">
+      針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
+    </div>
   </div>
 </section>
 
@@ -129,6 +166,10 @@ footer { text-align: center; padding: 60px; color: #9ca3af; font-size: 14px; bac
         <div class="section-label">👤 第一步：建立個人檔案與退休目標</div>
         <div class="inputs-row">
           <div class="field">
+            <label>您的稱呼 <span class="tip" data-tip="若留白，報告將以『空白』為稱呼。">?</span></label>
+            <div class="input-wrap"><input type="text" id="userName" placeholder="預設: 空白" style="font-family: inherit;"></div>
+          </div>
+          <div class="field">
             <label>預計退休年齡</label>
             <div class="input-wrap"><input type="number" id="startAge" value="60" class="has-unit"><span class="input-unit">歲</span></div>
           </div>
@@ -137,11 +178,7 @@ footer { text-align: center; padding: 60px; color: #9ca3af; font-size: 14px; bac
             <div class="input-wrap"><input type="number" id="years" value="20" class="has-unit"><span class="input-unit">年</span></div>
           </div>
           <div class="field">
-            <label>退休總資產 (市值)</label>
-            <div class="input-wrap"><input type="number" id="mv" value="1600" class="has-unit"><span class="input-unit">萬</span></div>
-          </div>
-          <div class="field">
-            <label>現金備用金 <span class="tip" data-tip="股災時用來支付生活費與利息，保護維持率的救命錢。">?</span></label>
+            <label>現金備用金 <span class="tip" data-tip="股災時用來支付生活費與利息的預備金。">?</span></label>
             <div class="input-wrap"><input type="number" id="cash" value="150" class="has-unit"><span class="input-unit">萬</span></div>
           </div>
         </div>
@@ -151,43 +188,21 @@ footer { text-align: center; padding: 60px; color: #9ca3af; font-size: 14px; bac
         <div class="section-label">💰 第二步：資產配置與市場假設</div>
         <div class="inputs-row">
           <div class="field">
+            <label>股票市值 (退休資產總值)</label>
+            <div class="input-wrap"><input type="number" id="mv" value="1600" class="has-unit"><span class="input-unit">萬</span></div>
+          </div>
+          <div class="field">
             <label>目前負債 (質押金額)</label>
             <div class="input-wrap"><input type="number" id="debt" value="500" class="has-unit"><span class="input-unit">萬</span></div>
           </div>
           <div class="field">
-            <label>質借年利率</label>
-            <div class="input-wrap"><input type="number" id="pledgeRate" value="2.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
-          </div>
-          <div class="field">
-            <label>市場模式 <span class="tip" data-tip="選擇隨機模擬或真實歷史數據回測。">?</span></label>
-            <div class="input-wrap">
-                <select id="marketMode" onchange="toggleMarketUI()">
-                    <option value="mc">蒙地卡羅 (隨機模擬)</option>
-                    <option value="sp500">歷史數據 (S&P 500)</option>
-                    <option value="taiex">歷史數據 (台股加權報酬指數)</option>
-                </select>
-            </div>
+            <label>預期年化報酬率</label>
+            <div class="input-wrap"><input type="number" id="returnRate" value="8.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
           </div>
           <div class="field">
             <label>預期年化通膨率</label>
             <div class="input-wrap"><input type="number" id="inflation" value="2.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
           </div>
-        </div>
-        
-        <div id="stress-box" style="display:none; margin-top:20px;">
-            <label style="font-size:13px; font-weight:700; color:#4f46e5; margin-bottom:12px; display:block;">🔥 一鍵模擬歷史災難起點：</label>
-            <div class="stress-area" id="stress-btns"></div>
-        </div>
-
-        <div id="mc-params" class="inputs-row" style="margin-top:20px;">
-            <div class="field">
-                <label>平均年化報酬率</label>
-                <div class="input-wrap"><input type="number" id="returnRate" value="7.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
-            </div>
-            <div class="field">
-                <label>年化波動率 (標準差)</label>
-                <div class="input-wrap"><input type="number" id="vol" value="18" class="has-unit"><span class="input-unit">%</span></div>
-            </div>
         </div>
       </div>
 
@@ -195,7 +210,7 @@ footer { text-align: center; padding: 60px; color: #9ca3af; font-size: 14px; bac
         <div class="section-label">📉 第三步：GK 動態提領與晚年保護規則</div>
         <div class="inputs-row">
           <div class="field">
-            <label>初始提領率 (%) <span class="tip" data-tip="第一年想要提領出的比例。">?</span></label>
+            <label>初始提領率 (%) <span class="tip" data-tip="退休第一年想要提領的比例。">?</span></label>
             <div class="input-wrap"><input type="number" id="initWithdrawRate" value="5.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
           </div>
           <div class="field">
@@ -207,36 +222,69 @@ footer { text-align: center; padding: 60px; color: #9ca3af; font-size: 14px; bac
             <div class="input-wrap"><input type="number" id="lowerGuard" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
           </div>
           <div class="field">
-            <label>晚年免縮減規則</label>
+            <label>晚年免縮減年數 (免死金牌)</label>
             <div class="input-wrap"><input type="number" id="lateLifeYears" value="15" class="has-unit"><span class="input-unit">年</span></div>
           </div>
         </div>
       </div>
 
-      <div id="pledge-card" class="engine-toggle-card active">
+      <div id="pledge-card" class="engine-toggle-card">
         <div class="engine-header" onclick="toggleSwitch('isPledgeEnabled')">
-          <label style="font-weight: 800; color: #4f46e5; font-size: 18px; cursor:pointer;">🚀 啟用股票質押引擎 (混合進攻策略)</label>
-          <div class="sw"><input type="checkbox" id="isPledgeEnabled" checked><span class="sw-track"></span></div>
+          <label style="font-weight: 800; color: #4f46e5; font-size: 18px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+            🚀 啟用股票質押引擎 (混合進攻策略)
+          </label>
+          <div class="sw"><input type="checkbox" id="isPledgeEnabled" onchange="updateEngineUI()"><span class="sw-track"></span></div>
         </div>
-        <div class="engine-content" style="margin-top:24px;">
-          <div style="display: flex; gap: 36px; margin-bottom: 24px;">
-            <label style="display:flex; align-items:center; gap:10px; font-weight:700; cursor:pointer;"><input type="checkbox" id="preDeduct"> 預扣一年利息</label>
-            <label style="display:flex; align-items:center; gap:10px; font-weight:700; cursor:pointer;"><input type="checkbox" id="reinvest" checked> 🔄 自動增貸再投入</label>
+        <div class="engine-content" id="pledge-content">
+          <div style="display: flex; gap: 36px; margin-bottom: 24px; flex-wrap: wrap;">
+            <label style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:15px; cursor:pointer; color:#374151;">
+              <div class="sw"><input type="checkbox" id="preDeduct"><span class="sw-track"></span></div>
+              預扣一年利息 <span class="tip" data-tip="增貸時先扣除一年份利息。">?</span>
+            </label>
+            <label style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:15px; cursor:pointer; color:#374151;">
+              <div class="sw"><input type="checkbox" id="reinvest" checked><span class="sw-track"></span></div>
+              🔄 維持率充裕時自動增貸再投入
+            </label>
           </div>
           <div class="inputs-row">
             <div class="field">
-                <label>目標維持率 (借款閾值)</label>
-                <div class="input-wrap"><input type="number" id="targetMR" value="300" class="has-unit"><span class="input-unit">%</span></div>
+              <label>1. 質借年利率</label>
+              <div class="input-wrap"><input type="number" id="pledgeRate" value="2.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
             </div>
             <div class="field">
-                <label>危險維持率 (停止借款線)</label>
-                <div class="input-wrap"><input type="number" id="dangerMR" value="140" class="has-unit"><span class="input-unit">%</span></div>
+              <label>2. 危險維持率 (停止借貸線)</label>
+              <div class="input-wrap"><input type="number" id="dangerMR" value="140" class="has-unit"><span class="input-unit">%</span></div>
+            </div>
+            <div class="field">
+              <label>3. 目標維持率 (%) <span class="tip" data-tip="高於此值才觸發增貸投入。">?</span></label>
+              <div class="input-wrap"><input type="number" id="targetMR" value="300" class="has-unit"><span class="input-unit">%</span></div>
             </div>
           </div>
         </div>
       </div>
 
-      <button class="btn-primary" onclick="runSim()">🚀 生成專業回測精算報告</button>
+      <div id="mc-card" class="engine-toggle-card">
+        <div class="engine-header" onclick="toggleSwitch('mc-toggle')">
+          <label style="font-weight: 800; color: #4f46e5; font-size: 18px; display:flex; align-items:center; gap:8px; cursor:pointer;">
+            🎲 啟用蒙地卡羅模擬（將進行 1000 次隨機路徑測試）
+          </label>
+          <div class="sw"><input type="checkbox" id="mc-toggle" onchange="updateEngineUI()"><span class="sw-track"></span></div>
+        </div>
+        <div class="engine-content" id="mc-content">
+          <div class="field">
+            <label>年化波動率 (標準差) <span class="tip" data-tip="波動越高，極端牛熊市出現機率越高。">?</span></label>
+            <div class="input-wrap" style="max-width: 320px;"><input type="number" id="vol" value="20" class="has-unit"><span class="input-unit">%</span></div>
+          </div>
+          <div class="vol-presets">
+            <div class="vol-preset" onclick="setVol(10)"><span class="vol-title">保守配置 (10%)</span><span class="vol-sub">美債為主</span></div>
+            <div class="vol-preset" onclick="setVol(15)"><span class="vol-title">穩健高息 (15%)</span><span class="vol-sub">ETF 組合</span></div>
+            <div class="vol-preset" onclick="setVol(20)"><span class="vol-title">市值大盤 (20%)</span><span class="vol-sub">0050, 006208</span></div>
+            <div class="vol-preset" onclick="setVol(30)"><span class="vol-title">積極個股 (30%)</span><span class="vol-sub">台積電等個股</span></div>
+          </div>
+        </div>
+      </div>
+      
+      <button class="btn-primary" onclick="runSim()">🚀 生成專屬退休精算報告</button>
     </div>
   </div>
 
@@ -246,32 +294,21 @@ footer { text-align: center; padding: 60px; color: #9ca3af; font-size: 14px; bac
 <section class="seo-section">
   <div class="seo-inner">
     <h2>什麼是 GK 動態提領法則？</h2>
-    <p>Guyton-Klinger（GK）法則由財務顧問 Jonathan Guyton 提出。其精神是根據當下「提領率」動態調整支出。相較於死板的固定 4% 法則，GK 法則能在多頭市場時加碼提領犒賞自己，在空頭市場、提領率過高時則自動啟動「保本護欄」縮減開支。這種彈性機制能極大化退休金在漫長時光中的生存機率。</p>
+    <p>Guyton-Klinger（GK）法則由財務顧問 Jonathan Guyton 提出。核心精神是根據當下提領率動態調整支出。相較於死板的固定提領（如 4% 法則每年只隨通膨調升），GK 法則能在市場大好時額外增加提領（犒賞自己），而在市場回檔、提領率過高時自動縮減開支（保本防禦），透過這種彈性調整，能極大化本金在漫長退休生涯中的生存機率。</p>
     
     <h3>為什麼採用「先賣股、後質押」的混合策略？</h3>
-    <p>市面上常見的「純質押、一股不賣」在長期退休中隱藏巨大風險，因為生活費與利息會造成負債雪球快速膨脹，一旦遭遇股災即面臨斷頭。阿奇這套策略的核心在於：<b>「防禦時賣股付現，維持負債不變；進攻時才啟動質押加速器。」</b>每年優先賣股支付生活費，確保負債絕不隨意增加。只有當維持率優於安全水位（如 300%）時，系統才執行增貸再投入。這兼顧了資產在股災時的韌性，與牛市時的槓桿爆發力。</p>
+    <p>傳統「只借不賣」在長期退休中其實隱藏著巨大風險，因為生活費與利息支出會造成負債雪球快速膨脹。本計算機採用的混合策略邏輯為：<b>「平時優先透過賣出部分股票來支應生活，讓負債維持穩定；只有當維持率優於安全門檻（如 300%）且市場處於上升軌道時，才啟動質押引擎擴張資產。」</b>這種打法兼顧了資產在股災時的抗跌韌性，以及在牛市時利用低成本資金增強複利的能力。</p>
     
     <h3>蒙地卡羅壓力測試是什麼？</h3>
-    <p>市場報酬絕非直線。本系統會根據您的報酬與波動率設定，隨機生成 1000 種不同的市場軌跡。系統會嚴格檢驗在這些隨機劇本下，您的資產是否會枯竭或擊穿 130% 質押斷頭線，最終產出「成功機率」。這能幫助您找出計畫中的脆弱年份，並提早做好風險應對。</p>
+    <p>市場報酬絕非一條直線。本系統會根據您設定的預期報酬與波動率（標準差），隨機生成 1000 種截然不同的市場劇本（包含連年大跌、先崩後漲、長期盤整等）。系統會模擬您的動態提領規則在這些情境下的表現，統計資產是否會枯竭或擊穿 130% 的質押斷頭線，最終產出「成功機率」。這比單一數值的預測更具參考價值，能幫您找出計畫中的脆弱點。</p>
   </div>
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 動態退休金提領精算系統 Ver 1.4.1 · <a href="#">Archie Lab 實驗室</a></p>
+  <p>© 2026 Archie Studio · 動態退休金提領精算系統 Ver 1.3.3 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
-/* ===== 核心歷史數據庫 (年化總報酬率) ===== */
-const HISTORICAL_DB = {
-    sp500: [
-        {y:1928, r:0.438}, {y:1929, r:-0.083}, {y:1930, r:-0.251}, {y:1931, r:-0.438}, {y:1932, r:-0.086}, {y:1933, r:0.5}, {y:1934, r:-0.012}, {y:1935, r:0.467}, {y:1936, r:0.328}, {y:1937, r:-0.353},
-        {y:1973, r:-0.143}, {y:1974, r:-0.259}, {y:1975, r:0.372}, {y:1976, r:0.236}, {y:2000, r:-0.091}, {y:2001, r:-0.119}, {y:2002, r:-0.221}, {y:2008, r:-0.37}, {y:2022, r:-0.181}, {y:2023, r:0.263}, {y:2024, r:0.242}
-    ],
-    taiex: [
-        {y:2003, r:0.323}, {y:2004, r:0.042}, {y:2005, r:0.067}, {y:2006, r:0.194}, {y:2007, r:0.087}, {y:2008, r:-0.46}, {y:2009, r:0.783}, {y:2010, r:0.095}, {y:2011, r:-0.212}, {y:2012, r:0.088}, {y:2022, r:-0.224}, {y:2023, r:0.268}, {y:2024, r:0.31}
-    ]
-};
-
 const $ = id => document.getElementById(id);
 const fM = n => (Math.round(n * 10) / 10).toLocaleString();
 const fMo = n => (Math.round(n / 12 * 10) / 10).toLocaleString();
@@ -279,222 +316,267 @@ const fMo = n => (Math.round(n / 12 * 10) / 10).toLocaleString();
 let ALL_PATHS = {};
 let SUCCESS_RATE = 0;
 let CURRENT_TAB = "p50";
-let LINE_CHART = null, PIE_CHART = null;
+let LINE_CHART = null;
+let PIE_CHART = null;
 
 function toggleSwitch(id) { $(id).click(); }
+function updateEngineUI() {
+  $('pledge-card').className = $('isPledgeEnabled').checked ? 'engine-toggle-card active' : 'engine-toggle-card';
+  $('mc-card').className = $('mc-toggle').checked ? 'engine-toggle-card active' : 'engine-toggle-card';
+}
+function setVol(v) { $('vol').value = v; }
 
-function toggleMarketUI() {
-    const mode = $('marketMode').value;
-    $('mc-params').style.display = mode === 'mc' ? 'grid' : 'none';
-    $('stress-box').style.display = mode === 'mc' ? 'none' : 'block';
-    
-    let btns = "";
-    if (mode === 'sp500') {
-        btns = `<button class="btn-stress" onclick="runHistorical(1929)">1929 大蕭條</button>
-                <button class="btn-stress" onclick="runHistorical(1973)">1973 能源危機</button>
-                <button class="btn-stress" onclick="runHistorical(2000)">2000 網路泡沫</button>
-                <button class="btn-stress" onclick="runHistorical(2008)">2008 金融海嘯</button>`;
-    } else if (mode === 'taiex') {
-        btns = `<button class="btn-stress" onclick="runHistorical(2008)">2008 金融海嘯</button>
-                <button class="btn-stress" onclick="runHistorical(2011)">2011 歐債危機</button>
-                <button class="btn-stress" onclick="runHistorical(2022)">2022 升息大回檔</button>`;
-    }
-    $('stress-btns').innerHTML = btns;
+window.onload = function() { 
+  $('isPledgeEnabled').checked = false;
+  $('mc-toggle').checked = false;
+  updateEngineUI(); 
 }
 
 function getP() {
-    return {
-        name: $('userName').value || "您",
-        startAge: parseInt($('startAge').value) || 60,
-        mv: parseFloat($('mv').value) || 0,
-        debt: parseFloat($('debt').value) || 0,
-        cash: parseFloat($('cash').value) || 0,
-        years: parseInt($('years').value) || 20,
-        withdrawRate: parseFloat($('initWithdrawRate').value) / 100 || 0.05,
-        inflation: parseFloat($('inflation').value)/100,
-        upperGuard: parseFloat($('upperGuard').value)/100,
-        lowerGuard: parseFloat($('lowerGuard').value)/100,
-        lateLifeYears: parseInt($('lateLifeYears').value) || 15,
-        isPledgeEnabled: $('isPledgeEnabled').checked,
-        preDeduct: $('preDeduct').checked,
-        reinvest: $('reinvest').checked,
-        pledgeRate: parseFloat($('pledgeRate').value)/100,
-        targetMR: parseFloat($('targetMR').value)/100,
-        dangerMR: parseFloat($('dangerMR').value)/100,
-        mode: $('marketMode').value
-    };
+  let nameInput = $('userName').value.trim();
+  return {
+    name: nameInput ? nameInput : "您",
+    startAge: parseInt($('startAge').value) || 60,
+    mv: parseFloat($('mv').value) || 0,
+    debt: parseFloat($('debt').value) || 0,
+    cash: parseFloat($('cash').value) || 0,
+    years: parseInt($('years').value) || 20,
+    adjRate: 0.10,
+    withdrawRate: parseFloat($('initWithdrawRate').value) / 100 || 0.05,
+    inflation: parseFloat($('inflation').value)/100,
+    upperGuard: parseFloat($('upperGuard').value)/100,
+    lowerGuard: parseFloat($('lowerGuard').value)/100,
+    lateLifeYears: parseInt($('lateLifeYears').value) || 15,
+    returnRate: parseFloat($('returnRate').value)/100,
+    isPledgeEnabled: $('isPledgeEnabled').checked,
+    preDeduct: $('preDeduct').checked,
+    reinvest: $('reinvest').checked,
+    pledgeRate: parseFloat($('pledgeRate').value)/100,
+    dangerMR: parseFloat($('dangerMR').value)/100,
+    targetMR: parseFloat($('targetMR').value)/100,
+    mc: $('mc-toggle').checked,
+    vol: parseFloat($('vol').value)/100
+  };
 }
 
-function runHistorical(year) {
-    const p = getP(); const db = HISTORICAL_DB[p.mode];
-    let startIdx = db.findIndex(d => d.y === year); if (startIdx === -1) startIdx = 0;
-    let rets = Array.from({length: p.years}, (_, i) => db[(startIdx + i) % db.length].r);
-    const res = simPath(p, rets);
-    ALL_PATHS = { default: res.history };
-    SUCCESS_RATE = res.survived ? 100 : 0;
-    CURRENT_TAB = "default";
-    renderDashboard(`歷史回測：從 ${year} 年開始`);
-}
-
-function simPath(p, rets) {
-    let mv = p.mv, debt = p.debt, cash = p.cash;
-    let wa = mv * p.withdrawRate;
-    let rows = [], minMR = 999;
+function simPath(p, overrides) {
+  let mv = p.mv, debt = p.debt, cash = p.cash;
+  let wa = mv * p.withdrawRate;
+  let rows = [], minMR = 999;
+  
+  if (!p.isPledgeEnabled && debt > 0) { mv -= debt; debt = 0; }
+  
+  for (let y = 1; y <= p.years; y++) {
+    const ret = overrides ? overrides[y-1] : p.returnRate;
+    mv *= (1 + ret);
+    wa *= (1 + p.inflation);
     
-    // 如果不啟動引擎但有負債，第一年強制清償
-    if (!p.isPledgeEnabled && debt > 0) { mv -= debt; debt = 0; }
+    let currentWR = wa / mv;
+    let gkRule = 'none';
+    let isImmune = (y > p.years - p.lateLifeYears);
     
-    for (let y = 1; y <= p.years; y++) {
-        const ret = rets[y-1];
-        mv *= (1 + ret);
-        debt *= (1 + p.pledgeRate); // 負債利息滾動
-        
-        let currentWR = wa / mv;
-        let gkRule = 'none', isImmune = (y > p.years - p.lateLifeYears);
-        
-        if (currentWR > p.upperGuard) { 
-            if (!isImmune) { wa *= 0.9; gkRule = 'danger'; } else { gkRule = 'immune'; }
-        } else if (currentWR < p.lowerGuard) { 
-            wa *= 1.1; gkRule = 'boom'; 
-        }
-        
-        let op = "✅ 賣股付現。";
-        let cashNeed = wa;
-        
-        if (p.isPledgeEnabled) {
-            let mr = debt > 0 ? mv / debt : 999;
-            if (mr < p.dangerMR && cash > 0) {
-                let take = Math.min(cash, cashNeed); cash -= take; cashNeed -= take;
-                mv -= cashNeed; op = "🛡️ 觸發警戒，動用備用金。";
-            } else {
-                mv -= cashNeed;
-                if (debt > 0 && (mv/debt) >= p.targetMR && p.reinvest) {
-                    let borrow = (mv/p.targetMR - debt) * 0.6;
-                    if (borrow > 5) { 
-                        debt += borrow; 
-                        mv += p.preDeduct ? borrow*(1-p.pledgeRate) : borrow; 
-                        op = `📈 增貸 ${fM(borrow)}萬進攻。`; 
-                    }
-                } else {
-                    op = "✅ 賣股付現。維持率不足。";
-                }
-            }
-        } else { mv -= wa; }
-        
-        let finalMR = debt > 0 ? mv / debt : 999;
-        if (finalMR < minMR) minMR = finalMR;
-        rows.push({ y, age: p.startAge + y, ret, mv, debt, cash, mr: finalMR, wa, mo: wa/12, gkRule, op });
-        wa *= (1 + p.inflation);
+    if (currentWR > p.upperGuard) {
+      if (!isImmune) { wa *= (1 - p.adjRate); gkRule = 'danger'; }
+      else { gkRule = 'immune'; }
+    } else if (currentWR < p.lowerGuard) {
+      wa *= (1 + p.adjRate); gkRule = 'boom';
     }
-    return { history: rows, survived: (mv - debt) > 0 && minMR > 1.3 };
+    
+    let opStr = "", logStr = "";
+    let interest = debt * p.pledgeRate;
+    let cashNeed = wa + interest;
+
+    if (p.isPledgeEnabled) {
+      let postSellMV = mv - cashNeed;
+      let postSellMR = debt > 0 ? postSellMV / debt : 999;
+
+      if (postSellMR < p.dangerMR && cash > 0) {
+        let bailout = Math.min(cash, cashNeed);
+        cash -= bailout; cashNeed -= bailout;
+        mv -= cashNeed;
+        opStr = "🛡️ 觸發警戒，動用備用金。";
+      } else {
+        mv -= cashNeed;
+        if (debt > 0 && (mv / debt) >= p.targetMR && p.reinvest) {
+          let space = mv / p.targetMR - debt;
+          if (space > 5) {
+            let borrow = space * 0.6;
+            debt += borrow;
+            mv += p.preDeduct ? borrow * (1 - p.pledgeRate) : borrow;
+            opStr = `📈 達標進攻，增貸 ${fM(borrow)} 萬。`;
+          } else { opStr = "✅ 賣股付現。維持率安全。"; }
+        } else { opStr = "✅ 賣股付現。防禦休眠。"; }
+      }
+      let finalMR = debt > 0 ? mv / debt : 999;
+      if (finalMR < minMR) minMR = finalMR;
+      rows.push({ y, age: p.startAge + y, ret, mv, debt, cash, mr: finalMR, wa, mo: wa/12, gkRule, op: opStr, net: mv - debt });
+    } else {
+      mv -= wa;
+      rows.push({ y, age: p.startAge + y, ret, mv, debt: 0, cash, mr: 999, wa, mo: wa/12, gkRule, op: "✅ 賣股付現。", net: mv });
+    }
+  }
+  return { history: rows, finalNet: rows[rows.length-1].net, minMR, survived: rows[rows.length-1].net > 0 && minMR > 1.3 };
 }
 
 function runSim() {
-    const p = getP();
-    if (p.mode === 'mc') {
-        let sims = [], success = 0;
-        let avg = parseFloat($('returnRate').value)/100;
-        let vol = parseFloat($('vol').value)/100;
-        for (let i = 0; i < 500; i++) {
-            let rets = Array.from({length: p.years}, () => {
-                const u = Math.random(), v = Math.random();
-                return avg + vol * Math.sqrt(-2*Math.log(u)) * Math.cos(2*Math.PI*v);
-            });
-            const res = simPath(p, rets); sims.push(res);
-            if (res.survived) success++;
-        }
-        sims.sort((a, b) => (a.history[p.years-1].mv - a.history[p.years-1].debt) - (b.history[p.years-1].mv - b.history[p.years-1].debt));
-        SUCCESS_RATE = (success / 500) * 100;
-        ALL_PATHS = { p10: sims[49].history, p50: sims[249].history, p90: sims[449].history };
-        CURRENT_TAB = "p50";
-        renderDashboard();
-    } else { runHistorical(HISTORICAL_DB[p.mode][0].y); }
+  const p = getP();
+  if (!p.mc) {
+    const res = simPath(p); ALL_PATHS = { default: res.history }; SUCCESS_RATE = 100; CURRENT_TAB = "default";
+  } else {
+    let sims = [], success = 0;
+    for (let i = 0; i < 1000; i++) {
+      let rets = Array.from({length: p.years}, () => {
+        const u1 = Math.random(), u2 = Math.random();
+        return p.returnRate + p.vol * Math.sqrt(-2*Math.log(u1)) * Math.cos(2*Math.PI*u2);
+      });
+      const res = simPath(p, rets); sims.push(res);
+      if (res.survived) success++;
+    }
+    sims.sort((a,b) => a.finalNet - b.finalNet);
+    SUCCESS_RATE = (success / 1000) * 100;
+    ALL_PATHS = { p10: sims[99].history, p25: sims[249].history, p50: sims[499].history, p75: sims[749].history, p90: sims[899].history };
+    CURRENT_TAB = "p50";
+  }
+  renderDashboard();
 }
 
-function setTab(t) { CURRENT_TAB = t; renderDashboard(); }
+function setTab(t) { 
+  CURRENT_TAB = t; 
+  renderDashboard();
+}
 
-function renderDashboard(titleOverride) {
-    const p = getP(); const rows = ALL_PATHS[CURRENT_TAB]; const last = rows[rows.length-1];
-    const totalW = rows.reduce((a,b)=>a+b.wa,0);
-    const title = titleOverride || `${p.name} 的退休模擬報告 (${getTabName(CURRENT_TAB)})`;
+function renderDashboard() {
+  const p = getP(); const rows = ALL_PATHS[CURRENT_TAB]; const last = rows[rows.length-1]; const totalW = rows.reduce((a,b)=>a+b.wa,0);
+  const tabsHTML = p.mc ? `<div class="tab-group fade-in">` + ["p10","p25","p50","p75","p90"].map(t => `<button class="tab-btn ${CURRENT_TAB===t?'active '+t:''}" onclick="setTab('${t}')">${getTabName(t)}</button>`).join('') + `</div>` : '';
 
-    $('results-area').innerHTML = `
-        <div class="fade-in">
-            ${p.mode==='mc' ? `<div class="tab-group">${["p10","p50","p90"].map(t=>`<button class="tab-btn ${CURRENT_TAB===t?'active':''}" onclick="setTab('${t}')">${getTabName(t)}</button>`).join('')}</div>` : ''}
-            <div class="summary-box">
-                <h3>🎯 ${title}</h3>
-                <div class="metric-grid">
-                    <div class="metric"><div class="metric-label">存活成功率</div><div class="metric-value">${SUCCESS_RATE.toFixed(1)}%</div></div>
-                    <div class="metric"><div class="metric-label">期末淨資產</div><div class="metric-value">${fM(last.mv - last.debt)}萬</div></div>
-                    <div class="metric"><div class="metric-label">累計總提領</div><div class="metric-value val-amber">$${fM(totalW)}萬</div></div>
-                    <div class="metric"><div class="metric-label">最終月生活費</div><div class="metric-value val-green">$${fMo(last.wa)}萬</div></div>
-                </div>
-            </div>
-            <div class="charts-grid"><div class="chart-card"><canvas id="lineChart"></canvas></div><div class="chart-card"><canvas id="pieChart"></canvas></div></div>
-            <div class="table-card">
-                <div class="table-header">📊 逐年精算明細報表</div>
-                <table>
-                    <thead><tr><th>年齡</th><th>年化報酬</th><th>市值</th><th>負債</th><th>維持率</th><th>GK 狀態</th><th>月提領</th><th>實際執行動作</th></tr></thead>
-                    <tbody>${rows.map(r=>`<tr>
-                        <td><b>${r.age} 歲</b></td>
-                        <td class="${r.ret>=0?'val-green':'val-red'}">${(r.ret*100).toFixed(1)}%</td>
-                        <td>${fM(r.mv)}</td><td>${fM(r.debt)}</td>
-                        <td style="font-weight:700;">${p.isPledgeEnabled?(r.mr*100).toFixed(0)+'%':'—'}</td>
-                        <td><span class="gk-badge ${getBadgeClass(r.gkRule)}">${getBadgeText(r.gkRule)}</span></td>
-                        <td>$${fM(r.mo)}</td><td class="action-text">${r.op}</td>
-                    </tr>`).join('')}</tbody>
-                </table>
-            </div>
-            <div class="analysis-card"><h4>📋 專屬退休生存報告分析</h4><div id="story-root"></div></div>
-            <div class="export-wrap"><button class="btn-export" onclick="exportCSV()">📊 匯出完整精算報表 (含故事分析)</button></div>
+  $('results-area').innerHTML = `
+    <div class="fade-in">
+      ${tabsHTML}
+      <div class="summary-box">
+        <h3>🎯 ${p.name} 的退休成功率：${SUCCESS_RATE.toFixed(1)}%</h3>
+        <div class="metric-grid">
+          <div class="metric"><div class="metric-label">期末淨資產 (${last.age}歲)</div><div class="metric-value ${last.net>0?'val-green':'val-red'}">$${fM(last.net)}萬</div></div>
+          <div class="metric"><div class="metric-label">最低維持率</div><div class="metric-value ${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))>p.dangerMR?'val-green':'val-red'):'val-green'}">${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))*100).toFixed(0)+'%':'N/A'}</div></div>
+          <div class="metric"><div class="metric-label">累計總提領</div><div class="metric-value val-amber">$${fM(totalW)}萬</div></div>
+          <div class="metric"><div class="metric-label">末年平均月領</div><div class="metric-value val-green">$${fMo(last.wa)}萬</div></div>
         </div>
-    `;
-    renderCharts(rows); renderStory(rows, p);
-}
+      </div>
 
-function renderStory(rows, p) {
-    const last = rows[rows.length-1];
-    const totalW = rows.reduce((a,b)=>a+b.wa,0);
-    const crashYears = rows.filter(r => r.ret < -0.2).map(r => r.age);
-    const defenseYears = rows.filter(r => r.gkRule === 'danger').map(r => r.age);
-    const cashYears = rows.filter(r => r.op.includes("備用金")).map(r => r.age);
-    
-    let html = `
-        <div class="story-section">
-            <div class="story-title">❶ 人生總結與財富傳承</div>
-            <div class="story-body">${p.name} 您好，根據模擬路徑顯示：在長達 ${p.years} 年的退休長征中，您的資產展現了極佳的防禦韌性。您累計從市場中提領了 <b>$${fM(totalW)} 萬</b> 作為生活費，且在計畫結束時，仍保有 <b>$${fM(last.mv - last.debt)} 萬</b> 的淨資產可供傳承或晚年應急。</div>
+      <div class="charts-grid">
+        <div class="chart-card"><div class="chart-inner"><canvas id="lineChart"></canvas></div></div>
+        <div class="chart-card">
+          <div class="chart-inner"><canvas id="pieChart"></canvas></div>
+          <div class="pie-center-text">
+            <div class="pie-val-label">累計提領</div><div class="pie-val-num" style="color:#f59e0b">$${fM(totalW)}萬</div>
+            <div style="width:40%;height:1px;background:#eee;margin:10px auto"></div>
+            <div class="pie-val-label">期末淨資產</div><div class="pie-val-num" style="color:#6366f1">$${fM(last.net)}萬</div>
+          </div>
         </div>
-        <div class="story-section">
-            <div class="story-title">❷ 極端壓力測試紀錄</div>
-            <div class="story-body">${crashYears.length > 0 ? `計畫期間遭遇了 ${crashYears.length} 次重大市場崩跌（發生於 ${crashYears.join('、')} 歲）。` : '值得慶幸的是，此路徑未遭遇連續性的極端股災。'} 
-            ${defenseYears.length > 0 ? `面對市場波動，您的 GK 動態護欄在 ${defenseYears.slice(0,3).join('、')} 歲等年份主動啟動了「保本縮減」，這項紀律縮減了約 10% 的預算，卻換取了核心本金的生存空間。` : '由於資產成長強勁，您的計畫從未觸發保本機制，生活品質始終維持在高標。'}</div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">📊 ${p.name} 的精算報表 (${getTabName(CURRENT_TAB)})</div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>年齡</th><th>年化報酬</th><th>股票市值</th><th>質押負債</th><th>維持率</th><th>GK 狀態</th><th>月生活費</th><th>實際執行動作</th></tr></thead>
+            <tbody>${rows.map(r => `<tr>
+              <td><b>${r.age} 歲</b></td>
+              <td class="${r.ret>=0?'val-green':'val-red'}">${(r.ret*100).toFixed(1)}%</td>
+              <td>${fM(r.mv)}萬</td><td>${fM(r.debt)}萬</td>
+              <td style="font-weight:700;">${p.isPledgeEnabled?(r.mr*100).toFixed(0)+'%':'—'}</td>
+              <td><span class="gk-badge ${getBadgeClass(r.gkRule)}">${getBadgeText(r.gkRule)}</span></td>
+              <td style="font-weight:700;">$${fM(r.mo)}萬</td>
+              <td class="action-text">${r.op}</td>
+            </tr>`).join('')}</tbody>
+          </table>
         </div>
-        <div class="story-section">
-            <div class="story-title">❸ 質押引擎與生存策略執行</div>
-            <div class="story-body">在此情境下，您的質押維持率最低曾來到 <b>${(Math.min(...rows.map(r=>r.mr))*100).toFixed(0)}%</b>。${cashYears.length > 0 ? `在 ${cashYears[0]} 歲時，混合策略發揮了關鍵作用——系統判定維持率過低，果斷動用「現金備用金」來保命，成功阻止了在市場谷底賣出股票的悲劇。` : '透過混合打法（優先賣股付現），您的負債始終維持在健康水平。'} 這套「防禦賣股、牛市增貸」的策略，確實達到了您心中理想的攻守平衡。</div>
-        </div>`;
-    $('story-root').innerHTML = html;
+      </div>
+
+      <div class="analysis-card">
+        <h4>📋 ${p.name} 的專屬報告分析 (${getTabName(CURRENT_TAB)})</h4>
+        <div class="analysis-text" id="analysis-content">${generateStory(rows, p)}</div>
+      </div>
+
+      <div class="export-wrap"><button class="btn-export" onclick="exportExcel()">⬇️ 匯出當前路徑 CSV 報表 (含分析)</button></div>
+    </div>
+  `;
+  renderCharts(rows, p);
 }
 
-function getTabName(t) { return {p10:"悲觀 P10", p50:"中位數 P50", p90:"樂觀 P90", default:"歷史回測"}[t]; }
-function getBadgeClass(rule) { return { 'danger': 'badge-danger', 'boom': 'badge-boom', 'immune': 'badge-immune', 'none': 'badge-normal' }[rule]; }
-function getBadgeText(rule) { return { 'danger': '保本縮減', 'boom': '繁榮加薪', 'immune': '免死金牌', 'none': '正常提領' }[rule]; }
+function getBadgeClass(rule) {
+  return { 'danger': 'badge-danger', 'boom': 'badge-boom', 'immune': 'badge-immune', 'none': 'badge-normal' }[rule];
+}
+function getBadgeText(rule) {
+  return { 'danger': '保本縮減', 'boom': '繁榮加薪', 'immune': '免死金牌', 'none': '正常提領' }[rule];
+}
+function getTabName(t) { return {p10:"悲觀 P10", p25:"保守 P25", p50:"中位數 P50", p75:"穩健 P75", p90:"樂觀 P90", default:"理想路徑"}[t]; }
 
-function renderCharts(rows) {
-    if (LINE_CHART) LINE_CHART.destroy(); if (PIE_CHART) PIE_CHART.destroy();
-    LINE_CHART = new Chart($('lineChart'), { type: 'line', data: { labels: rows.map(r => r.age+'歲'), datasets: [{ label: '總市值', data: rows.map(r => r.mv), borderColor: '#10b981', tension: 0.3 }, { label: '淨資產', data: rows.map(r => r.mv - r.debt), borderColor: '#6366f1', tension: 0.3 }] }, options: { responsive: true, maintainAspectRatio: false } });
-    PIE_CHART = new Chart($('pieChart'), { type: 'doughnut', data: { labels: ['累計提領', '期末淨額'], datasets: [{ data: [rows.reduce((a,b)=>a+b.wa,0), Math.max(0, rows[rows.length-1].mv - rows[rows.length-1].debt)], backgroundColor: ['#f59e0b', '#6366f1'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false } });
+function generateStory(rows, p) {
+  const last = rows[rows.length-1]; 
+  const s_years = rows.filter(r => r.gkRule === 'danger').map(r => r.age);
+  const b_years = rows.filter(r => r.gkRule === 'boom').map(r => r.age);
+  const i_years = rows.filter(r => r.gkRule === 'immune').map(r => r.age);
+  const cash_years = rows.filter(r => r.op.includes("備用金")).map(r => r.age);
+
+  let story = `<p><strong>【總體觀察】</strong><br>${p.name} 您好，這是在「${getTabName(CURRENT_TAB)}」情境下的模擬結果。這段退休旅程涵蓋了市場真實的波動特徵。</p>`;
+  
+  if (s_years.length > 0 || cash_years.length > 0) {
+    story += `<p><strong>【防禦與救援】</strong><br>${s_years.length > 0 ? `在您 <strong>${s_years.slice(0,3).join('、')}</strong> 歲時，由於市場大幅回檔，系統精準啟動了保本縮減以減緩本金消耗。` : ''} 
+    ${cash_years.length > 0 ? `值得注意的是在 <strong>${cash_years[0]} 歲</strong> 左右，系統啟動了極限防禦，暫停質押並動用現金備用金，這成功幫您擋下了可能的斷頭風險。` : ''}</p>`;
+  }
+
+  if (b_years.length > 0) {
+    story += `<p><strong>【資產擴張】</strong><br>而在 <strong>${b_years.slice(0,3).join('、')} 歲</strong> 等多頭階段，資產成長強勢觸發繁榮護欄。${p.isPledgeEnabled ? '此時維持率充裕，系統執行了增貸再投入，讓您在安全的前提下放大了資產增長幅度。' : '系統隨之調升了您的生活預算，顯著提升了退休生活的舒適度。'}</p>`;
+  }
+
+  if (i_years.length > 0) {
+    story += `<p><strong>【晚年尊嚴】</strong><br>在計畫後期的 <strong>${i_years.join('、')} 歲</strong>，儘管報酬率不佳，但「免死金牌」規則保護了您的提領額度，確保您的退休品質不因市場短期震盪而打折。</p>`;
+  }
+
+  story += `<p><strong>【期末結算】</strong><br>歷經 ${rows.length} 年，累計總提領 <strong>[ ${fM(rows.reduce((a,b)=>a+b.wa,0))} 萬 ]</strong>。最終期末淨資產為 <strong>[ ${fM(last.net)} 萬 ]</strong>。${last.net > 0 ? '這是一次成功的資產保全計畫。' : '提醒：此路徑資產出現短缺，建議考慮降低提領率。'}</p>`;
+  
+  return story;
 }
 
-function exportCSV() {
-    const p = getP(); const rows = ALL_PATHS[CURRENT_TAB];
-    const storyText = $('story-root').innerText.replace(/\n/g, ' ');
-    let csv = "\uFEFF年齡,報酬,市值,負債,維持率,狀態,月領,操作\n";
-    rows.forEach(r => csv += `${r.age},${(r.ret*100).toFixed(2)}%,${r.mv.toFixed(1)},${r.debt.toFixed(1)},${(r.mr*100).toFixed(0)}%,${getBadgeText(r.gkRule)},${r.mo.toFixed(2)},${r.op}\n`);
-    csv += `\n\n專屬報告分析：\n"${storyText}"\n`;
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-    link.download = `${p.name}_退休精算報告_${getTabName(CURRENT_TAB)}.csv`; link.click();
+function renderCharts(rows, p) {
+  if (LINE_CHART) LINE_CHART.destroy(); if (PIE_CHART) PIE_CHART.destroy();
+  const ctxL = $('lineChart').getContext('2d');
+  LINE_CHART = new Chart(ctxL, {
+    type: 'line',
+    data: {
+      labels: rows.map(r => r.age + '歲'),
+      datasets: [
+        { label: '市值', data: rows.map(r => r.mv), borderColor: '#10b981', fill: true, backgroundColor: 'rgba(16,185,129,0.05)', tension: 0.3, yAxisID: 'y' },
+        { label: '淨資產', data: rows.map(r => r.net), borderColor: '#6366f1', tension: 0.3, yAxisID: 'y' },
+        { label: '月領', data: rows.map(r => r.mo), borderColor: '#f59e0b', borderDash:[5,5], tension: 0.3, yAxisID: 'y2' }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, scales: { y2:{position:'right', grid:{drawOnChartArea:false}} } }
+  });
+  const ctxP = $('pieChart').getContext('2d');
+  PIE_CHART = new Chart(ctxP, {
+    type: 'doughnut',
+    data: { labels: ['累計提領', '期末淨額'], datasets: [{ data: [rows.reduce((a,b)=>a+b.wa,0), Math.max(0,rows[rows.length-1].net)], backgroundColor: ['#f59e0b', '#6366f1'], borderWidth: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '78%', plugins: { legend: { display: false } } }
+  });
+}
+
+function exportExcel() {
+  const p = getP(); const rows = ALL_PATHS[CURRENT_TAB];
+  // 取得分析文字並過濾掉 HTML 標籤
+  const analysisHtml = $('analysis-content').innerHTML;
+  const analysisText = analysisHtml.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ');
+
+  let csv = "\uFEFF年齡,年化報酬,市值,負債,維持率,GK狀態,月領,操作紀錄\n";
+  rows.forEach(r => csv += `${r.age}歲,${(r.ret*100).toFixed(1)}%,${r.mv},${r.debt},${p.isPledgeEnabled?r.mr.toFixed(2):'N/A'},${getBadgeText(r.gkRule)},${fM(r.mo)},${r.op}\n`);
+  
+  csv += "\n\n--- 專屬報告分析 ---\n";
+  csv += `"${analysisText}"\n`;
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+  link.download = `${p.name}_退休精算報告_${getTabName(CURRENT_TAB)}.csv`;
+  link.click();
 }
 </script>
 </body>
