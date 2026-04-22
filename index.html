@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜阿奇專業版 V1.2.0</title>
+<title>退休金動態提領精算機｜阿奇專業版 V1.2.1</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -128,7 +128,7 @@ td { padding: 18px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', mo
 .btn-export { width: 100%; max-width: 500px; padding: 20px; background: linear-gradient(135deg, #1f2937 0%, #111827 100%); color: #fff; border: none; border-radius: 14px; font-size: 18px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; transition: .2s; box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
 .btn-export:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
 
-/* ===== SEO SECTION (補回遺失的樣式) ===== */
+/* SEO SECTION */
 .seo-section { background: #fff; border-top: 1px solid #e8eaed; padding: 60px 16px; margin-top: 48px; }
 .seo-inner { max-width: 800px; margin: 0 auto; }
 .seo-section h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; color: #1a1d23; }
@@ -156,7 +156,7 @@ footer a:hover { color: #4f46e5; border-bottom-color: #4f46e5; }
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與質押精算 - <span class="version-tag">ver 1.2.0</span></h2>
+    <h2>- 含蒙地卡羅模擬與質押精算 - <span class="version-tag">ver 1.2.1</span></h2>
     <div class="hero-desc">
       made by 阿奇 · 您花了幾十年累積資產，現在最重要的問題變了：<br>
       不是「如何存更多」，而是「如何讓錢撐得夠久」。
@@ -170,7 +170,7 @@ footer a:hover { color: #4f46e5; border-bottom-color: #4f46e5; }
     <div class="card-body">
       
       <div class="param-section">
-        <div class="section-label">👤 第一步：建立個人檔案與退休目標</div>
+        <div class="section-label">👤 第一步：建立個人檔案與提領目標</div>
         <div class="inputs-row">
           <div class="field">
             <label>您的稱呼 <span class="tip" data-tip="輸入大名，報告與 CSV 將為您客製化生成。">?</span></label>
@@ -191,8 +191,12 @@ footer a:hover { color: #4f46e5; border-bottom-color: #4f46e5; }
             <div class="input-wrap"><input type="number" id="startAge" value="60" class="has-unit"><span class="input-unit">歲</span></div>
           </div>
           <div class="field">
-            <label>模擬年數 <span class="tip" data-tip="退休生活的試算長度。">?</span></label>
+            <label>模擬年數 <span class="tip" data-tip="退休生活的試算長度。建議 20~30 年。">?</span></label>
             <div class="input-wrap"><input type="number" id="years" value="20" class="has-unit" onchange="renderCustomMrGrid()"><span class="input-unit">年</span></div>
+          </div>
+          <div class="field">
+            <label>初始提領率 <span class="tip" data-tip="退休第一年想要提領的比例（建議 3~5% 較穩健）。">?</span></label>
+            <div class="input-wrap"><input type="number" id="withdrawRate" value="5.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
           </div>
         </div>
       </div>
@@ -223,11 +227,11 @@ footer a:hover { color: #4f46e5; border-bottom-color: #4f46e5; }
         <div class="section-label">📉 第三步：GK 動態護欄與晚年保護</div>
         <div class="inputs-row">
           <div class="field">
-            <label>上限護欄 (保本) <span class="tip" data-tip="提領率衝破此值時，強制縮減 10% 提領額。">?</span></label>
+            <label>上限護欄 (保本) <span class="tip" data-tip="提領率衝破此值時，強制縮減提領額。">?</span></label>
             <div class="input-wrap"><input type="number" id="upperGuard" value="6.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
           </div>
           <div class="field">
-            <label>下限護欄 (繁榮) <span class="tip" data-tip="提領率低於此值時，獎勵性調升 10% 提領額。">?</span></label>
+            <label>下限護欄 (繁榮) <span class="tip" data-tip="提領率低於此值時，獎勵性調升提領額。">?</span></label>
             <div class="input-wrap"><input type="number" id="lowerGuard" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
           </div>
           <div class="field">
@@ -246,7 +250,7 @@ footer a:hover { color: #4f46e5; border-bottom-color: #4f46e5; }
           <label style="font-weight: 800; color: #4f46e5; font-size: 18px; display:flex; align-items:center; gap:8px; cursor:pointer;">
             🚀 啟用股票質押引擎 (不賣股提領策略)
           </label>
-          <div class="sw"><input type="checkbox" id="isPledgeEnabled" onchange="updateEngineUI()"><span class="sw-track"></span></div>
+          <div class="sw"><input type="checkbox" id="isPledgeEnabled" checked onchange="updateEngineUI()"><span class="sw-track"></span></div>
         </div>
         <div class="engine-content" id="pledge-content">
           <div style="display: flex; gap: 32px; margin-bottom: 24px; flex-wrap: wrap;">
@@ -266,7 +270,7 @@ footer a:hover { color: #4f46e5; border-bottom-color: #4f46e5; }
               <div class="input-wrap"><input type="number" id="pledgeRate" value="2.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
             </div>
             <div class="field">
-              <label>危險維持率 <span class="tip" data-tip="低於此值即停止質押，轉由現金備用金支付。">?</span></label>
+              <label>危險維持率 <span class="tip" data-tip="低於此值即觸發「暫停質押扣備用金」。若低於 130% 斷頭線則判定模擬失敗。">?</span></label>
               <div class="input-wrap"><input type="number" id="dangerMR" value="140" class="has-unit"><span class="input-unit">%</span></div>
             </div>
             <div class="field">
@@ -333,7 +337,7 @@ footer a:hover { color: #4f46e5; border-bottom-color: #4f46e5; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 動態退休金提領精算系統 Ver 1.2.0 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · 動態退休金提領精算系統 Ver 1.2.1 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -398,9 +402,8 @@ function getP() {
     debt: parseFloat($('debt').value) || 0,
     cash: parseFloat($('cash').value) || 0,
     years: yrs,
-    // 雖然 UI 沒有單次調整幅度，但在這裡固定帶入 10% 確保精算公式正常運作
-    adjRate: 0.10, 
-    withdrawRate: 0.05, // 初始提領率先固定為 5%，因為 UI 目前沒此欄位
+    adjRate: 0.10, // 固定 10% 調整幅度
+    withdrawRate: parseFloat($('withdrawRate').value)/100 || 0.05,
     inflation: parseFloat($('inflation').value)/100,
     upperGuard: parseFloat($('upperGuard').value)/100,
     lowerGuard: parseFloat($('lowerGuard').value)/100,
@@ -423,6 +426,12 @@ function simPath(p, overrides) {
   let mv = p.mv, debt = p.debt, cash = p.cash, initCash = p.cash;
   let wa = mv * p.withdrawRate;
   let rows = [], minMR = 999;
+  
+  // [公平競爭修正] 如果不開質押，第一年必須先把「初始負債」賣股還清
+  if (!p.isPledgeEnabled && debt > 0) {
+    mv -= debt;
+    debt = 0;
+  }
   
   for (let y = 1; y <= p.years; y++) {
     const ret = overrides ? overrides[y-1] : p.returnRate;
@@ -449,9 +458,19 @@ function simPath(p, overrides) {
       let currentTargetMR = p.mrMode === 'custom' ? p.customMRs[y-1] : p.targetMR;
       
       if (mr < p.dangerMR) {
-        cash = Math.max(0, cash - wa);
-        opStr = `⚠️ 觸發危險警戒，暫停質押扣備用金`;
-        logStr = `維持率跌破 ${p.dangerMR*100}% 危險線，系統已暫停質押，改由現金備用金支付生活費保命。${gkRule==='danger'?'同時觸發保本規則縮減 10%。':''}`;
+        // [斷頭線修正] 現金不夠扣時，強迫賣股補齊生活費
+        let useCash = Math.min(cash, wa);
+        cash -= useCash;
+        let shortfall = wa - useCash;
+        
+        if (shortfall > 0) {
+            mv -= shortfall; 
+            opStr = `⚠️ 備用金耗盡，被迫賣股變現`;
+            logStr = `維持率跌破危險線且現金備用金已耗盡！系統被迫賣出 ${fM(shortfall)} 萬股票以支付生活費。`;
+        } else {
+            opStr = `⚠️ 觸發危險警戒，暫停質押扣備用金`;
+            logStr = `維持率跌破 ${p.dangerMR*100}% 危險線，系統已暫停質押，改由現金備用金支付生活費保命。${gkRule==='danger'?'同時觸發保本規則縮減。':''}`;
+        }
       } else {
         debt += wa;
         if (mr >= currentTargetMR && p.reinvest) {
@@ -460,7 +479,7 @@ function simPath(p, overrides) {
             let pa = space * 0.6;
             debt += pa; mv += pa;
             opStr = `📈 維持率充裕，執行 +${fM(pa)} 萬再投入`;
-            logStr = `維持率高於目標設定 (${currentTargetMR*100}%)，系統為您自動增貸並再投入 ${fM(pa)} 萬，擴大複利飛輪。`;
+            logStr = `維持率高於目標設定 (${(currentTargetMR*100).toFixed(0)}%)，系統為您自動增貸並再投入 ${fM(pa)} 萬，擴大複利飛輪。`;
           }
         }
         
@@ -508,7 +527,8 @@ function runSim() {
         return p.returnRate + p.vol * Math.sqrt(-2*Math.log(u1)) * Math.cos(2*Math.PI*u2);
       });
       const res = simPath(p, rets); sims.push(res);
-      if (res.finalNet > 0 && res.minMR > (p.isPledgeEnabled ? p.dangerMR : -1) && res.finalCash >= 0) success++;
+      // [斷頭線修正] 真正斷頭線設定為 130%。140% 是危險警告但不會直接死。
+      if (res.finalNet > 0 && res.minMR > (p.isPledgeEnabled ? 1.30 : -1)) success++;
     }
     sims.sort((a,b) => a.finalNet - b.finalNet);
     SUCCESS_RATE = (success / 1000) * 100;
