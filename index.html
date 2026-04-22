@@ -18,7 +18,9 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .header-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
 .brand-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
 .brand-name { font-weight: 700; font-size: 15px; }
-.nav-badge { font-size: 11px; background: #f0f0ff; color: #667eea; border: 1px solid #d4d4ff; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+.nav-right-area { display: flex; align-items: center; gap: 12px; }
+.nav-badge { font-size: 12px; background: #f0f0ff; color: #667eea; border: 1px solid #d4d4ff; padding: 4px 12px; border-radius: 20px; font-weight: 600; }
+.nav-version { font-size: 12px; color: #9ca3af; font-weight: 600; }
 
 /* ===== HERO ===== */
 .hero { background: #fff; border-bottom: 1px solid #e8eaed; padding: 60px 16px; text-align: center; }
@@ -61,7 +63,8 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 /* MC & TOGGLES */
 .mc-container { background: #f9fafb; border: 1.5px solid #e8eaed; border-radius: 12px; padding: 8px 16px 16px; }
 .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; cursor: pointer; }
-.toggle-row.standalone { border: 1.5px solid #e8eaed; background: #f9fafb; padding: 14px 16px; border-radius: 12px; margin-top: 16px; }
+.toggle-row.standalone { border: 1.5px solid #e8eaed; background: #f9fafb; padding: 14px 16px; border-radius: 12px; margin-top: 16px; transition: .2s; }
+.toggle-row.standalone:hover { border-color: #667eea; }
 .sw { position: relative; width: 42px; height: 24px; }
 .sw input { opacity: 0; width: 0; height: 0; }
 .sw-track { position: absolute; inset: 0; background: #d1d5db; border-radius: 12px; transition: .2s; }
@@ -76,6 +79,12 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
 
 /* RESULTS DASHBOARD */
+.tab-group { display: flex; gap: 8px; margin-bottom: 24px; background: #e5e7eb; padding: 6px; border-radius: 12px; overflow-x: auto; }
+.tab-btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: #4b5563; }
+.tab-btn.active { background: #fff; color: #1a1d23; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.tab-btn.active.p10 { color: #dc2626; }
+.tab-btn.active.p90 { color: #10b981; }
+
 .summary-box { background: #1a1d23; border-radius: 20px; padding: 32px; color: #fff; margin-bottom: 24px; }
 .summary-box h3 { font-size: 28px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; font-weight: 700; }
 .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; }
@@ -118,11 +127,19 @@ td { padding: 14px 16px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono
 .hero-story ol { padding-left: 20px; }
 .hero-story li { margin-bottom: 10px; }
 
+/* SEO SECTION */
+.seo-section { background: #fff; border-top: 1px solid #e8eaed; padding: 60px 16px; margin-top: 48px; }
+.seo-inner { max-width: 800px; margin: 0 auto; }
+.seo-section h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; color: #1a1d23; }
+.seo-section p { font-size: 15px; color: #4b5563; line-height: 1.8; margin-bottom: 24px; text-align: justify; }
+.seo-section h3 { font-size: 18px; font-weight: 700; margin: 32px 0 12px; color: #1a1d23; }
+
 /* UTILS */
 .val-green { color: #10b981 !important; } .val-red { color: #ef4444 !important; } .val-amber { color: #f59e0b !important; }
 .fade-in { animation: fadeIn .5s ease both; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-footer { background: #1a1d23; color: #9ca3af; padding: 40px 16px; text-align: center; font-size: 13px; }
+footer { background: #fff; border-top: 1px solid #e8eaed; color: #6b7280; padding: 40px 16px; text-align: center; font-size: 14px; }
+footer a { color: #667eea; text-decoration: none; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -132,7 +149,10 @@ footer { background: #1a1d23; color: #9ca3af; padding: 40px 16px; text-align: ce
     <div class="brand-icon">🏖️</div>
     <div class="brand-name">Archie Lab <span>投資工具系列</span></div>
   </a>
-  <span class="nav-badge">🏖️ 退休規劃工具 · 阿奇專業版 V1.2.0</span>
+  <div class="nav-right-area">
+    <span class="nav-badge">🏖️ 退休規劃工具 · 阿奇專業版</span>
+    <span class="nav-version">made by 阿奇 ver 1.2.0</span>
+  </div>
 </header>
 
 <section class="hero">
@@ -275,18 +295,18 @@ footer { background: #1a1d23; color: #9ca3af; padding: 40px 16px; text-align: ce
 <section class="seo-section">
   <div class="seo-inner">
     <h2>什麼是 GK 動態提領法則？</h2>
-    <p>Guyton-Klinger（GK）法則由財務顧問 Jonathan Guyton 與科學家 William Klinger 提出。核心精神是「空頭市場領少一點，多頭市場領多一點」，透過三條護欄規則動態調整提領額，大幅優於固定提領策略。</p>
+    <p>Guyton-Klinger（GK）法則由美國財務規劃顧問 Jonathan Guyton 與電腦科學家 William Klinger 共同提出。核心精神是「空頭市場時退休金領少一點，多頭市場時退休金領多一點」，透過三條護欄規則自動觸發調整，讓退休資產的存活率大幅優於固定提領策略。</p>
     
     <h3>為何搭配股票質押？</h3>
-    <p>在不賣股的前提下取得現金流，讓資產繼續參與複利。本工具同時計算質押維持率，確保在享受槓桿便利的同時，不會因市場波動而被迫斷頭賣股。</p>
+    <p>台灣存股族常見的退休方式是「只領股息」，但這樣的現金流受限於殖利率，且需要賣股時往往在市場低點。搭配股票質押策略，可以在不賣股的前提下取得現金流，讓股票繼續參與複利成長。本工具同時計算質押維持率，確保在享受槓桿便利的同時，不會因市場波動而被迫斷頭。</p>
     
     <h3>蒙地卡羅模擬是什麼？</h3>
-    <p>蒙地卡羅模擬不是預測未來，而是問「在 1000 種可能的未來裡，你有幾%的機率安全退休」。本系統根據您設定的報酬率與波動率，隨機生成 1000 種漲跌情境，嚴格檢驗資產是否能免於枯竭且全程未跌破危險維持率。</p>
+    <p>蒙地卡羅模擬不是預測「未來會怎樣」，而是問「在1000種可能的未來裡，你有幾%的機率安全退休」。本系統會根據您所設定的「預期年報酬率」與「年化波動率」，隨機生成 1000 種不同的市場漲跌劇本。系統會嚴格檢驗在這些情境中，您的資產是否能免於枯竭，且從未跌破危險維持率，藉此精算出您退休計畫的真實成功機率與抗壓能力。</p>
   </div>
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 動態退休金提領精算系統 Ver 1.2.0</p>
+  <p>© 2026 Archie Studio · 動態退休金提領精算系統 Ver 1.2.0 · <a href="#">質押複利計算機</a></p>
 </footer>
 
 <script>
