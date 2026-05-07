@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合戰術沙盒版 V1.5.5</title>
+<title>退休金動態提領精算機｜混合戰術沙盒版 V1.6</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -116,24 +116,24 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .analysis-text strong { color: #1a1d23; font-weight: 700; }
 .analysis-text h3 { font-size: 18px; margin-bottom: 10px; color: #4f46e5; font-weight: 800; }
 
-/* [V1.5.5 FIXED] 表格極簡空間優化 */
+/* 表格極簡空間優化 */
 .table-card { background: #fff; border: 1px solid #e8eaed; border-radius: 20px; overflow: hidden; margin-top: 32px; }
 .table-header { padding: 20px 24px; border-bottom: 1px solid #f0f1f3; font-weight: 800; color: #1a1d23; background: #fafafa; font-size: 17px;}
-.table-scroll { width: 100%; overflow: hidden; } /* 強制不產生捲軸 */
-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; } /* [V1.5.5] 使用固定布局與縮小字體 */
+.table-scroll { width: 100%; overflow: hidden; } 
+table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; } 
 th { padding: 12px 6px; text-align: left; background: #f9fafb; color: #4b5563; font-weight: 700; border-bottom: 2px solid #e5e7eb; white-space: nowrap; }
 td { padding: 12px 6px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', monospace; vertical-align: middle; white-space: nowrap; overflow: hidden; }
-/* [V1.5.5] 各欄位百分比分配 (10欄共計100%) */
-th:nth-child(1), td:nth-child(1) { width: 4.5%; }  /* 歲 */
-th:nth-child(2), td:nth-child(2) { width: 6.5%; }  /* 報酬 */
-th:nth-child(3), td:nth-child(3) { width: 6.5%; }  /* 利率 */
-th:nth-child(4), td:nth-child(4) { width: 9%; }    /* 市值(萬) */
-th:nth-child(5), td:nth-child(5) { width: 9%; }    /* 負債(萬) */
-th:nth-child(6), td:nth-child(6) { width: 7.5%; }  /* 維持率 */
-th:nth-child(7), td:nth-child(7) { width: 9%; }    /* 備用金(萬) */
-th:nth-child(8), td:nth-child(8) { width: 9.5%; }  /* GK狀態 */
-th:nth-child(9), td:nth-child(9) { width: 9%; }    /* 月領(萬) */
-th:nth-child(10), td:nth-child(10) { width: 29.5%; white-space: normal; line-height: 1.2; font-size: 12px; } /* 執行動作：留最大空間並允許微換行 */
+
+th:nth-child(1), td:nth-child(1) { width: 4.5%; } 
+th:nth-child(2), td:nth-child(2) { width: 6.5%; } 
+th:nth-child(3), td:nth-child(3) { width: 6.5%; } 
+th:nth-child(4), td:nth-child(4) { width: 9%; } 
+th:nth-child(5), td:nth-child(5) { width: 9%; } 
+th:nth-child(6), td:nth-child(6) { width: 7.5%; } 
+th:nth-child(7), td:nth-child(7) { width: 9%; } 
+th:nth-child(8), td:nth-child(8) { width: 9.5%; } 
+th:nth-child(9), td:nth-child(9) { width: 9%; } 
+th:nth-child(10), td:nth-child(10) { width: 29.5%; white-space: normal; line-height: 1.2; font-size: 12px; }
 
 /* BADGES */
 .gk-badge { font-family: 'Noto Sans TC', sans-serif; font-weight: 700; font-size: 10px; padding: 3px 6px; border-radius: 4px; display: inline-block; }
@@ -179,7 +179,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.5.5 made by 阿奇</span></h2>
+    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.6 made by 阿奇</span></h2>
     <div class="hero-desc">
       針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
     </div>
@@ -247,12 +247,12 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
       <div class="param-section">
         <div class="section-label">📉 第三步：退休金方式</div>
         
-        <div id="withdraw-logic-card" class="engine-toggle-card card-purple active">
+        <div id="withdraw-logic-card" class="engine-toggle-card card-purple">
           <div class="engine-header" onclick="toggleSwitch('isWithdrawLogicEnabled')">
             <label style="font-weight: 800; color: #4f46e5; font-size: 17px; display:flex; align-items:center; gap:8px; cursor:pointer;">
               🛡️ 提領邏輯設定
             </label>
-            <div class="sw"><input type="checkbox" id="isWithdrawLogicEnabled" checked onchange="updateEngineUI()"><span class="sw-track"></span></div>
+            <div class="sw"><input type="checkbox" id="isWithdrawLogicEnabled" onchange="updateEngineUI()"><span class="sw-track"></span></div>
           </div>
           <div class="engine-content" id="withdraw-logic-content">
              <div class="inputs-row">
@@ -269,10 +269,26 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
                     <label>年度固定提領 (%)</label>
                     <div class="input-wrap"><input type="number" id="fixedWithdrawRate" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
                 </div>
+                
                 <div class="field">
-                    <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:13px; font-weight:700;">
-                        <input type="checkbox" id="repayPriority" checked> 優先還債開關 <span class="tip" data-tip="牛市獲利優先回補預備金及償還質押。">i</span>
-                    </label>
+                    <label>還債模式選擇</label>
+                    <div class="input-wrap">
+                        <select id="repayMode" onchange="updateRepayUI()">
+                            <option value="NONE">不主動還債</option>
+                            <option value="AMOUNT">還債至目標金額</option>
+                            <option value="RATIO">還債至目標維持率</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="repay-amount-input" class="field" style="display:none;">
+                    <label>目標債務金額</label>
+                    <div class="input-wrap"><input type="number" id="repayTargetAmount" value="100" class="has-unit"><span class="input-unit">萬</span></div>
+                </div>
+
+                <div id="repay-ratio-input" class="field" style="display:none;">
+                    <label>目標維持率 (%)</label>
+                    <div class="input-wrap"><input type="number" id="repayTargetMR" value="300" class="has-unit"><span class="input-unit">%</span></div>
                 </div>
              </div>
 
@@ -310,7 +326,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
               <label style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px; cursor:pointer; color:#374151;">
                 <div class="sw"><input type="checkbox" id="preDeduct"><span class="sw-track"></span></div> 預扣一年利息
               </label>
-              <label style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px; cursor:pointer; color:#374151;">
+              <label id="reinvest-label" style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px; cursor:pointer; color:#374151;">
                 <div class="sw"><input type="checkbox" id="reinvest" checked><span class="sw-track"></span></div> 達標增貸再投入
               </label>
             </div>
@@ -402,7 +418,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.5.5 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.6 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -421,6 +437,7 @@ function toggleSwitch(id) { $(id).click(); }
 function updateEngineUI() {
   $('pledge-card').className = $('isPledgeEnabled').checked ? 'engine-toggle-card card-purple active' : 'engine-toggle-card card-purple';
   $('mc-card').className = $('mc-toggle').checked ? 'engine-toggle-card card-green active' : 'engine-toggle-card card-green';
+  /* [V1.6 UPDATED] 提領邏輯卡片連動開關 */
   $('withdraw-logic-card').className = $('isWithdrawLogicEnabled').checked ? 'engine-toggle-card card-purple active' : 'engine-toggle-card card-purple';
 }
 function setVol(v) { $('vol').value = v; }
@@ -429,6 +446,27 @@ function updateWithdrawUI() {
     const mode = $('withdrawMode').value;
     $('gk-params').style.display = (mode === 'GK') ? 'block' : 'none';
     $('fixed-rate-input').style.display = (mode === 'FIXED') ? 'block' : 'none';
+}
+
+/* [V1.6 ADDED] 還債模式 UI 連動與邏輯鎖定 */
+function updateRepayUI() {
+    const mode = $('repayMode').value;
+    $('repay-amount-input').style.display = (mode === 'AMOUNT') ? 'block' : 'none';
+    $('repay-ratio-input').style.display = (mode === 'RATIO') ? 'block' : 'none';
+    
+    /* 邏輯防禦：若選擇「還至金額」，自動關閉並禁用「增貸」功能 */
+    const reinvestToggle = $('reinvest');
+    const reinvestLabel = $('reinvest-label');
+    if (mode === 'AMOUNT') {
+        reinvestToggle.checked = false;
+        reinvestToggle.disabled = true;
+        reinvestLabel.style.opacity = "0.4";
+        reinvestLabel.style.cursor = "not-allowed";
+    } else {
+        reinvestToggle.disabled = false;
+        reinvestLabel.style.opacity = "1";
+        reinvestLabel.style.cursor = "pointer";
+    }
 }
 
 function updateRateUI() {
@@ -465,9 +503,10 @@ function generateDynamicGrids() {
 window.onload = function() { 
   $('isPledgeEnabled').checked = false;
   $('mc-toggle').checked = false;
-  $('isWithdrawLogicEnabled').checked = true;
+  $('isWithdrawLogicEnabled').checked = false; /* [V1.6 UPDATED] 預設關閉 */
   updateEngineUI(); 
   updateWithdrawUI();
+  updateRepayUI(); /* [V1.6 ADDED] */
   updateRateUI();
   updateMRUI();
   generateDynamicGrids();
@@ -497,7 +536,10 @@ function getP() {
     initWithdrawRate: parseFloat($('initWithdrawRate').value) / 100 || 0.05,
     survivalFloor: parseFloat($('survivalFloor').value) || 0,
     maxCeiling: parseFloat($('maxCeiling').value) || 999,
-    repayPriority: $('repayPriority').checked,
+    /* [V1.6 UPDATED] 還債參數擷取 */
+    repayMode: $('repayMode').value,
+    repayTargetAmount: parseFloat($('repayTargetAmount').value) || 0,
+    repayTargetMR: parseFloat($('repayTargetMR').value) / 100 || 3.0,
     inflation: parseFloat($('inflation').value)/100,
     inflationMode: $('inflationMode').value,
     upperGuard: parseFloat($('upperGuard').value)/100,
@@ -572,13 +614,28 @@ function simPath(p, overrides) {
       let postSellMV = mv - cashNeed;
       let postSellMR = debt > 0 ? postSellMV / debt : 999;
 
-      if (ret > 0 && p.repayPriority && postSellMR > targetMR) {
-          let surplus = (mv - wa - interest) - (debt * targetMR);
-          if (surplus > 0) {
-              let refill = Math.min(surplus, Math.max(0, p.cashMax - cash));
-              cash += refill; surplus -= refill;
-              let payDebt = Math.min(surplus, debt);
-              debt -= payDebt; surplus -= payDebt;
+      /* [V1.6 UPDATED] 核心還債邏輯分支 */
+      if (ret > 0) {
+          let surplus = (mv - wa - interest);
+          let repayAmount = 0;
+
+          if (p.repayMode === 'AMOUNT' && debt > p.repayTargetAmount) {
+              // 模式：還債至固定金額
+              let needToRepay = debt - p.repayTargetAmount;
+              repayAmount = Math.min(surplus, needToRepay);
+          } else if (p.repayMode === 'RATIO' && postSellMR > p.repayTargetMR) {
+              // 模式：還債至目標維持率
+              let maxDebtForRatio = (mv - wa - interest) / p.repayTargetMR;
+              repayAmount = Math.max(0, Math.min(surplus, debt - maxDebtForRatio));
+          }
+
+          if (repayAmount > 0) {
+              // 先填補預備金
+              let refill = Math.min(repayAmount, Math.max(0, p.cashMax - cash));
+              cash += refill; repayAmount -= refill;
+              // 再償還債務
+              let payDebt = Math.min(repayAmount, debt);
+              debt -= payDebt;
               mv -= (refill + payDebt);
               opStr = `♻️ 牛市回補：預備金(+${fM(refill)})、償債(-${fM(payDebt)})。`;
           }
@@ -590,7 +647,8 @@ function simPath(p, overrides) {
         mv -= cashNeed; opStr += " 🛡️ 觸發防禦，動用預備金。";
       } else {
         mv -= cashNeed;
-        if (debt > 0 && (mv / debt) >= targetMR && p.reinvest && !p.repayPriority) {
+        /* [V1.6 UPDATED] 增貸必須在模式非 AMOUNT 且沒開啟還債比例時才觸發，避免洗衣機效應 */
+        if (debt > 0 && (mv / debt) >= targetMR && p.reinvest && p.repayMode === 'NONE') {
           let borrow = Math.max(0, (mv / targetMR - debt) * 0.6);
           debt += borrow;
           mv += p.preDeduct ? borrow * (1 - currentPledgeRate) : borrow;
@@ -662,7 +720,6 @@ function renderDashboard() {
   const p = getP(); const rows = ALL_PATHS[CURRENT_TAB]; const last = rows[rows.length-1]; const totalW = rows.reduce((a,b)=>a+b.wa,0);
   const tabsHTML = p.mc ? `<div class="tab-group fade-in">` + ["p10","p25","p50","p75","p90"].map(t => `<button class="tab-btn ${CURRENT_TAB===t?'active '+t:''}" onclick="setTab('${t}')">${getTabName(t)}</button>`).join('') + `</div>` : '';
 
-  /* [V1.5.5 UPDATED] 極簡表頭、單位移入標題、數據壓縮 */
   $('results-area').innerHTML = `
     <div class="fade-in">
       ${tabsHTML}
@@ -670,7 +727,7 @@ function renderDashboard() {
         <h3>🎯 退休成功率：${SUCCESS_RATE.toFixed(1)}%</h3>
         <div class="metric-grid">
           <div class="metric"><div class="metric-label">期末淨資產</div><div class="metric-value ${last.net>0?'val-green':'val-red'}">$${fM(last.net)}萬</div></div>
-          <div class="metric"><div class="metric-label">最低維持率</div><div class="metric-value ${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))>p.dangerMR/100?'val-green':'val-red'):'val-green'}">${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))*100).toFixed(0)+'%':'N/A'}</div></div>
+          <div class="metric"><div class="metric-label">最低維持率</div><div class="metric-value ${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))>p.dangerMR/100?'val-green':'val-red'):'val-green'}">${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))*100).toFixed(0)+'%':'—'}</div></div>
           <div class="metric"><div class="metric-label">累計總提領</div><div class="metric-value val-amber">$${fM(totalW)}萬</div></div>
           <div class="metric"><div class="metric-label">末年平均月領</div><div class="metric-value val-green">$${fMo(last.wa)}萬</div></div>
         </div>
@@ -725,7 +782,6 @@ function getBadgeClass(rule) { return { 'danger': 'badge-danger', 'boom': 'badge
 function getBadgeText(rule) { return { 'danger': '保護', 'boom': '繁榮', 'immune': '免死', 'inflation': '通膨', 'none': '正常' }[rule]; }
 function getTabName(t) { return {p10:"悲觀 P10", p25:"保守 P25", p50:"中位數 P50", p75:"穩健 P75", p90:"樂觀 P90", default:"理想路徑"}[t]; }
 
-/* 診斷報告全覆蓋文案引擎 */
 function generateStory(rows, p) {
   const last = rows[rows.length-1]; 
   const totalW = rows.reduce((a,b)=>a+b.wa,0);
@@ -747,7 +803,7 @@ function generateStory(rows, p) {
   let story = `<h3>${modeTitle}</h3><p>${modeIntro}</p>`;
   let events = [];
   const s_years = rows.filter(r => r.gkRule === 'danger').map(r => r.age);
-  const ceil_years = rows.filter(r => r.op.includes("最高月薪上限")).map(r => r.age);
+  const ceil_years = rows.filter(r => r.op.includes("月薪上限")).map(r => r.age);
   const cash_years = rows.filter(r => r.op.includes("預備金")).map(r => r.age);
   const floor_years = rows.filter(r => r.mo <= p.survivalFloor * 1.05).map(r => r.age);
 
@@ -795,7 +851,7 @@ function exportExcel() {
   rows.forEach(r => csv += `${r.age},${(r.ret*100).toFixed(1)}%,${(r.currentRate*100).toFixed(1)}%,${r.mv},${r.debt},${p.isPledgeEnabled?r.mr.toFixed(2):'N/A'},${r.cash},${getBadgeText(r.gkRule)},${fM(r.mo)},${r.op}\n`);
   const link = document.createElement("a");
   link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-  link.download = `退休精算V1.5.5_${getTabName(CURRENT_TAB)}.csv`;
+  link.download = `退休精算V1.6_${getTabName(CURRENT_TAB)}.csv`;
   link.click();
 }
 </script>
