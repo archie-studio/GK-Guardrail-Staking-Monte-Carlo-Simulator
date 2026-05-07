@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合戰術沙盒版 V1.5.3</title>
+<title>退休金動態提領精算機｜混合戰術沙盒版 V1.5.4</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -52,7 +52,7 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .input-wrap input:focus, .input-wrap select:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.12); }
 .input-unit { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #9ca3af; pointer-events: none; }
 
-/* ENGINE TOGGLE CARDS - [V1.5.3] */
+/* ENGINE TOGGLE CARDS */
 .engine-toggle-card { background: #f9fafb; border: 1.5px solid #e8eaed; border-radius: 16px; padding: 20px; margin-bottom: 20px; transition: .3s; }
 .engine-toggle-card.card-purple.active { background: #f5f3ff; border-color: #ddd6fe; }
 .engine-toggle-card.card-green.active { background: #f0fdf4; border-color: #bbf7d0; }
@@ -141,7 +141,7 @@ td { padding: 16px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', mo
 /* 收納標題樣式 */
 .sub-label-header { font-size: 14px; font-weight: 700; margin-top: 20px; margin-bottom: 12px; padding: 10px 14px; background: #fff; border: 1px solid #eef0f2; border-radius: 10px; color: #475569; display: flex; align-items: center; justify-content: space-between; }
 
-/* [V1.5.3 FIXED] SEO SECTION 統整佈局 */
+/* SEO SECTION 統整佈局 */
 .seo-section { background: #fff; border-top: 1px solid #e8eaed; padding: 60px 16px; margin-top: 48px; }
 .seo-inner { max-width: 850px; margin: 0 auto; }
 .seo-item { margin-bottom: 32px; }
@@ -168,7 +168,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.5.3 made by 阿奇</span></h2>
+    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.5.4 made by 阿奇</span></h2>
     <div class="hero-desc">
       針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
     </div>
@@ -359,7 +359,8 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
               <div class="input-wrap" style="max-width: 320px;"><input type="number" id="vol" value="20" class="has-unit"><span class="input-unit">%</span></div>
             </div>
             <div class="vol-presets">
-              <div class="vol-preset" onclick="setVol(10)"><span class="vol-title">保守 (10%)</span><span class="vol-sub">美債為主</span></div>
+              <div class="vol-preset" onclick="setVol(10)"><span class="vol-title">保守 (10%)</span><span class="vol-sub">債券為主</span></div>
+              <div class="vol-preset" onclick="setVol(15)"><span class="vol-title">穩健 (15%)</span><span class="vol-sub">高息 ETF</span></div>
               <div class="vol-preset" onclick="setVol(20)"><span class="vol-title">中等 (20%)</span><span class="vol-sub">大盤 ETF</span></div>
               <div class="vol-preset" onclick="setVol(30)"><span class="vol-title">積極 (30%)</span><span class="vol-sub">成長型個股</span></div>
             </div>
@@ -390,7 +391,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.5.3 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.5.4 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -651,6 +652,7 @@ function renderDashboard() {
   const p = getP(); const rows = ALL_PATHS[CURRENT_TAB]; const last = rows[rows.length-1]; const totalW = rows.reduce((a,b)=>a+b.wa,0);
   const tabsHTML = p.mc ? `<div class="tab-group fade-in">` + ["p10","p25","p50","p75","p90"].map(t => `<button class="tab-btn ${CURRENT_TAB===t?'active '+t:''}" onclick="setTab('${t}')">${getTabName(t)}</button>`).join('') + `</div>` : '';
 
+  /* [V1.5.4 UPDATED] 增加備用金欄位、狀態更名為 GK狀態 */
   $('results-area').innerHTML = `
     <div class="fade-in">
       ${tabsHTML}
@@ -680,8 +682,18 @@ function renderDashboard() {
         <div class="table-header">📊 精算報表 (${getTabName(CURRENT_TAB)})</div>
         <div class="table-scroll">
           <table>
-            <thead><tr><th>年齡</th><th>報酬</th><th>利率</th><th>市值</th><th>負債</th><th>維持率</th><th>狀態</th><th>月領</th><th>操作紀錄</th></tr></thead>
-            <tbody>${rows.map(r => `<tr><td><b>${r.age} 歲</b></td><td class="${r.ret>=0?'val-green':'val-red'}">${(r.ret*100).toFixed(1)}%</td><td>${(r.currentRate*100).toFixed(1)}%</td><td>${fM(r.mv)}萬</td><td>${fM(r.debt)}萬</td><td>${p.isPledgeEnabled?(r.mr*100).toFixed(0)+'%':'—'}</td><td><span class="gk-badge ${getBadgeClass(r.gkRule)}">${getBadgeText(r.gkRule)}</span></td><td>$${fM(r.mo)}萬</td><td>${r.op}</td></tr>`).join('')}</tbody>
+            <thead><tr><th>年齡</th><th>報酬</th><th>利率</th><th>市值</th><th>負債</th><th>維持率</th><th>備用金</th><th>GK狀態</th><th>月領</th><th>操作紀錄</th></tr></thead>
+            <tbody>${rows.map(r => `<tr>
+              <td><b>${r.age} 歲</b></td>
+              <td class="${r.ret>=0?'val-green':'val-red'}">${(r.ret*100).toFixed(1)}%</td>
+              <td>${(r.currentRate*100).toFixed(1)}%</td>
+              <td>${fM(r.mv)}萬</td><td>${fM(r.debt)}萬</td>
+              <td>${p.isPledgeEnabled?(r.mr*100).toFixed(0)+'%':'—'}</td>
+              <td>${fM(r.cash)}萬</td>
+              <td><span class="gk-badge ${getBadgeClass(r.gkRule)}">${getBadgeText(r.gkRule)}</span></td>
+              <td>$${fM(r.mo)}萬</td>
+              <td>${r.op}</td>
+            </tr>`).join('')}</tbody>
           </table>
         </div>
       </div>
@@ -767,11 +779,11 @@ function renderCharts(rows, p) {
 
 function exportExcel() {
   const p = getP(); const rows = ALL_PATHS[CURRENT_TAB];
-  let csv = "\uFEFF年齡,報酬,利率,市值,負債,維持率,狀態,月領,記錄\n";
-  rows.forEach(r => csv += `${r.age}歲,${(r.ret*100).toFixed(1)}%,${(r.currentRate*100).toFixed(1)}%,${r.mv},${r.debt},${p.isPledgeEnabled?r.mr.toFixed(2):'N/A'},${getBadgeText(r.gkRule)},${fM(r.mo)},${r.op}\n`);
+  let csv = "\uFEFF年齡,報酬,利率,市值,負債,維持率,備用金,GK狀態,月領,記錄\n";
+  rows.forEach(r => csv += `${r.age}歲,${(r.ret*100).toFixed(1)}%,${(r.currentRate*100).toFixed(1)}%,${r.mv},${r.debt},${p.isPledgeEnabled?r.mr.toFixed(2):'N/A'},${r.cash},${getBadgeText(r.gkRule)},${fM(r.mo)},${r.op}\n`);
   const link = document.createElement("a");
   link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-  link.download = `退休精算V1.5.3_${getTabName(CURRENT_TAB)}.csv`;
+  link.download = `退休精算V1.5.4_${getTabName(CURRENT_TAB)}.csv`;
   link.click();
 }
 </script>
