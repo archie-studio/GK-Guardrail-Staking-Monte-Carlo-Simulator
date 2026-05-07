@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合戰術沙盒版 V1.6</title>
+<title>退休金動態提領精算機｜混合戰術沙盒版 V1.6.1</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -179,7 +179,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.6 made by 阿奇</span></h2>
+    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.6.1 made by 阿奇</span></h2>
     <div class="hero-desc">
       針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
     </div>
@@ -418,7 +418,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.6 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.6.1 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -437,7 +437,6 @@ function toggleSwitch(id) { $(id).click(); }
 function updateEngineUI() {
   $('pledge-card').className = $('isPledgeEnabled').checked ? 'engine-toggle-card card-purple active' : 'engine-toggle-card card-purple';
   $('mc-card').className = $('mc-toggle').checked ? 'engine-toggle-card card-green active' : 'engine-toggle-card card-green';
-  /* [V1.6 UPDATED] 提領邏輯卡片連動開關 */
   $('withdraw-logic-card').className = $('isWithdrawLogicEnabled').checked ? 'engine-toggle-card card-purple active' : 'engine-toggle-card card-purple';
 }
 function setVol(v) { $('vol').value = v; }
@@ -448,13 +447,11 @@ function updateWithdrawUI() {
     $('fixed-rate-input').style.display = (mode === 'FIXED') ? 'block' : 'none';
 }
 
-/* [V1.6 ADDED] 還債模式 UI 連動與邏輯鎖定 */
 function updateRepayUI() {
     const mode = $('repayMode').value;
     $('repay-amount-input').style.display = (mode === 'AMOUNT') ? 'block' : 'none';
     $('repay-ratio-input').style.display = (mode === 'RATIO') ? 'block' : 'none';
     
-    /* 邏輯防禦：若選擇「還至金額」，自動關閉並禁用「增貸」功能 */
     const reinvestToggle = $('reinvest');
     const reinvestLabel = $('reinvest-label');
     if (mode === 'AMOUNT') {
@@ -503,10 +500,10 @@ function generateDynamicGrids() {
 window.onload = function() { 
   $('isPledgeEnabled').checked = false;
   $('mc-toggle').checked = false;
-  $('isWithdrawLogicEnabled').checked = false; /* [V1.6 UPDATED] 預設關閉 */
+  $('isWithdrawLogicEnabled').checked = false; 
   updateEngineUI(); 
   updateWithdrawUI();
-  updateRepayUI(); /* [V1.6 ADDED] */
+  updateRepayUI(); 
   updateRateUI();
   updateMRUI();
   generateDynamicGrids();
@@ -536,7 +533,6 @@ function getP() {
     initWithdrawRate: parseFloat($('initWithdrawRate').value) / 100 || 0.05,
     survivalFloor: parseFloat($('survivalFloor').value) || 0,
     maxCeiling: parseFloat($('maxCeiling').value) || 999,
-    /* [V1.6 UPDATED] 還債參數擷取 */
     repayMode: $('repayMode').value,
     repayTargetAmount: parseFloat($('repayTargetAmount').value) || 0,
     repayTargetMR: parseFloat($('repayTargetMR').value) / 100 || 3.0,
@@ -564,6 +560,7 @@ function getP() {
   };
 }
 
+/* [V1.6.1 UPDATED] 核心模擬路徑：修正備用金回補優先級 */
 function simPath(p, overrides) {
   let mv = p.mv, debt = p.debt, cash = p.cash;
   let wa = p.isWithdrawEnabled ? (p.withdrawMode === 'GK' ? mv * p.initWithdrawRate : mv * p.fixedWR) : 0;
@@ -614,30 +611,33 @@ function simPath(p, overrides) {
       let postSellMV = mv - cashNeed;
       let postSellMR = debt > 0 ? postSellMV / debt : 999;
 
-      /* [V1.6 UPDATED] 核心還債邏輯分支 */
+      /* [V1.6.1] 優化後的回補機制：保命優先、防禦次之 */
       if (ret > 0) {
           let surplus = (mv - wa - interest);
-          let repayAmount = 0;
+          
+          // 1. 第一優先：不論還債模式，優先補滿現金預備金
+          let refill = Math.min(surplus, Math.max(0, p.cashMax - cash));
+          if (refill > 0) {
+              cash += refill;
+              mv -= refill;
+              surplus -= refill;
+              opStr = `♻️ 回補預備金(+${fM(refill)})。`;
+          }
 
+          // 2. 第二優先：根據模式償還債務
+          let repayAmount = 0;
           if (p.repayMode === 'AMOUNT' && debt > p.repayTargetAmount) {
-              // 模式：還債至固定金額
-              let needToRepay = debt - p.repayTargetAmount;
-              repayAmount = Math.min(surplus, needToRepay);
+              repayAmount = Math.min(surplus, debt - p.repayTargetAmount);
           } else if (p.repayMode === 'RATIO' && postSellMR > p.repayTargetMR) {
-              // 模式：還債至目標維持率
               let maxDebtForRatio = (mv - wa - interest) / p.repayTargetMR;
               repayAmount = Math.max(0, Math.min(surplus, debt - maxDebtForRatio));
           }
 
           if (repayAmount > 0) {
-              // 先填補預備金
-              let refill = Math.min(repayAmount, Math.max(0, p.cashMax - cash));
-              cash += refill; repayAmount -= refill;
-              // 再償還債務
               let payDebt = Math.min(repayAmount, debt);
               debt -= payDebt;
-              mv -= (refill + payDebt);
-              opStr = `♻️ 牛市回補：預備金(+${fM(refill)})、償債(-${fM(payDebt)})。`;
+              mv -= payDebt;
+              opStr += ` 償債(-${fM(payDebt)})。`;
           }
       }
 
@@ -647,13 +647,12 @@ function simPath(p, overrides) {
         mv -= cashNeed; opStr += " 🛡️ 觸發防禦，動用預備金。";
       } else {
         mv -= cashNeed;
-        /* [V1.6 UPDATED] 增貸必須在模式非 AMOUNT 且沒開啟還債比例時才觸發，避免洗衣機效應 */
         if (debt > 0 && (mv / debt) >= targetMR && p.reinvest && p.repayMode === 'NONE') {
           let borrow = Math.max(0, (mv / targetMR - debt) * 0.6);
           debt += borrow;
           mv += p.preDeduct ? borrow * (1 - currentPledgeRate) : borrow;
           if(borrow > 0) opStr = `📈 達標進攻，增貸 ${fM(borrow)} 萬。`;
-          else opStr = "✅ 正常執行。";
+          else if(opStr === "") opStr = "✅ 正常執行。";
         } else if(opStr === "") opStr = "✅ 正常執行。";
       }
       if(p.isWithdrawEnabled && (wa >= p.maxCeiling * 12 * 0.99)) opStr += " (觸發月薪上限)";
@@ -661,12 +660,22 @@ function simPath(p, overrides) {
       if (finalMR < minMR) minMR = finalMR;
       rows.push({ y, age: p.startAge + y, ret, mv, debt, cash, mr: finalMR, wa, mo: wa/12, gkRule, op: opStr, net: mv - debt, currentRate: currentPledgeRate });
     } else {
+      /* [V1.6.1] 無質押模式下的預備金回補 */
+      if (ret > 0) {
+          let surplus = (mv - wa);
+          let refill = Math.min(surplus, Math.max(0, p.cashMax - cash));
+          if (refill > 0) {
+              cash += refill;
+              mv -= refill;
+              opStr = `♻️ 牛市獲利補回預備金(+${fM(refill)})。`;
+          }
+      }
       if(ret < 0 && cash > 0) {
           let bailout = Math.min(cash, wa);
           cash -= bailout; wa -= bailout;
           mv -= wa; opStr = "🛡️ 股市回檔，消耗預備金。";
       } else {
-          mv -= wa; opStr = "✅ 正常提領。";
+          if (opStr === "") opStr = "✅ 正常提領。";
       }
       if(p.isWithdrawEnabled && (wa >= p.maxCeiling * 12 * 0.99)) opStr += " (觸發月薪上限)";
       rows.push({ y, age: p.startAge + y, ret, mv, debt: 0, cash, mr: 999, wa, mo: wa/12, gkRule, op: opStr, net: mv, currentRate: 0 });
@@ -810,7 +819,7 @@ function generateStory(rows, p) {
   if (s_years.length > 0) events.push(`<strong>保護規則介入：</strong>模擬中看到『保護規則』被喚醒（如 ${s_years.slice(0,3).join('、')} 歲）。市場波動讓提領率飆升，系統強制下修提領額度以延續計畫生命線。`);
   if (floor_years.length > 0 && p.isWithdrawEnabled) events.push(`<strong>生存底線警報：</strong>警報！在如 ${floor_years.slice(0,2).join('、')} 歲左右，提領金額觸碰到『生存底線』。這意味著當時資產極度虛弱。`);
   if (ceil_years.length > 0) events.push(`<strong>最高月薪上限：</strong>值得慶賀！計畫多次觸發『最高月薪上限』。這成功防止了過度提領，將資本留在市場進行複利。`);
-  if (cash_years.length > 0) events.push(`<strong>現金預備金救援：</strong>股市回檔期，『現金預備金』發揮了定海神針的作用。優先消耗現金而非賣股，避開了低點割肉的慘劇。`);
+  if (cash_years.length > 0) events.push(`<strong>預備金回補：</strong>股市回檔期，『現金預備金』發揮了定海神針的作用。在獲利年份，系統會優先補滿預備金，為下一次危機做好準備。`);
 
   if(events.length > 0) story += `<p><strong>【關鍵生存事件復盤】</strong><br>${events.join('<br><br>')}</p>`;
 
@@ -851,7 +860,7 @@ function exportExcel() {
   rows.forEach(r => csv += `${r.age},${(r.ret*100).toFixed(1)}%,${(r.currentRate*100).toFixed(1)}%,${r.mv},${r.debt},${p.isPledgeEnabled?r.mr.toFixed(2):'N/A'},${r.cash},${getBadgeText(r.gkRule)},${fM(r.mo)},${r.op}\n`);
   const link = document.createElement("a");
   link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-  link.download = `退休精算V1.6_${getTabName(CURRENT_TAB)}.csv`;
+  link.download = `退休精算V1.6.1_${getTabName(CURRENT_TAB)}.csv`;
   link.click();
 }
 </script>
