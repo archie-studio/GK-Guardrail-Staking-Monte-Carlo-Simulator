@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合戰術沙盒版 V1.5.4</title>
+<title>退休金動態提領精算機｜混合戰術沙盒版 V1.5.5</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -116,16 +116,27 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .analysis-text strong { color: #1a1d23; font-weight: 700; }
 .analysis-text h3 { font-size: 18px; margin-bottom: 10px; color: #4f46e5; font-weight: 800; }
 
-/* TABLE */
+/* [V1.5.5 FIXED] 表格極簡空間優化 */
 .table-card { background: #fff; border: 1px solid #e8eaed; border-radius: 20px; overflow: hidden; margin-top: 32px; }
 .table-header { padding: 20px 24px; border-bottom: 1px solid #f0f1f3; font-weight: 800; color: #1a1d23; background: #fafafa; font-size: 17px;}
-.table-scroll { overflow-x: auto; }
-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 1000px; }
-th { padding: 16px; text-align: left; background: #f9fafb; color: #4b5563; font-weight: 700; border-bottom: 2px solid #e5e7eb; white-space: nowrap; }
-td { padding: 16px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', monospace; vertical-align: middle; }
+.table-scroll { width: 100%; overflow: hidden; } /* 強制不產生捲軸 */
+table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; } /* [V1.5.5] 使用固定布局與縮小字體 */
+th { padding: 12px 6px; text-align: left; background: #f9fafb; color: #4b5563; font-weight: 700; border-bottom: 2px solid #e5e7eb; white-space: nowrap; }
+td { padding: 12px 6px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', monospace; vertical-align: middle; white-space: nowrap; overflow: hidden; }
+/* [V1.5.5] 各欄位百分比分配 (10欄共計100%) */
+th:nth-child(1), td:nth-child(1) { width: 4.5%; }  /* 歲 */
+th:nth-child(2), td:nth-child(2) { width: 6.5%; }  /* 報酬 */
+th:nth-child(3), td:nth-child(3) { width: 6.5%; }  /* 利率 */
+th:nth-child(4), td:nth-child(4) { width: 9%; }    /* 市值(萬) */
+th:nth-child(5), td:nth-child(5) { width: 9%; }    /* 負債(萬) */
+th:nth-child(6), td:nth-child(6) { width: 7.5%; }  /* 維持率 */
+th:nth-child(7), td:nth-child(7) { width: 9%; }    /* 備用金(萬) */
+th:nth-child(8), td:nth-child(8) { width: 9.5%; }  /* GK狀態 */
+th:nth-child(9), td:nth-child(9) { width: 9%; }    /* 月領(萬) */
+th:nth-child(10), td:nth-child(10) { width: 29.5%; white-space: normal; line-height: 1.2; font-size: 12px; } /* 執行動作：留最大空間並允許微換行 */
 
 /* BADGES */
-.gk-badge { font-family: 'Noto Sans TC', sans-serif; font-weight: 700; font-size: 11px; padding: 4px 10px; border-radius: 6px; display: inline-block; }
+.gk-badge { font-family: 'Noto Sans TC', sans-serif; font-weight: 700; font-size: 10px; padding: 3px 6px; border-radius: 4px; display: inline-block; }
 .badge-normal { background: #dcfce7; color: #166534; }
 .badge-danger { background: #fee2e2; color: #991b1b; }
 .badge-boom { background: #dbeafe; color: #1e40af; }
@@ -141,7 +152,7 @@ td { padding: 16px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', mo
 /* 收納標題樣式 */
 .sub-label-header { font-size: 14px; font-weight: 700; margin-top: 20px; margin-bottom: 12px; padding: 10px 14px; background: #fff; border: 1px solid #eef0f2; border-radius: 10px; color: #475569; display: flex; align-items: center; justify-content: space-between; }
 
-/* SEO SECTION 統整佈局 */
+/* SEO SECTION */
 .seo-section { background: #fff; border-top: 1px solid #e8eaed; padding: 60px 16px; margin-top: 48px; }
 .seo-inner { max-width: 850px; margin: 0 auto; }
 .seo-item { margin-bottom: 32px; }
@@ -168,7 +179,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.5.4 made by 阿奇</span></h2>
+    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.5.5 made by 阿奇</span></h2>
     <div class="hero-desc">
       針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
     </div>
@@ -196,7 +207,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             <div class="input-wrap"><input type="number" id="years" value="20" class="has-unit" oninput="generateDynamicGrids()"><span class="input-unit">年</span></div>
           </div>
           <div class="field">
-            <label>現金備用金 <span class="tip" data-tip="股災時用來支付生活費與利息的預備金。系統將優先動用此桶金以避開低點賣股。">?</span></label>
+            <label>現金備用金 <span class="tip" data-tip="股災時優先動用的桶金。">?</span></label>
             <div class="input-wrap"><input type="number" id="cash" value="150" class="has-unit"><span class="input-unit">萬</span></div>
           </div>
         </div>
@@ -391,7 +402,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.5.4 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.5.5 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -550,7 +561,6 @@ function simPath(p, overrides) {
               wa *= (1 + p.adjRate); gkRule = 'boom';
             }
         } else { wa *= (1 + yearlyInflation); }
-        
         wa = Math.max(p.survivalFloor * 12, Math.min(p.maxCeiling * 12, wa));
     }
 
@@ -570,14 +580,14 @@ function simPath(p, overrides) {
               let payDebt = Math.min(surplus, debt);
               debt -= payDebt; surplus -= payDebt;
               mv -= (refill + payDebt);
-              opStr = `♻️ 牛市獲利回補：預備金(+${fM(refill)})、償債(-${fM(payDebt)})。`;
+              opStr = `♻️ 牛市回補：預備金(+${fM(refill)})、償債(-${fM(payDebt)})。`;
           }
       }
 
       if ((postSellMR < p.dangerMR || ret < 0) && cash > 0) {
         let bailout = Math.min(cash, cashNeed);
         cash -= bailout; cashNeed -= bailout;
-        mv -= cashNeed; opStr += " 🛡️ 觸發防禦，動用現金預備金。";
+        mv -= cashNeed; opStr += " 🛡️ 觸發防禦，動用預備金。";
       } else {
         mv -= cashNeed;
         if (debt > 0 && (mv / debt) >= targetMR && p.reinvest && !p.repayPriority) {
@@ -588,7 +598,7 @@ function simPath(p, overrides) {
           else opStr = "✅ 正常執行。";
         } else if(opStr === "") opStr = "✅ 正常執行。";
       }
-      if(p.isWithdrawEnabled && (wa >= p.maxCeiling * 12 * 0.99)) opStr += " (觸發最高月薪上限)";
+      if(p.isWithdrawEnabled && (wa >= p.maxCeiling * 12 * 0.99)) opStr += " (觸發月薪上限)";
       let finalMR = debt > 0 ? mv / debt : 999;
       if (finalMR < minMR) minMR = finalMR;
       rows.push({ y, age: p.startAge + y, ret, mv, debt, cash, mr: finalMR, wa, mo: wa/12, gkRule, op: opStr, net: mv - debt, currentRate: currentPledgeRate });
@@ -600,7 +610,7 @@ function simPath(p, overrides) {
       } else {
           mv -= wa; opStr = "✅ 正常提領。";
       }
-      if(p.isWithdrawEnabled && (wa >= p.maxCeiling * 12 * 0.99)) opStr += " (觸發最高月薪上限)";
+      if(p.isWithdrawEnabled && (wa >= p.maxCeiling * 12 * 0.99)) opStr += " (觸發月薪上限)";
       rows.push({ y, age: p.startAge + y, ret, mv, debt: 0, cash, mr: 999, wa, mo: wa/12, gkRule, op: opStr, net: mv, currentRate: 0 });
     }
   }
@@ -652,7 +662,7 @@ function renderDashboard() {
   const p = getP(); const rows = ALL_PATHS[CURRENT_TAB]; const last = rows[rows.length-1]; const totalW = rows.reduce((a,b)=>a+b.wa,0);
   const tabsHTML = p.mc ? `<div class="tab-group fade-in">` + ["p10","p25","p50","p75","p90"].map(t => `<button class="tab-btn ${CURRENT_TAB===t?'active '+t:''}" onclick="setTab('${t}')">${getTabName(t)}</button>`).join('') + `</div>` : '';
 
-  /* [V1.5.4 UPDATED] 增加備用金欄位、狀態更名為 GK狀態 */
+  /* [V1.5.5 UPDATED] 極簡表頭、單位移入標題、數據壓縮 */
   $('results-area').innerHTML = `
     <div class="fade-in">
       ${tabsHTML}
@@ -660,7 +670,7 @@ function renderDashboard() {
         <h3>🎯 退休成功率：${SUCCESS_RATE.toFixed(1)}%</h3>
         <div class="metric-grid">
           <div class="metric"><div class="metric-label">期末淨資產</div><div class="metric-value ${last.net>0?'val-green':'val-red'}">$${fM(last.net)}萬</div></div>
-          <div class="metric"><div class="metric-label">最低維持率</div><div class="metric-value ${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))>p.dangerMR/100?'val-green':'val-red'):'val-green'}">${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))*100).toFixed(0)+'%':'—'}</div></div>
+          <div class="metric"><div class="metric-label">最低維持率</div><div class="metric-value ${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))>p.dangerMR/100?'val-green':'val-red'):'val-green'}">${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))*100).toFixed(0)+'%':'N/A'}</div></div>
           <div class="metric"><div class="metric-label">累計總提領</div><div class="metric-value val-amber">$${fM(totalW)}萬</div></div>
           <div class="metric"><div class="metric-label">末年平均月領</div><div class="metric-value val-green">$${fMo(last.wa)}萬</div></div>
         </div>
@@ -682,16 +692,18 @@ function renderDashboard() {
         <div class="table-header">📊 精算報表 (${getTabName(CURRENT_TAB)})</div>
         <div class="table-scroll">
           <table>
-            <thead><tr><th>年齡</th><th>報酬</th><th>利率</th><th>市值</th><th>負債</th><th>維持率</th><th>備用金</th><th>GK狀態</th><th>月領</th><th>操作紀錄</th></tr></thead>
+            <thead><tr>
+              <th>歲</th><th>報酬</th><th>利率</th><th>市值(萬)</th><th>負債(萬)</th><th>維持率</th><th>備用金(萬)</th><th>GK</th><th>月領(萬)</th><th>執行動作</th>
+            </tr></thead>
             <tbody>${rows.map(r => `<tr>
-              <td><b>${r.age} 歲</b></td>
+              <td><b>${r.age}</b></td>
               <td class="${r.ret>=0?'val-green':'val-red'}">${(r.ret*100).toFixed(1)}%</td>
               <td>${(r.currentRate*100).toFixed(1)}%</td>
-              <td>${fM(r.mv)}萬</td><td>${fM(r.debt)}萬</td>
-              <td>${p.isPledgeEnabled?(r.mr*100).toFixed(0)+'%':'—'}</td>
-              <td>${fM(r.cash)}萬</td>
+              <td>${fM(r.mv)}</td><td>${fM(r.debt)}</td>
+              <td style="font-weight:700;">${p.isPledgeEnabled?(r.mr*100).toFixed(0)+'%':'—'}</td>
+              <td>${fM(r.cash)}</td>
               <td><span class="gk-badge ${getBadgeClass(r.gkRule)}">${getBadgeText(r.gkRule)}</span></td>
-              <td>$${fM(r.mo)}萬</td>
+              <td style="font-weight:700;">$${fM(r.mo)}</td>
               <td>${r.op}</td>
             </tr>`).join('')}</tbody>
           </table>
@@ -710,26 +722,26 @@ function renderDashboard() {
 }
 
 function getBadgeClass(rule) { return { 'danger': 'badge-danger', 'boom': 'badge-boom', 'immune': 'badge-immune', 'inflation': 'badge-inflation', 'none': 'badge-normal' }[rule]; }
-function getBadgeText(rule) { return { 'danger': '保護規則', 'boom': '繁榮規則', 'immune': '免死金牌', 'inflation': '通膨規則', 'none': '基本規則' }[rule]; }
+function getBadgeText(rule) { return { 'danger': '保護', 'boom': '繁榮', 'immune': '免死', 'inflation': '通膨', 'none': '正常' }[rule]; }
 function getTabName(t) { return {p10:"悲觀 P10", p25:"保守 P25", p50:"中位數 P50", p75:"穩健 P75", p90:"樂觀 P90", default:"理想路徑"}[t]; }
 
-/* [V1.5.3] 診斷報告全覆蓋文案引擎 */
+/* 診斷報告全覆蓋文案引擎 */
 function generateStory(rows, p) {
   const last = rows[rows.length-1]; 
   const totalW = rows.reduce((a,b)=>a+b.wa,0);
   let modeTitle = "", modeIntro = "";
   if (!p.isWithdrawEnabled && !p.isPledgeEnabled) {
     modeTitle = "【純存股複利模式】";
-    modeIntro = "這是一場純粹的資產長跑。您選擇不進行提領、不負債擴張，讓本金在時間的沃野中進行原始積累。這份報告分析的是資產的『生長韌性』。在沒有任何資金流出的情況下，您的計畫展示了複利最強大的一面——時間價值。";
+    modeIntro = "這是一場純粹的資產長跑。您選擇不進行提領、不負債擴張，讓本金在時間的沃野中進行原始積累。";
   } else if (p.isWithdrawEnabled && !p.isPledgeEnabled) {
     modeTitle = "【傳統提領退休模式】";
-    modeIntro = "這是一套典型的『現金流提領』策略。您完全透過賣出資產或支取股息來支付退休生活。這種戰略的關鍵在於『資產消耗率』與『通膨』的對抗。報告重點在於觀察您的本金是否能經受住漫長歲月的提領壓力。";
+    modeIntro = "這是一套典型的『現金流提領』策略。您完全透過賣出資產或支取股息來支付退休生活。";
   } else if ((!p.isWithdrawEnabled || (p.withdrawMode === 'FIXED' && p.fixedWR === 0)) && p.isPledgeEnabled) {
     modeTitle = "【純借貸退休模式】";
-    modeIntro = "您採取了『一股不賣』的高階戰略。退休金完全依賴質押借款來支應。這是一場債務利息與市值成長的軍備競賽。這份報告的核心診斷在於『利息雪球』的膨脹速度。";
+    modeIntro = "您採取了『一股不賣』的高階戰略。退休金完全依賴質押借款來支應。";
   } else {
     modeTitle = "【混合防禦退休模式】";
-    modeIntro = "這是最為靈活的『混合防禦模式』。您同時動用了提領與質押兩大武器。這是一種自適應的戰術，平時透過提領維持生活並穩定負債，在股災時則切換到質押模式避免低點砍倉。";
+    modeIntro = "這是最為靈活的『混合防禦模式』。您同時動用了提領與質押兩大武器。";
   }
 
   let story = `<h3>${modeTitle}</h3><p>${modeIntro}</p>`;
@@ -740,13 +752,13 @@ function generateStory(rows, p) {
   const floor_years = rows.filter(r => r.mo <= p.survivalFloor * 1.05).map(r => r.age);
 
   if (s_years.length > 0) events.push(`<strong>保護規則介入：</strong>模擬中看到『保護規則』被喚醒（如 ${s_years.slice(0,3).join('、')} 歲）。市場波動讓提領率飆升，系統強制下修提領額度以延續計畫生命線。`);
-  if (floor_years.length > 0 && p.isWithdrawEnabled) events.push(`<strong>生存底線警報：</strong>警報！在如 ${floor_years.slice(0,2).join('、')} 歲左右，提領金額觸碰到『生存底線』。這意味著當時資產極度虛弱，系統雖保障了您的基本開銷。`);
-  if (ceil_years.length > 0) events.push(`<strong>最高月薪上限：</strong>值得慶賀！計畫多次觸發『最高月薪上限』。這成功防止了過度提領，將資本留在市場進行複利，大幅拉升了晚年安全邊際。`);
-  if (cash_years.length > 0) events.push(`<strong>現金預備金救援：</strong>股市回檔期，『現金預備金』發揮了定海神針的作用。優先消耗現金而非賣股，有效避開了低點割肉的慘劇。`);
+  if (floor_years.length > 0 && p.isWithdrawEnabled) events.push(`<strong>生存底線警報：</strong>警報！在如 ${floor_years.slice(0,2).join('、')} 歲左右，提領金額觸碰到『生存底線』。這意味著當時資產極度虛弱。`);
+  if (ceil_years.length > 0) events.push(`<strong>最高月薪上限：</strong>值得慶賀！計畫多次觸發『最高月薪上限』。這成功防止了過度提領，將資本留在市場進行複利。`);
+  if (cash_years.length > 0) events.push(`<strong>現金預備金救援：</strong>股市回檔期，『現金預備金』發揮了定海神針的作用。優先消耗現金而非賣股，避開了低點割肉的慘劇。`);
 
   if(events.length > 0) story += `<p><strong>【關鍵生存事件復盤】</strong><br>${events.join('<br><br>')}</p>`;
 
-  let diagnosis = RISK_STATS.bankrupt > 10 ? "🔴 破產風險主因在於『提領率與市場報酬的負向共振』。建議下修初始提領比例。" : (RISK_STATS.marginCall > 10 ? "🟡 斷頭風險指向『維持率失守』。建議增加優先還債權重。" : (RISK_STATS.survival > 10 ? "🔵 雖然資產還在，但維持率過低導致系統限領，陷入『有錢領不出來』的困境。" : "✅ 三道紅線均處於安全區。資產规模、提領率與質押成數達成優異平衡。"));
+  let diagnosis = RISK_STATS.bankrupt > 10 ? "🔴 破產風險主因在於『提領率與市場報酬的負向共振』。" : (RISK_STATS.marginCall > 10 ? "🟡 斷頭風險指向『維持率失守』。建議增加優先還債權重。" : (RISK_STATS.survival > 10 ? "🔵 雖然資產還在，但維持率過低導致系統限領，陷入『有錢領不出來』的困境。" : "✅ 三道紅線均處於安全區。資產规模、提領率與質押成數達成優異平衡。"));
   story += `<p><strong>【核心風險診斷】</strong><br>${diagnosis}</p>`;
 
   let conclusion = SUCCESS_RATE > 95 ? "您的佈局在大多數劇本中如磐石般穩定，晚年的尊嚴與富足已是您的囊中物。" : (SUCCESS_RATE >= 75 ? "計畫具備可行性，但遇到大幅回檔時，您必須具備縮減開支或優先償債的決斷力。" : "目前的參數在壓力下略顯脆弱。建議重新尋找能讓您安心入睡的平衡點。");
@@ -779,11 +791,11 @@ function renderCharts(rows, p) {
 
 function exportExcel() {
   const p = getP(); const rows = ALL_PATHS[CURRENT_TAB];
-  let csv = "\uFEFF年齡,報酬,利率,市值,負債,維持率,備用金,GK狀態,月領,記錄\n";
-  rows.forEach(r => csv += `${r.age}歲,${(r.ret*100).toFixed(1)}%,${(r.currentRate*100).toFixed(1)}%,${r.mv},${r.debt},${p.isPledgeEnabled?r.mr.toFixed(2):'N/A'},${r.cash},${getBadgeText(r.gkRule)},${fM(r.mo)},${r.op}\n`);
+  let csv = "\uFEFF歲,報酬,利率,市值,負債,維持率,備用金,GK狀態,月領,記錄\n";
+  rows.forEach(r => csv += `${r.age},${(r.ret*100).toFixed(1)}%,${(r.currentRate*100).toFixed(1)}%,${r.mv},${r.debt},${p.isPledgeEnabled?r.mr.toFixed(2):'N/A'},${r.cash},${getBadgeText(r.gkRule)},${fM(r.mo)},${r.op}\n`);
   const link = document.createElement("a");
   link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-  link.download = `退休精算V1.5.4_${getTabName(CURRENT_TAB)}.csv`;
+  link.download = `退休精算V1.5.5_${getTabName(CURRENT_TAB)}.csv`;
   link.click();
 }
 </script>
