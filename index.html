@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合戰術沙盒版 V1.6.1</title>
+<title>退休金動態提領精算機｜混合戰術沙盒版 V1.7</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -143,14 +143,17 @@ th:nth-child(10), td:nth-child(10) { width: 29.5%; white-space: normal; line-hei
 .badge-immune { background: #fef3c7; color: #92400e; }
 .badge-inflation { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; }
 
+/* [V1.7 UPDATED] 單位標籤樣式 (方案 A) */
+.unit-label { font-size: 0.8rem; color: #9ca3af; margin-left: 2px; font-weight: normal; }
+
 /* 動態格位樣式 */
 .dynamic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.5); border-radius: 12px; border: 1px solid #eef0f2; }
 .dynamic-field { display: flex; flex-direction: column; gap: 4px; }
 .dynamic-field label { font-size: 10px; color: #9ca3af; font-weight: 700; text-align: center; }
 .dynamic-field input { padding: 6px; font-size: 12px; border-radius: 6px; border: 1.5px solid #e8eaed; width: 100%; text-align: center; }
 
-/* 收納標題樣式 */
-.sub-label-header { font-size: 14px; font-weight: 700; margin-top: 20px; margin-bottom: 12px; padding: 10px 14px; background: #fff; border: 1px solid #eef0f2; border-radius: 10px; color: #475569; display: flex; align-items: center; justify-content: space-between; }
+/* [V1.7 UPDATED] 移除白色背景與框框的標題樣式 */
+.sub-label-header { font-size: 13px; font-weight: 700; margin-top: 15px; margin-bottom: 8px; color: #6b7280; display: flex; align-items: center; gap: 4px; }
 
 /* SEO SECTION */
 .seo-section { background: #fff; border-top: 1px solid #e8eaed; padding: 60px 16px; margin-top: 48px; }
@@ -179,7 +182,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.6.1 made by 阿奇</span></h2>
+    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.7 made by 阿奇</span></h2>
     <div class="hero-desc">
       針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
     </div>
@@ -229,12 +232,13 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             <div class="input-wrap"><input type="number" id="returnRate" value="8.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
           </div>
           <div class="field">
-            <label>通膨設定與模式</label>
-            <div class="input-wrap" style="display:flex; flex-direction:column; gap:6px;">
-                <div style="position:relative; width:100%;">
-                    <input type="number" id="inflation" value="2.0" step="0.1" class="has-unit" style="padding-right:38px;"><span class="input-unit">%</span>
-                </div>
-                <select id="inflationMode" style="font-size:12px; padding:6px 10px; height: 32px; border-radius: 8px;">
+            <label>通膨設定</label>
+            <div class="input-wrap"><input type="number" id="inflation" value="2.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
+          </div>
+          <div class="field">
+            <label>通膨模式選擇</label>
+            <div class="input-wrap">
+                <select id="inflationMode">
                     <option value="fixed">固定模式 (穩定)</option>
                     <option value="random">隨機波動 (正常波動)</option>
                     <option value="inverse">滯脹模式 (與股市反向)</option>
@@ -331,37 +335,42 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
               </label>
             </div>
 
-            <div class="sub-label-header">
-                質借年利率調整
-                <select id="rateSelect" onchange="updateRateUI()" style="padding:4px 8px; border-radius:8px; font-size:12px; border:1.5px solid #e8eaed; outline:none;">
-                    <option value="fixed">固定利率</option>
-                    <option value="pegged">連動利率 (Pegged)</option>
-                    <option value="custom">自定義陣列</option>
-                </select>
+            <div class="inputs-row">
+                <div class="field">
+                    <div class="sub-label-header">質借年利率調整模式</div>
+                    <div class="input-wrap">
+                        <select id="rateSelect" onchange="updateRateUI()">
+                            <option value="fixed">固定利率</option>
+                            <option value="pegged">連動利率 (Pegged)</option>
+                            <option value="custom">自定義陣列</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="sub-label-header">維持率設定模式</div>
+                    <div class="input-wrap">
+                        <select id="mrSelect" onchange="updateMRUI()">
+                            <option value="fixed">固定維持率</option>
+                            <option value="custom">維持率自定義</option>
+                        </select>
+                    </div>
+                </div>
             </div>
             
-            <div id="rate-fixed-ui" class="inputs-row" style="margin-bottom:15px;">
+            <div id="rate-fixed-ui" class="inputs-row" style="margin-top:15px;">
                 <div class="field"><label>質借年利率 (%)</label><div class="input-wrap"><input type="number" id="pledgeRate" value="2.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
             </div>
-            <div id="rate-pegged-ui" class="inputs-row" style="display:none; margin-bottom:15px;">
+            <div id="rate-pegged-ui" class="inputs-row" style="display:none; margin-top:15px;">
                 <div class="field"><label>基礎利率</label><div class="input-wrap"><input type="number" id="rateBase" value="2.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
                 <div class="field"><label>下限 (Floor)</label><div class="input-wrap"><input type="number" id="rateFloor" value="1.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
                 <div class="field"><label>上限 (Cap)</label><div class="input-wrap"><input type="number" id="rateCap" value="8.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
             </div>
-            <div id="rate-custom-ui" style="display:none;"><div id="custom-rate-grid" class="dynamic-grid"></div></div>
+            <div id="rate-custom-ui" style="display:none; margin-top:15px;"><div id="custom-rate-grid" class="dynamic-grid"></div></div>
 
-            <div class="sub-label-header">
-                維持率設定
-                <select id="mrSelect" onchange="updateMRUI()" style="padding:4px 8px; border-radius:8px; font-size:12px; border:1.5px solid #e8eaed; outline:none;">
-                    <option value="fixed">固定維持率</option>
-                    <option value="custom">維持率自定義</option>
-                </select>
-            </div>
-
-            <div class="inputs-row" id="mr-fixed-ui">
+            <div class="inputs-row" id="mr-fixed-ui" style="margin-top:15px;">
                 <div class="field"><label>目標維持率 (%)</label><div class="input-wrap"><input type="number" id="targetMR" value="300" class="has-unit"><span class="input-unit">%</span></div></div>
             </div>
-            <div id="mr-custom-ui" style="display:none;"><div id="custom-mr-grid" class="dynamic-grid"></div></div>
+            <div id="mr-custom-ui" style="display:none; margin-top:15px;"><div id="custom-mr-grid" class="dynamic-grid"></div></div>
 
             <div class="field" style="margin-top:20px; border-top:1px solid #f1f3f5; padding-top:15px;">
                 <label style="color:#ef4444; font-weight: 800;">終極紅線：危險維持率 (140%)</label>
@@ -418,7 +427,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.6.1 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.7 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -560,7 +569,6 @@ function getP() {
   };
 }
 
-/* [V1.6.1 UPDATED] 核心模擬路徑：修正備用金回補優先級 */
 function simPath(p, overrides) {
   let mv = p.mv, debt = p.debt, cash = p.cash;
   let wa = p.isWithdrawEnabled ? (p.withdrawMode === 'GK' ? mv * p.initWithdrawRate : mv * p.fixedWR) : 0;
@@ -611,20 +619,13 @@ function simPath(p, overrides) {
       let postSellMV = mv - cashNeed;
       let postSellMR = debt > 0 ? postSellMV / debt : 999;
 
-      /* [V1.6.1] 優化後的回補機制：保命優先、防禦次之 */
       if (ret > 0) {
           let surplus = (mv - wa - interest);
-          
-          // 1. 第一優先：不論還債模式，優先補滿現金預備金
           let refill = Math.min(surplus, Math.max(0, p.cashMax - cash));
           if (refill > 0) {
-              cash += refill;
-              mv -= refill;
-              surplus -= refill;
+              cash += refill; mv -= refill; surplus -= refill;
               opStr = `♻️ 回補預備金(+${fM(refill)})。`;
           }
-
-          // 2. 第二優先：根據模式償還債務
           let repayAmount = 0;
           if (p.repayMode === 'AMOUNT' && debt > p.repayTargetAmount) {
               repayAmount = Math.min(surplus, debt - p.repayTargetAmount);
@@ -632,11 +633,9 @@ function simPath(p, overrides) {
               let maxDebtForRatio = (mv - wa - interest) / p.repayTargetMR;
               repayAmount = Math.max(0, Math.min(surplus, debt - maxDebtForRatio));
           }
-
           if (repayAmount > 0) {
               let payDebt = Math.min(repayAmount, debt);
-              debt -= payDebt;
-              mv -= payDebt;
+              debt -= payDebt; mv -= payDebt;
               opStr += ` 償債(-${fM(payDebt)})。`;
           }
       }
@@ -660,13 +659,11 @@ function simPath(p, overrides) {
       if (finalMR < minMR) minMR = finalMR;
       rows.push({ y, age: p.startAge + y, ret, mv, debt, cash, mr: finalMR, wa, mo: wa/12, gkRule, op: opStr, net: mv - debt, currentRate: currentPledgeRate });
     } else {
-      /* [V1.6.1] 無質押模式下的預備金回補 */
       if (ret > 0) {
           let surplus = (mv - wa);
           let refill = Math.min(surplus, Math.max(0, p.cashMax - cash));
           if (refill > 0) {
-              cash += refill;
-              mv -= refill;
+              cash += refill; mv -= refill;
               opStr = `♻️ 牛市獲利補回預備金(+${fM(refill)})。`;
           }
       }
@@ -729,6 +726,7 @@ function renderDashboard() {
   const p = getP(); const rows = ALL_PATHS[CURRENT_TAB]; const last = rows[rows.length-1]; const totalW = rows.reduce((a,b)=>a+b.wa,0);
   const tabsHTML = p.mc ? `<div class="tab-group fade-in">` + ["p10","p25","p50","p75","p90"].map(t => `<button class="tab-btn ${CURRENT_TAB===t?'active '+t:''}" onclick="setTab('${t}')">${getTabName(t)}</button>`).join('') + `</div>` : '';
 
+  /* [V1.7 UPDATED] 單位補上、顏色修正、寬度微調 */
   $('results-area').innerHTML = `
     <div class="fade-in">
       ${tabsHTML}
@@ -736,7 +734,7 @@ function renderDashboard() {
         <h3>🎯 退休成功率：${SUCCESS_RATE.toFixed(1)}%</h3>
         <div class="metric-grid">
           <div class="metric"><div class="metric-label">期末淨資產</div><div class="metric-value ${last.net>0?'val-green':'val-red'}">$${fM(last.net)}萬</div></div>
-          <div class="metric"><div class="metric-label">最低維持率</div><div class="metric-value ${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))>p.dangerMR/100?'val-green':'val-red'):'val-green'}">${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))*100).toFixed(0)+'%':'—'}</div></div>
+          <div class="metric"><div class="metric-label">最低維持率</div><div class="metric-value ${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))>p.dangerMR/100?'val-green':'val-red'):'val-green'}">${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))*100).toFixed(0)+'%':'N/A'}</div></div>
           <div class="metric"><div class="metric-label">累計總提領</div><div class="metric-value val-amber">$${fM(totalW)}萬</div></div>
           <div class="metric"><div class="metric-label">末年平均月領</div><div class="metric-value val-green">$${fMo(last.wa)}萬</div></div>
         </div>
@@ -759,17 +757,18 @@ function renderDashboard() {
         <div class="table-scroll">
           <table>
             <thead><tr>
-              <th>歲</th><th>報酬</th><th>利率</th><th>市值(萬)</th><th>負債(萬)</th><th>維持率</th><th>備用金(萬)</th><th>GK</th><th>月領(萬)</th><th>執行動作</th>
+              <th>歲</th><th>報酬</th><th>利率</th><th>市值</th><th>負債</th><th>維持率</th><th>備用金</th><th>GK</th><th>月領</th><th>執行動作</th>
             </tr></thead>
             <tbody>${rows.map(r => `<tr>
               <td><b>${r.age}</b></td>
-              <td class="${r.ret>=0?'val-green':'val-red'}">${(r.ret*100).toFixed(1)}%</td>
+              <td class="${r.ret>=0?'val-red':'val-green'}">${(r.ret*100).toFixed(1)}%</td>
               <td>${(r.currentRate*100).toFixed(1)}%</td>
-              <td>${fM(r.mv)}</td><td>${fM(r.debt)}</td>
+              <td>${fM(r.mv)}<span class="unit-label">萬</span></td>
+              <td>${fM(r.debt)}<span class="unit-label">萬</span></td>
               <td style="font-weight:700;">${p.isPledgeEnabled?(r.mr*100).toFixed(0)+'%':'—'}</td>
-              <td>${fM(r.cash)}</td>
+              <td>${fM(r.cash)}<span class="unit-label">萬</span></td>
               <td><span class="gk-badge ${getBadgeClass(r.gkRule)}">${getBadgeText(r.gkRule)}</span></td>
-              <td style="font-weight:700;">$${fM(r.mo)}</td>
+              <td style="font-weight:700;">$${fM(r.mo)}<span class="unit-label">萬</span></td>
               <td>${r.op}</td>
             </tr>`).join('')}</tbody>
           </table>
@@ -860,7 +859,7 @@ function exportExcel() {
   rows.forEach(r => csv += `${r.age},${(r.ret*100).toFixed(1)}%,${(r.currentRate*100).toFixed(1)}%,${r.mv},${r.debt},${p.isPledgeEnabled?r.mr.toFixed(2):'N/A'},${r.cash},${getBadgeText(r.gkRule)},${fM(r.mo)},${r.op}\n`);
   const link = document.createElement("a");
   link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-  link.download = `退休精算V1.6.1_${getTabName(CURRENT_TAB)}.csv`;
+  link.download = `退休精算V1.7_${getTabName(CURRENT_TAB)}.csv`;
   link.click();
 }
 </script>
