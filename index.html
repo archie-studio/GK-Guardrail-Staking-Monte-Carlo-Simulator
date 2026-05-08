@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合戰術沙盒版 V1.8.1</title>
+<title>退休金動態提領精算機｜混合戰術沙盒版 V1.8.2</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -41,6 +41,8 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .param-section { border-bottom: 1px dashed #e5e7eb; padding-bottom: 32px; margin-bottom: 32px; }
 .param-section:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
 .section-label { font-size: 16px; font-weight: 700; color: #1a1d23; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+
+/* [V1.8.2] 標準四欄格佈局 */
 .inputs-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; align-items: start; }
 @media (max-width: 900px) { .inputs-row { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px) { .inputs-row { grid-template-columns: 1fr; } }
@@ -155,9 +157,10 @@ th:nth-child(10), td:nth-child(10) { width: 29.5%; white-space: normal; line-hei
 
 .sub-label-header { font-size: 13px; font-weight: 700; margin-top: 15px; margin-bottom: 8px; color: #6b7280; display: flex; align-items: center; gap: 4px; }
 
-/* [V1.8.1] 垂直流佈局樣式修正 */
+/* [V1.8.2] 垂直流與寬度一致化樣式 */
 .vertical-stack { display: flex; flex-direction: column; gap: 20px; width: 100%; }
 .full-width-field { width: 100% !important; max-width: 100% !important; }
+.standard-grid-item { width: 100%; max-width: 100%; }
 
 /* SEO SECTION */
 .seo-section { background: #fff; border-top: 1px solid #e8eaed; padding: 60px 16px; margin-top: 48px; }
@@ -186,7 +189,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.8.1 made by 阿奇</span></h2>
+    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.8.2 made by 阿奇</span></h2>
     <div class="hero-desc">
       針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
     </div>
@@ -348,43 +351,69 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             </div>
 
             <div class="vertical-stack">
-                <div class="field full-width-field">
-                    <div class="sub-label-header">1. 質借年利率調整模式</div>
-                    <div class="input-wrap" style="margin-bottom:10px;">
-                        <select id="rateSelect" onchange="updateRateUI()">
-                            <option value="fixed">固定利率</option>
-                            <option value="pegged">連動利率 (Pegged)</option>
-                            <option value="custom">自定義陣列</option>
-                        </select>
+                <div class="inputs-row">
+                    <div class="field">
+                        <div class="sub-label-header">1. 質借年利率調整模式</div>
+                        <div class="input-wrap">
+                            <select id="rateSelect" onchange="updateRateUI()">
+                                <option value="fixed">固定利率</option>
+                                <option value="pegged">連動利率 (Pegged)</option>
+                                <option value="custom">自定義陣列</option>
+                            </select>
+                        </div>
                     </div>
-                    <div id="rate-fixed-ui">
+                </div>
+
+                <div id="rate-fixed-ui" class="inputs-row">
+                    <div class="field">
+                        <label>質借年利率 (%)</label>
                         <div class="input-wrap"><input type="number" id="pledgeRate" value="2.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
                     </div>
-                    <div id="rate-pegged-ui" style="display:none; gap:10px; flex-direction:row;">
-                        <div class="input-wrap" style="width:40%;"><input type="number" id="rateBase" value="2.5" step="0.1" placeholder="基礎"><span class="input-unit">基</span></div>
-                        <input type="number" id="rateFloor" value="1.5" placeholder="下限" style="width:30%; border:1.5px solid #e8eaed; border-radius:10px; padding:8px;">
-                        <input type="number" id="rateCap" value="8.0" placeholder="上限" style="width:30%; border:1.5px solid #e8eaed; border-radius:10px; padding:8px;">
-                    </div>
-                    <div id="rate-custom-ui" style="display:none;"><div id="custom-rate-grid" class="dynamic-grid"></div></div>
                 </div>
 
-                <div class="field full-width-field">
-                    <div class="sub-label-header">2. 維持率設定模式 (兼還債目標)</div>
-                    <div class="input-wrap" style="margin-bottom:10px;">
-                        <select id="mrSelect" onchange="updateMRUI()">
-                            <option value="fixed">固定維持率</option>
-                            <option value="custom">維持率自定義</option>
-                        </select>
+                <div id="rate-pegged-ui" class="inputs-row" style="display:none;">
+                    <div class="field">
+                        <label>基礎利率</label>
+                        <div class="input-wrap"><input type="number" id="rateBase" value="2.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
                     </div>
-                    <div id="mr-fixed-ui">
+                    <div class="field">
+                        <label>利率下限 (Floor)</label>
+                        <div class="input-wrap"><input type="number" id="rateFloor" value="1.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
+                    </div>
+                    <div class="field">
+                        <label>利率上限 (Cap)</label>
+                        <div class="input-wrap"><input type="number" id="rateCap" value="8.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
+                    </div>
+                </div>
+
+                <div id="rate-custom-ui" style="display:none;"><div id="custom-rate-grid" class="dynamic-grid"></div></div>
+
+                <div class="inputs-row">
+                    <div class="field">
+                        <div class="sub-label-header">2. 維持率設定模式 (兼還債目標)</div>
+                        <div class="input-wrap">
+                            <select id="mrSelect" onchange="updateMRUI()">
+                                <option value="fixed">固定維持率</option>
+                                <option value="custom">維持率自定義</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="mr-fixed-ui" class="inputs-row">
+                    <div class="field">
+                        <label>目標維持率 (%)</label>
                         <div class="input-wrap"><input type="number" id="targetMR" value="300" class="has-unit"><span class="input-unit">%</span></div>
                     </div>
-                    <div id="mr-custom-ui" style="display:none;"><div id="custom-mr-grid" class="dynamic-grid"></div></div>
                 </div>
 
-                <div class="field full-width-field" style="border-top:1px solid #f1f3f5; padding-top:15px;">
-                    <label style="color:#ef4444; font-weight: 800;">3. 終極紅線：危險維持率 (斷頭警示)</label>
-                    <div class="input-wrap" style="width:160px;"><input type="number" id="dangerMR" value="140" class="has-unit" style="border-color: #fecaca;"><span class="input-unit">%</span></div>
+                <div id="mr-custom-ui" style="display:none;"><div id="custom-mr-grid" class="dynamic-grid"></div></div>
+
+                <div class="inputs-row" style="border-top:1px solid #f1f3f5; padding-top:15px;">
+                    <div class="field">
+                        <label style="color:#ef4444; font-weight: 800;">3. 終極紅線：危險維持率 (斷頭警示)</label>
+                        <div class="input-wrap"><input type="number" id="dangerMR" value="140" class="has-unit" style="border-color: #fecaca;"><span class="input-unit">%</span></div>
+                    </div>
                 </div>
             </div>
           </div>
@@ -401,9 +430,11 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             <div class="sw"><input type="checkbox" id="mc-toggle" onchange="updateEngineUI()"><span class="sw-track"></span></div>
           </div>
           <div class="engine-content" id="mc-content">
-            <div class="field">
-              <label>年化波動率 (標準差)</label>
-              <div class="input-wrap" style="max-width: 320px;"><input type="number" id="vol" value="20" class="has-unit"><span class="input-unit">%</span></div>
+            <div class="inputs-row">
+                <div class="field">
+                  <label>年化波動率 (標準差)</label>
+                  <div class="input-wrap"><input type="number" id="vol" value="20" class="has-unit"><span class="input-unit">%</span></div>
+                </div>
             </div>
             <div class="vol-presets">
               <div class="vol-preset" onclick="setVol(10)"><span class="vol-title">保守 (10%)</span><span class="vol-sub">債券為主</span></div>
@@ -438,7 +469,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.8.1 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.8.2 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -493,14 +524,14 @@ function updateRepayUI() {
 
 function updateRateUI() {
     const mode = $('rateSelect').value;
-    $('rate-fixed-ui').style.display = (mode === 'fixed') ? 'block' : 'none';
-    $('rate-pegged-ui').style.display = (mode === 'pegged') ? 'flex' : 'none';
+    $('rate-fixed-ui').style.display = (mode === 'fixed') ? 'grid' : 'none';
+    $('rate-pegged-ui').style.display = (mode === 'pegged') ? 'grid' : 'none';
     $('rate-custom-ui').style.display = (mode === 'custom') ? 'block' : 'none';
 }
 
 function updateMRUI() {
     const mode = $('mrSelect').value;
-    $('mr-fixed-ui').style.display = (mode === 'fixed') ? 'block' : 'none';
+    $('mr-fixed-ui').style.display = (mode === 'fixed') ? 'grid' : 'none';
     $('mr-custom-ui').style.display = (mode === 'custom') ? 'block' : 'none';
 }
 
@@ -585,7 +616,6 @@ function getP() {
   };
 }
 
-/* [V1.8.1 UPDATED] 核心模擬路徑：實裝槓桿指標同步 */
 function simPath(p, overrides) {
   let mv = p.mv, debt = p.debt, cash = p.cash;
   let wa = p.isWithdrawEnabled ? (p.withdrawMode === 'GK' ? mv * p.initWithdrawRate : mv * p.fixedWR) : 0;
@@ -622,8 +652,6 @@ function simPath(p, overrides) {
 
     let opStr = "", interest = debt * currentPledgeRate;
     let cashNeed = wa + interest;
-    
-    // [V1.8.1] 定義當前年份的目標維持率基準
     let currentYearTargetMR = (p.mrMode === 'custom' && p.customMRs[y-1] !== null ? p.customMRs[y-1]/100 : p.targetMR);
 
     if (p.isPledgeEnabled) {
@@ -632,16 +660,13 @@ function simPath(p, overrides) {
 
       if (ret > 0) {
           let surplus = (mv - wa - interest);
-          // A. 優先回補預備金
           let refill = Math.min(surplus, Math.max(0, p.cashMax - cash));
           if (refill > 0) { cash += refill; mv -= refill; surplus -= refill; opStr = `♻️ 回補預備金(+${fM(refill)})。`; }
           
-          // B. 依照模式還債 (大一統同步)
           let repayAmount = 0;
           if (p.repayMode === 'AMOUNT' && debt > p.repayTargetAmount) {
               repayAmount = Math.min(surplus, debt - p.repayTargetAmount);
           } else if (p.repayMode === 'RATIO' && postSellMR > currentYearTargetMR) {
-              // 此處直接參考質押區的目標維持率
               let maxDebtForRatio = surplus / currentYearTargetMR;
               repayAmount = Math.max(0, Math.min(surplus, debt - maxDebtForRatio));
           }
@@ -653,7 +678,6 @@ function simPath(p, overrides) {
         cash -= bailout; cashNeed -= bailout; mv -= cashNeed; opStr += " 🛡️ 觸發防禦，動用預備金。";
       } else {
         mv -= cashNeed;
-        // 增貸邏輯：僅在非固定還債模式下運作
         if (debt > 0 && (mv / debt) >= currentYearTargetMR && p.reinvest && p.repayMode === 'NONE') {
           let borrow = Math.max(0, (mv / currentYearTargetMR - debt) * 0.6);
           debt += borrow; mv += p.preDeduct ? borrow * (1 - currentPledgeRate) : borrow;
