@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9.4.1</title>
+<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9.4.2</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -121,7 +121,7 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .analysis-text strong { color: #1a1d23; font-weight: 700; }
 .analysis-text h3 { font-size: 18px; margin-bottom: 10px; color: #4f46e5; font-weight: 800; }
 
-/* 表格優化 (修復第11欄被擠壓的Bug) */
+/* 表格優化 */
 .table-card { background: #fff; border: 1px solid #e8eaed; border-radius: 20px; overflow: hidden; margin-top: 32px; }
 .table-header { padding: 20px 24px; border-bottom: 1px solid #f0f1f3; font-weight: 800; color: #1a1d23; background: #fafafa; font-size: 17px;}
 .table-scroll { width: 100%; overflow: hidden; } 
@@ -129,18 +129,17 @@ table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: f
 th { padding: 12px 6px; text-align: left; background: #f9fafb; color: #4b5563; font-weight: 700; border-bottom: 2px solid #e5e7eb; white-space: nowrap; }
 td { padding: 12px 6px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', monospace; vertical-align: middle; white-space: nowrap; overflow: hidden; }
 
-/* 重新分配 11 個欄位的寬度 (總和 100%) */
-th:nth-child(1), td:nth-child(1) { width: 5%; }   /* 西元 */
-th:nth-child(2), td:nth-child(2) { width: 4.5%; } /* 歲 */
-th:nth-child(3), td:nth-child(3) { width: 6.5%; } /* 報酬 */
-th:nth-child(4), td:nth-child(4) { width: 6.5%; } /* 利率 */
-th:nth-child(5), td:nth-child(5) { width: 8.5%; } /* 市值 */
-th:nth-child(6), td:nth-child(6) { width: 8.5%; } /* 負債 */
-th:nth-child(7), td:nth-child(7) { width: 7.5%; } /* 維持率 */
-th:nth-child(8), td:nth-child(8) { width: 8.5%; } /* 備用金 */
-th:nth-child(9), td:nth-child(9) { width: 6.5%; } /* GK */
-th:nth-child(10), td:nth-child(10) { width: 9%; } /* 月領 */
-th:nth-child(11), td:nth-child(11) { width: 29%; white-space: normal; line-height: 1.2; font-size: 12px; } /* 執行動作 (移轉換行屬性) */
+th:nth-child(1), td:nth-child(1) { width: 5%; }   
+th:nth-child(2), td:nth-child(2) { width: 4.5%; } 
+th:nth-child(3), td:nth-child(3) { width: 6.5%; } 
+th:nth-child(4), td:nth-child(4) { width: 6.5%; } 
+th:nth-child(5), td:nth-child(5) { width: 8.5%; } 
+th:nth-child(6), td:nth-child(6) { width: 8.5%; } 
+th:nth-child(7), td:nth-child(7) { width: 7.5%; } 
+th:nth-child(8), td:nth-child(8) { width: 8.5%; } 
+th:nth-child(9), td:nth-child(9) { width: 6.5%; } 
+th:nth-child(10), td:nth-child(10) { width: 9%; } 
+th:nth-child(11), td:nth-child(11) { width: 29%; white-space: normal; line-height: 1.2; font-size: 12px; }
 
 /* BADGES */
 .gk-badge { font-family: 'Noto Sans TC', sans-serif; font-weight: 700; font-size: 10px; padding: 3px 6px; border-radius: 4px; display: inline-block; }
@@ -188,7 +187,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9.4.1 made by 阿奇</span></h2>
+    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9.4.2 made by 阿奇</span></h2>
     <div class="hero-desc">
       針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
     </div>
@@ -475,7 +474,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9.4.1 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9.4.2 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -691,6 +690,7 @@ function simPath(p, overrides) {
       if(ret < 0 && cash > 0 && p.isWithdrawEnabled) {
           let bailout = Math.min(cash, wa); cash -= bailout; wa -= bailout; mv -= wa; opStr = "🛡️ 股市回檔，消耗預備金。";
       } else { if (opStr === "") opStr = p.isWithdrawEnabled ? "✅ 正常提領。" : "✅ 靜態複利。"; }
+      // [V1.9.4.2 修正] 將 currentRate 正確傳入，不論是否啟用質押，都確保屬性存在以避免顯示錯亂
       rows.push({ y, year: p.startYear + y - 1, age: p.startAge + y, ret, mv, debt, cash, mr: 999, wa, mo: wa/12, gkRule, op: opStr, net: mv - debt, currentRate: 0 });
     }
   }
@@ -881,7 +881,7 @@ function renderDashboard() {
               <td style="color:#6b7280;">${r.year}</td>
               <td><b>${r.age}</b></td>
               <td class="${r.ret>=0?'val-red':'val-green'}">${(r.ret*100).toFixed(1)}%</td>
-              <td>${(r.currentRate !== undefined ? r.currentRate : r.rate*100).toFixed(1)}%</td>
+              <td>${(r.currentRate * 100).toFixed(1)}%</td>
               <td>${fM(r.mv)}<span class="unit-label">萬</span></td>
               <td>${fM(r.debt)}<span class="unit-label">萬</span></td>
               <td style="font-weight:700;">${p.isPledgeEnabled?(r.mr*100).toFixed(0)+'%':'—'}</td>
@@ -1012,7 +1012,8 @@ async function exportUltimateXLSX() {
     startRow++;
     
     rows.forEach(r => {
-        const rateVal = r.currentRate !== undefined ? r.currentRate : r.rate; 
+        // [V1.9.4.2 修正] 確保 XLSX 中的利率也直接使用 r.currentRate 渲染
+        const rateVal = r.currentRate !== undefined ? r.currentRate : 0; 
         const row = ws.addRow([r.year, r.age, (r.ret*100).toFixed(1)+'%', (rateVal*100).toFixed(1)+'%', parseFloat(r.mv.toFixed(2)), parseFloat(r.debt.toFixed(2)), p.isPledgeEnabled ? (r.mr*100).toFixed(0)+'%' : '—', parseFloat(r.cash.toFixed(2)), getBadgeText(r.gkRule), parseFloat(r.mo.toFixed(2)), r.op]);
         const retCell = row.getCell(3); 
         if(r.ret >= 0) retCell.font = { color: { argb: 'FFEF4444' } }; else retCell.font = { color: { argb: 'FF10B981' } };
