@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9</title>
+<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9.1</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -188,7 +188,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9 made by 阿奇</span></h2>
+    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9.1 made by 阿奇</span></h2>
     <div class="hero-desc">
       針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
     </div>
@@ -335,7 +335,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
         <div id="pledge-card" class="engine-toggle-card card-purple">
           <div class="engine-header" onclick="toggleSwitch('isPledgeEnabled')">
             <label style="font-weight: 800; color: #4f46e5; font-size: 17px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-              🚀 啟 পণ্ডিত 啟動股票質押引擎
+              🚀 啟動股票質押引擎
             </label>
             <div class="sw"><input type="checkbox" id="isPledgeEnabled" onchange="updateEngineUI()"><span class="sw-track"></span></div>
           </div>
@@ -468,7 +468,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9.1 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -481,9 +481,9 @@ let SUCCESS_RATE = 0;
 let CURRENT_TAB = "p50";
 let LINE_CHART = null;
 let PIE_CHART = null;
-let FAN_CHART = null; // [V1.9] 新增扇形圖變數
+let FAN_CHART = null; 
 let RISK_STATS = { bankrupt: 0, marginCall: 0, survival: 0, protectTriggerRatio: 0 };
-let MC_RESULTS = null; // [V1.9] 儲存蒙地卡羅的 P10, P50, P90 資料
+let MC_RESULTS = null; 
 
 function toggleSwitch(id) { $(id).click(); }
 function updateEngineUI() {
@@ -698,7 +698,7 @@ function simPath(p, overrides) {
 
 function runSim() {
   const p = getP(); RISK_STATS = { bankrupt: 0, marginCall: 0, survival: 0 };
-  MC_RESULTS = null; // 重置
+  MC_RESULTS = null; 
   
   if (!p.mc) {
     const res = simPath(p); ALL_PATHS = { default: res.history }; SUCCESS_RATE = res.survived ? 100 : 0;
@@ -722,7 +722,6 @@ function runSim() {
     RISK_STATS.marginCall = (RISK_STATS.marginCall/10).toFixed(1);
     RISK_STATS.survival = (RISK_STATS.survival/10).toFixed(1);
     
-    // [V1.9] 儲存用於畫扇形圖的資料
     MC_RESULTS = {
       p10_net: sims[99].history.map(r => Math.max(0, r.net)),
       p50_net: sims[499].history.map(r => Math.max(0, r.net)),
@@ -738,18 +737,15 @@ function runSim() {
 
 function setTab(t) { CURRENT_TAB = t; renderDashboard(); }
 
-/* [V1.9] 新增：產生動態隨機文本 */
 function getRandomText(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
-/* [V1.9] 核心：重寫診斷報告產生器，加入動態矩陣與名字 */
 function generateStory(rows, p) {
   const last = rows[rows.length-1]; 
   const nameStr = p.name === "您" ? "您" : p.name;
   const nameCall = p.name === "您" ? "親愛的投資者" : p.name;
   
-  // 1. 個人化開場
   const openings = [
       `<strong>${nameCall}</strong>，歡迎來到您的退休沙盒。透過上千次平行宇宙的壓力測試，我們為您定調了這份計畫的靈魂。`,
       `您好，<strong>${nameCall}</strong>。這是一份專屬於您的財務韌性報告。我們模擬了從牛市繁榮到地獄級股災的各種情境。`,
@@ -757,7 +753,6 @@ function generateStory(rows, p) {
   ];
   let story = `<p>${getRandomText(openings)}</p>`;
 
-  // 2. 戰術定調
   let modeTitle = "", modeIntro = "";
   if (!p.isWithdrawEnabled && !p.isPledgeEnabled) { 
       modeTitle = "【純存股複利模式】"; 
@@ -789,7 +784,6 @@ function generateStory(rows, p) {
   }
   story += `<h3>${modeTitle}</h3><p>${modeIntro}</p>`;
 
-  // 3. 事件描述
   let events = [];
   const s_years = rows.filter(r => r.gkRule === 'danger').map(r => r.age);
   const ceil_years = rows.filter(r => r.op.includes("月薪上限")).map(r => r.age);
@@ -815,7 +809,6 @@ function generateStory(rows, p) {
   }
   if (events.length > 0) story += `<p><strong>【關鍵生存事件復盤】</strong><br>${events.join('<br><br>')}</p>`;
 
-  // 4. 結語與建議
   let conclusion = "";
   if (SUCCESS_RATE > 95) {
       conclusion = getRandomText([
@@ -834,7 +827,6 @@ function generateStory(rows, p) {
   return story;
 }
 
-/* [V1.9] 重寫 renderDashboard 打造黑卡指揮中心 */
 function renderDashboard() {
   const p = getP(); const rows = ALL_PATHS[CURRENT_TAB]; const last = rows[rows.length-1]; const totalW = rows.reduce((a,b)=>a+b.wa,0);
   const tabsHTML = p.mc ? `<div class="tab-group fade-in">` + ["p10","p25","p50","p75","p90"].map(t => `<button class="tab-btn ${CURRENT_TAB===t?'active '+t:''}" onclick="setTab('${t}')">${getTabName(t)}</button>`).join('') + `</div>` : '';
@@ -903,6 +895,10 @@ function renderDashboard() {
         <h4>📋 ${p.name === "您" ? "" : `[${p.name}] 的`}專屬退休壓力測試報告 (${getTabName(CURRENT_TAB)})</h4>
         <div class="analysis-text" id="analysis-content">${generateStory(rows, p)}</div>
       </div>
+
+      <div class="export-wrap" style="margin-top:24px; text-align:center;">
+        <button class="btn-primary" style="background:#4b5563; padding:15px; font-size:16px; width:auto; padding-left: 30px; padding-right: 30px;" onclick="exportExcel()">⬇️ 匯出當前路徑 CSV 報表</button>
+      </div>
     </div>
   `;
   renderCharts(rows, p);
@@ -913,7 +909,6 @@ function getBadgeText(rule) { return { 'danger': '保護', 'boom': '繁榮', 'im
 function getTabName(t) { return {p10:"悲觀 P10", p25:"保守 P25", p50:"中位數 P50", p75:"穩健 P75", p90:"樂觀 P90", default:"理想路徑"}[t]; }
 
 function renderCharts(rows, p) {
-  // 1. 繪製白卡的細節折線圖
   if (LINE_CHART) LINE_CHART.destroy();
   const ctxL = $('lineChart').getContext('2d');
   LINE_CHART = new Chart(ctxL, {
@@ -929,7 +924,6 @@ function renderCharts(rows, p) {
     options: { responsive: true, maintainAspectRatio: false, scales: { y2:{position:'right', grid:{drawOnChartArea:false}} } }
   });
 
-  // 2. 繪製白卡的圓餅圖
   if (PIE_CHART) PIE_CHART.destroy();
   const ctxP = $('pieChart').getContext('2d');
   PIE_CHART = new Chart(ctxP, {
@@ -938,12 +932,10 @@ function renderCharts(rows, p) {
     options: { responsive: true, maintainAspectRatio: false, cutout: '78%', plugins: { legend: { display: false } } }
   });
 
-  // 3. [V1.9] 繪製黑卡的蒙地卡羅扇形圖 (Bloom Effect 動畫)
   if (p.mc && MC_RESULTS) {
       if (FAN_CHART) FAN_CHART.destroy();
       const ctxF = $('fanChart').getContext('2d');
       
-      // 動畫配置：利用 delay 製造「先掃描中線，再綻放區間」的效果
       const totalDuration = 2000;
       const delayBetweenPoints = totalDuration / MC_RESULTS.labels.length;
       const previousY = (ctx) => ctx.index === 0 ? ctx.chart.scales.y.getPixelForValue(100) : ctx.chart.getDatasetMeta(ctx.datasetIndex).data[ctx.index - 1].getProps(['y'], true).y;
@@ -965,13 +957,13 @@ function renderCharts(rows, p) {
               borderWidth: 1,
               tension: 0.4, 
               pointRadius: 0,
-              fill: '+1', // 填滿至 P50
+              fill: '+1', 
               backgroundColor: 'rgba(99, 102, 241, 0.15)'
             },
             { 
               label: '中位數 P50', 
               data: MC_RESULTS.p50_net, 
-              borderColor: '#fff', // 螢光白線
+              borderColor: '#fff', 
               borderWidth: 2,
               tension: 0.4, 
               pointRadius: 0,
@@ -985,7 +977,7 @@ function renderCharts(rows, p) {
               borderWidth: 1,
               tension: 0.4, 
               pointRadius: 0,
-              fill: '-1', // 填滿至 P50
+              fill: '-1', 
               backgroundColor: 'rgba(239, 68, 68, 0.15)'
             }
           ]
@@ -1006,6 +998,18 @@ function renderCharts(rows, p) {
         }
       });
   }
+}
+
+/* [V1.9.1] 復原並優化的 CSV 匯出功能 */
+function exportExcel() {
+  const p = getP(); const rows = ALL_PATHS[CURRENT_TAB];
+  let csv = "\uFEFF歲,報酬,利率,市值,負債,維持率,備用金,GK狀態,月領,記錄\n";
+  // 保持數字原始型態 (不加逗號)，方便 Excel 進行加總計算
+  rows.forEach(r => csv += `${r.age},${(r.ret*100).toFixed(1)}%,${(r.currentRate*100).toFixed(1)}%,${r.mv.toFixed(2)},${r.debt.toFixed(2)},${p.isPledgeEnabled?r.mr.toFixed(2):'N/A'},${r.cash.toFixed(2)},${getBadgeText(r.gkRule)},${r.mo.toFixed(2)},${r.op}\n`);
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+  link.download = `退休精算_${p.name === "您" ? "V1.9.1" : p.name}_${getTabName(CURRENT_TAB)}.csv`;
+  link.click();
 }
 </script>
 </body>
