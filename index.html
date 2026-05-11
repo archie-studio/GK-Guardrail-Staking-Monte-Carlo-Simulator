@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9.6</title>
+<title>FIRE 退休財富計算機｜Ver 1.9.6.1</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -24,7 +24,7 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .hero { background: #fff; border-bottom: 1px solid #e8eaed; padding: 60px 16px; text-align: center; }
 .hero-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
 .hero h1 { font-size: clamp(36px, 8vw, 52px); font-weight: 800; color: #1a1d23; margin-bottom: 12px; letter-spacing: -1.5px; }
-.hero h2 { font-size: 20px; font-weight: 600; color: #a78bfa; margin-bottom: 16px; display: flex; align-items: center; gap: 14px; }
+.hero h2 { font-size: 20px; font-weight: 600; color: #a78bfa; margin-bottom: 16px; display: flex; align-items: center; gap: 14px; text-align: center; }
 .version-tag { font-size: 14px; color: #9ca3af; font-weight: 500; background: #f3f4f6; padding: 4px 14px; border-radius: 20px; border: 1px solid #e5e7eb; }
 .hero-desc { color: #6b7280; font-size: 16px; max-width: 800px; margin: 0 auto; line-height: 1.8; }
 
@@ -186,10 +186,10 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 
 <section class="hero">
   <div class="hero-inner">
-    <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9.6 made by 阿奇</span></h2>
+    <h1>FIRE 退休財富計算機</h1>
+    <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 - <span class="version-tag">ver 1.9.6.1 made by 阿奇</span></h2>
     <div class="hero-desc">
-      針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
+      「牛市鎖利增貸、熊市現金防禦、買借死傳承」打造的全天候財富沙盒，<br>透過 1000 次極端市場模擬，精算全方面抗通膨戰術。
     </div>
   </div>
 </section>
@@ -474,7 +474,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="seo-section">
   <div class="seo-inner">
     <div class="seo-item">
-      <h3>📚 退休精算機：核心邏輯指南</h3>
+      <h3>📚 FIRE 精算機：核心邏輯指南</h3>
       <p><strong>1. 為什麼採用 GK 動態提領？</strong><br>比起死板的固定比例，GK 法則能隨市場波動進行「自適應調整」。股市大好時啟動「繁榮加薪」，市場低迷時則執行「保本減薪」，透過動態護欄平衡資產長青與生活尊嚴。</p>
     </div>
     <div class="seo-item">
@@ -487,7 +487,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9.6 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 1.9.6.1 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -520,8 +520,6 @@ function updateWithdrawUI() {
 
 function updateRepayUI() {
     const mode = $('repayMode').value;
-    
-    // 隱藏所有第四格的選項
     $('repay-placeholder-input').style.display = 'none';
     $('repay-none-input').style.display = 'none';
     $('repay-amount-input').style.display = 'none';
@@ -569,7 +567,7 @@ function generateDynamicGrids() {
         mrGrid.appendChild(divMr);
         const divRt = document.createElement('div');
         divRt.className = 'dynamic-field';
-        divRt.innerHTML = `<label>Y${i}</label><input type="number" id="custRate_${i}" placeholder="2.5">`;
+        divRt.innerHTML = `<label>Y${i}</label><input type="number" id="custRate_${i}" placeholder="3.5">`;
         rateGrid.appendChild(divRt);
     }
 }
@@ -608,7 +606,7 @@ function getP() {
     isWithdrawEnabled: $('isWithdrawLogicEnabled').checked,
     withdrawMode: $('withdrawMode').value,
     fixedWR: parseFloat($('fixedWithdrawRate').value) / 100 || 0,
-    initWithdrawRate: parseFloat($('initWithdrawRate').value) / 100 || 0.05,
+    initWithdrawRate: parseFloat($('initWithdrawRate').value) / 100 || 0.04,
     survivalFloor: parseFloat($('survivalFloor').value) || 0,
     maxCeiling: parseFloat($('maxCeiling').value) || 999,
     repayMode: $('repayMode').value,
@@ -617,7 +615,7 @@ function getP() {
     inflationMode: $('inflationMode').value,
     upperGuard: parseFloat($('upperGuard').value)/100,
     lowerGuard: parseFloat($('lowerGuard').value)/100,
-    lateLifeYears: parseInt($('lateLifeYears').value) || 15,
+    lateLifeYears: parseInt($('lateLifeYears').value) || 5,
     returnRate: parseFloat($('returnRate').value)/100,
     isPledgeEnabled: $('isPledgeEnabled').checked,
     preDeduct: $('preDeduct').checked,
@@ -677,13 +675,12 @@ function simPath(p, overrides) {
         wa = Math.max(p.survivalFloor * 12, Math.min(p.maxCeiling * 12, wa));
     }
 
-    let ops = []; // [V1.9.6 修正] 改用陣列處理文字分行
+    let ops = []; 
     let interest = debt * currentPledgeRate, cashNeed = wa + interest;
     let currentYearTargetMR = (p.mrMode === 'custom' && p.customMRs[y-1] !== null ? p.customMRs[y-1]/100 : p.targetMR);
 
     if (p.isPledgeEnabled) {
       let bbdTriggered = false;
-
       if (isBBD) {
           let projectedMR = (debt + cashNeed) > 0 ? mv / (debt + cashNeed) : 9999;
           if (projectedMR >= p.dangerMR) {
@@ -710,11 +707,9 @@ function simPath(p, overrides) {
                   repayAmount = Math.max(0, Math.min(surplus, payNeed));
               }
           }
-          
           if (repayAmount > 0) { 
               let payDebt = Math.min(repayAmount, debt); 
-              debt -= payDebt; 
-              mv -= payDebt; 
+              debt -= payDebt; mv -= payDebt; 
               ops.push(`償債(-${fM(payDebt)})。`); 
           }
       }
@@ -739,7 +734,6 @@ function simPath(p, overrides) {
               ops.push(`📈 達標進攻，增貸 ${fM(borrow)} 萬。`);
           }
       }
-      
       if (ops.length === 0) ops.push("✅ 正常執行。");
       let finalMR = debt > 0 ? mv / debt : 999;
       rows.push({ y, year: p.startYear + y - 1, age: p.startAge + y, ret, mv, debt, cash, mr: finalMR, wa, mo: wa/12, gkRule, op: ops.join('<br>'), net: mv - debt, currentRate: currentPledgeRate });
@@ -748,7 +742,6 @@ function simPath(p, overrides) {
           let surplus = mv - (p.isWithdrawEnabled ? wa : 0); 
           let refill = Math.min(surplus, Math.max(0, p.cashMax - cash));
           if (refill > 0) { cash += refill; mv -= refill; surplus -= refill; ops.push(`♻️ 回補預備金(+${fM(refill)})。`); }
-          
           let repayAmount = 0;
           if (p.repayMode === 'AMOUNT' && debt > p.repayTargetAmount) repayAmount = Math.min(surplus, debt - p.repayTargetAmount);
           if (repayAmount > 0) { let payDebt = Math.min(repayAmount, debt); debt -= payDebt; mv -= payDebt; ops.push(`償還舊債(-${fM(payDebt)})。`); }
@@ -756,7 +749,6 @@ function simPath(p, overrides) {
       if(ret < 0 && cash > 0 && p.isWithdrawEnabled) {
           let bailout = Math.min(cash, wa); cash -= bailout; wa -= bailout; mv -= wa; ops.push("🛡️ 股市回檔，消耗預備金。");
       }
-      
       if (ops.length === 0) ops.push(p.isWithdrawEnabled ? "✅ 正常提領。" : "✅ 靜態複利。");
       rows.push({ y, year: p.startYear + y - 1, age: p.startAge + y, ret, mv, debt, cash, mr: 999, wa, mo: wa/12, gkRule, op: ops.join('<br>'), net: mv - debt, currentRate: 0 });
     }
@@ -768,7 +760,6 @@ function simPath(p, overrides) {
 function runSim() {
   const p = getP(); RISK_STATS = { bankrupt: 0, marginCall: 0, survival: 0 };
   MC_RESULTS = null; 
-  
   if (!p.mc) {
     const res = simPath(p); ALL_PATHS = { default: res.history }; SUCCESS_RATE = res.survived ? 100 : 0;
     if (res.failType.bankrupt) RISK_STATS.bankrupt = 100;
@@ -790,14 +781,12 @@ function runSim() {
     RISK_STATS.bankrupt = (RISK_STATS.bankrupt/10).toFixed(1);
     RISK_STATS.marginCall = (RISK_STATS.marginCall/10).toFixed(1);
     RISK_STATS.survival = (RISK_STATS.survival/10).toFixed(1);
-    
     MC_RESULTS = {
       p10_net: sims[99].history.map(r => Math.max(0, r.net)),
       p50_net: sims[499].history.map(r => Math.max(0, r.net)),
       p90_net: sims[899].history.map(r => Math.max(0, r.net)),
       labels: sims[0].history.map(r => r.year + ' (' + r.age + '歲)') 
     };
-    
     ALL_PATHS = { p10: sims[99].history, p25: sims[249].history, p50: sims[499].history, p75: sims[749].history, p90: sims[899].history };
     CURRENT_TAB = "p50";
   }
@@ -805,16 +794,12 @@ function runSim() {
 }
 
 function setTab(t) { CURRENT_TAB = t; renderDashboard(); }
-
-function getRandomText(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-}
+function getRandomText(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
 function generateStory(rows, p) {
   const last = rows[rows.length-1]; 
   const nameStr = p.name === "您" ? "您" : p.name;
   const nameCall = p.name === "您" ? "親愛的投資者" : p.name;
-  
   const openings = [
       `<strong>${nameCall}</strong>，歡迎來到您的退休沙盒。透過上千次平行宇宙的壓力測試，我們為您定調了這份計畫的靈魂。`,
       `您好，<strong>${nameCall}</strong>。這是一份專屬於您的財務韌性報告。我們模擬了從牛市繁榮到地獄級股災的各種情境。`,
@@ -864,88 +849,41 @@ function generateStory(rows, p) {
   const s_years = rows.filter(r => r.gkRule === 'danger').map(r => r.age);
   const ceil_years = rows.filter(r => r.op.includes("月薪上限")).map(r => r.age);
   const cash_years = rows.filter(r => r.op.includes("預備金") && r.op.includes("觸發防禦")).map(r => r.age);
-  
-  if (s_years.length > 0) {
-      events.push(getRandomText([
-          `<strong>保護規則介入：</strong>${nameCall}，請注意 <strong>${s_years[0]} 歲</strong> 那年的轉折，『保護規則』像是自動導航一樣介入了，強制下修提領以保護本金。`,
-          `<strong>啟動保本盾牌：</strong>我們在路徑中看到 ${nameStr} 在 <strong>${s_years[0]} 歲</strong> 時觸發了減薪。這並非失敗，而是為了確保計畫能走得更遠。`
-      ]));
-  }
-  if (ceil_years.length > 0) {
-      events.push(getRandomText([
-          `<strong>最高月薪上限：</strong>值得擊掌！${nameCall}，您的資產在 <strong>${ceil_years[0]} 歲</strong> 時衝破雲霄，觸發了月薪上限，成功為未來留下了更多種子。`,
-          `<strong>繁榮鎖利：</strong>恭喜！在 <strong>${ceil_years[0]} 歲</strong> 的大牛市中，系統成功為 ${nameStr} 踩下煞車，防止過度揮耗。`
-      ]));
-  }
-  if (cash_years.length > 0) {
-      events.push(getRandomText([
-          `<strong>救命錢救援：</strong>在 <strong>${cash_years[0]} 歲</strong> 的股災期，現金預備金發揮了定海神針的作用。`,
-          `<strong>防禦啟動：</strong>${nameStr} 預留的現金桶在 <strong>${cash_years[0]} 歲</strong> 完美擋下了市場的致命一擊，免於斷頭危機。`
-      ]));
-  }
+  if (s_years.length > 0) events.push(`<strong>保護規則介入：</strong>${nameCall}，請注意 <strong>${s_years[0]} 歲</strong> 那年的轉折，『保護規則』像自動導航一樣介入，下修提領。`);
+  if (ceil_years.length > 0) events.push(`<strong>最高月薪上限：</strong>值得擊掌！資產在 <strong>${ceil_years[0]} 歲</strong> 衝破上限，成功為未來留下了更多種子。`);
+  if (cash_years.length > 0) events.push(`<strong>救命錢救援：</strong>在 <strong>${cash_years[0]} 歲</strong> 的股災期，現金桶完美擋下了致命一擊，免於斷頭。`);
   if (events.length > 0) story += `<p><strong>【關鍵生存事件復盤】</strong><br>${events.join('<br><br>')}</p>`;
 
-  let conclusion = "";
-  if (SUCCESS_RATE > 95) {
-      conclusion = getRandomText([
-          `這是一份滿分的退休卷宗。${nameCall}，您的佈局磐石般穩定，您可以安心入睡了。`,
-          `極度穩健的結構！${nameStr}，晚年的尊嚴與富足已是您的囊中物。`
-      ]);
-  } else if (RISK_STATS.marginCall > 10) {
-      conclusion = `<strong>斷頭風險警示：</strong>${nameCall}，您的船很穩，但槓桿這把雙面刃在股災時顯得有些尖銳，建議調高現金備用金或降低目標維持率。`;
-  } else if (RISK_STATS.survival > 10) {
-      conclusion = `<strong>生存底線警示：</strong>${nameStr}，資產雖在，但生活品質可能在極端情境下大幅縮水。建議您考慮調降初始提領率，以換取長期的安穩。`;
-  } else {
-      conclusion = `目前的參數具備一定可行性，但 ${nameCall} 仍需在面臨連續空頭時，具備果斷縮減開支的決心。`;
-  }
+  let conclusion = SUCCESS_RATE > 95 ? `這是一份滿分的退休卷宗。${nameCall}，佈局磐石般穩定。` : (RISK_STATS.marginCall > 10 ? `<strong>斷頭風險警示：</strong>槓桿這把雙面刃在股災時顯得尖銳，建議調高備用金。` : `目前的參數具備一定可行性，但仍需具備果斷縮減開支的決心。`);
   story += `<p><strong>【報告結語】</strong><br>${conclusion}</p>`;
-
   return story;
 }
 
 function renderDashboard() {
   const p = getP(); const rows = ALL_PATHS[CURRENT_TAB]; const last = rows[rows.length-1]; const totalW = rows.reduce((a,b)=>a+b.wa,0);
   const tabsHTML = p.mc ? `<div class="tab-group fade-in">` + ["p10","p25","p50","p75","p90"].map(t => `<button class="tab-btn ${CURRENT_TAB===t?'active '+t:''}" onclick="setTab('${t}')">${getTabName(t)}</button>`).join('') + `</div>` : '';
-
   $('results-area').innerHTML = `
     <div class="fade-in">
       ${tabsHTML}
-      
       <div class="summary-box">
         <h3>🎯 退休成功率：${SUCCESS_RATE}%</h3>
-        
         <div class="metric-grid">
           <div class="metric"><div class="metric-label">期末淨資產</div><div class="metric-value ${last.net>0?'val-green':'val-red'}">$${fM(last.net)}萬</div></div>
           <div class="metric"><div class="metric-label">最低維持率</div><div class="metric-value ${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))>p.dangerMR/100?'val-green':'val-red'):'val-green'}">${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))*100).toFixed(0)+'%':'—'}</div></div>
           <div class="metric"><div class="metric-label">累計總提領</div><div class="metric-value val-amber">$${fM(totalW)}萬</div></div>
           <div class="metric"><div class="metric-label">末年平均月領</div><div class="metric-value val-green">$${fMo(last.wa)}萬</div></div>
         </div>
-
-        ${p.mc ? `
-        <div class="dark-chart-container">
-            <div class="dark-chart-title">🌌 淨資產機率分布 (P10 / P50 / P90)</div>
-            <div class="chart-inner"><canvas id="fanChart"></canvas></div>
-        </div>
-        ` : ''}
-
+        ${p.mc ? `<div class="dark-chart-container"><div class="dark-chart-title">🌌 淨資產機率分布 (P10 / P50 / P90)</div><div class="chart-inner"><canvas id="fanChart"></canvas></div></div>` : ''}
         <div class="risk-indicator-wrap" style="margin-top:0;">
             <div class="risk-light"><div class="dot ${RISK_STATS.bankrupt > 10 ? 'dot-red' : 'dot-green'}"></div>🔴 破產風險：${RISK_STATS.bankrupt}%</div>
             <div class="risk-light"><div class="dot ${RISK_STATS.marginCall > 10 ? 'dot-red' : 'dot-yellow'}"></div>🟡 斷頭風險：${RISK_STATS.marginCall}%</div>
             <div class="risk-light"><div class="dot ${RISK_STATS.survival > 10 ? 'dot-red' : 'dot-blue'}"></div>🔵 生存風險：${RISK_STATS.survival}%</div>
         </div>
       </div>
-
       <div class="charts-grid">
-        <div class="chart-card">
-            <div style="font-weight:700; color:#4b5563; margin-bottom:15px;">📊 戰術執行路徑 (${getTabName(CURRENT_TAB)})</div>
-            <div class="chart-inner" style="height:350px;"><canvas id="lineChart"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-inner" style="height:350px;"><canvas id="pieChart"></canvas></div>
-          <div class="pie-center-text"><div class="pie-val-label">累計提領</div><div class="pie-val-num" style="color:#f59e0b">$${fM(totalW)}萬</div><div class="pie-val-label">期末淨額</div><div class="pie-val-num" style="color:#6366f1">$${fM(last.net)}萬</div></div>
-        </div>
+        <div class="chart-card"><div style="font-weight:700; color:#4b5563; margin-bottom:15px;">📊 戰術執行路徑 (${getTabName(CURRENT_TAB)})</div><div class="chart-inner" style="height:350px;"><canvas id="lineChart"></canvas></div></div>
+        <div class="chart-card"><div class="chart-inner" style="height:350px;"><canvas id="pieChart"></canvas></div><div class="pie-center-text"><div class="pie-val-label">累計提領</div><div class="pie-val-num" style="color:#f59e0b">$${fM(totalW)}萬</div><div class="pie-val-label">期末淨額</div><div class="pie-val-num" style="color:#6366f1">$${fM(last.net)}萬</div></div></div>
       </div>
-
       <div class="table-card">
         <div class="table-header">📝 執行明細表 (${getTabName(CURRENT_TAB)})</div>
         <div class="table-scroll">
@@ -967,15 +905,11 @@ function renderDashboard() {
           </table>
         </div>
       </div>
-      
       <div class="analysis-card">
         <h4>📋 ${p.name === "您" ? "" : `[${p.name}] 的`}專屬退休壓力測試報告 (${getTabName(CURRENT_TAB)})</h4>
         <div class="analysis-text" id="analysis-content">${generateStory(rows, p)}</div>
       </div>
-
-      <div class="export-wrap" style="margin-top:24px; text-align:center;">
-        <button class="btn-primary" style="background:#059669; padding:15px; font-size:16px; width:auto; padding-left: 30px; padding-right: 30px;" onclick="exportUltimateXLSX()">匯出 XLSX 全圖文報表</button>
-      </div>
+      <div class="export-wrap" style="margin-top:24px; text-align:center;"><button class="btn-primary" style="background:#059669; padding:15px; font-size:16px; width:auto; padding-left: 30px; padding-right: 30px;" onclick="exportUltimateXLSX()">匯出 XLSX 全圖文報表</button></div>
     </div>
   `;
   renderCharts(rows, p);
@@ -1012,23 +946,10 @@ function renderCharts(rows, p) {
   if (p.mc && MC_RESULTS) {
       if (FAN_CHART) FAN_CHART.destroy();
       const ctxF = $('fanChart').getContext('2d');
-      
       const animation = {
-        y: {
-          duration: 2000,             
-          easing: 'easeOutQuart',     
-          from: (ctx) => {
-            if (ctx.type === 'data') {
-                return ctx.chart.scales.y ? ctx.chart.scales.y.getPixelForValue(MC_RESULTS.p50_net[0]) : 0;
-            }
-          }
-        },
-        x: {
-          duration: 1500,
-          easing: 'easeOutQuart'
-        }
+        y: { duration: 2000, easing: 'easeOutQuart', from: (ctx) => { if (ctx.type === 'data') return ctx.chart.scales.y ? ctx.chart.scales.y.getPixelForValue(MC_RESULTS.p50_net[0]) : 0; } },
+        x: { duration: 1500, easing: 'easeOutQuart' }
       };
-
       FAN_CHART = new Chart(ctxF, {
         type: 'line',
         data: {
@@ -1053,7 +974,6 @@ async function exportUltimateXLSX() {
     const p = getP(), rows = ALL_PATHS[CURRENT_TAB], last = rows[rows.length-1], totalW = rows.reduce((a,b)=>a+b.wa,0);
     const wb = new ExcelJS.Workbook();
     const ws = wb.addWorksheet('退休精算報告');
-    
     ws.mergeCells('A1:K1'); 
     const head = ws.getCell('A1'); 
     head.value = `${p.name} 的專屬退休精算報告 (${getTabName(CURRENT_TAB)})`;
@@ -1061,14 +981,11 @@ async function exportUltimateXLSX() {
     head.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1A1D23' } };
     head.alignment = { horizontal: 'center', vertical: 'middle' };
     ws.getRow(1).height = 30;
-
     ws.addRow(['成功率', `${SUCCESS_RATE}%`, '期末淨額', `$${fM(last.net)}萬`, '累計提領', `$${fM(totalW)}萬`, '末年平均月領', `$${fMo(last.wa)}萬`]);
     ws.getRow(2).font = { bold: true };
     ws.addRow([]); 
-
     let startRow = 4;
     const charts = [ { id: 'fanChart', title: '機率分布扇形圖 (P10/P50/P90)', isDark: true }, { id: 'lineChart', title: '戰術執行路徑 (市值/淨資產/月領)', isDark: false } ];
-    
     for (const c of charts) {
         const canv = $(c.id);
         if (canv) {
@@ -1085,28 +1002,20 @@ async function exportUltimateXLSX() {
             startRow += 18;
         }
     }
-
     const tableHeader = ['西元', '歲', '報酬%', '利率%', '市值(萬)', '負債(萬)', '維持率', '備用金(萬)', 'GK狀態', '月領(萬)', '執行動作'];
     const headerRow = ws.getRow(startRow); 
     headerRow.values = tableHeader;
     headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
     headerRow.eachCell(c => c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4F46E5' } });
     startRow++;
-    
     rows.forEach(r => {
         const rateVal = r.currentRate !== undefined ? r.currentRate : 0; 
-        // [V1.9.6] 將 HTML 的 <br> 標籤轉換為 Excel 能讀懂的換行符號 \n
         const opExcel = r.op.replace(/<br>/g, '\n');
-        
         const row = ws.addRow([r.year, r.age, (r.ret*100).toFixed(1)+'%', (rateVal*100).toFixed(1)+'%', parseFloat(r.mv.toFixed(2)), parseFloat(r.debt.toFixed(2)), p.isPledgeEnabled ? (r.mr*100).toFixed(0)+'%' : '—', parseFloat(r.cash.toFixed(2)), getBadgeText(r.gkRule), parseFloat(r.mo.toFixed(2)), opExcel]);
-        
-        // 設定第 11 欄 (執行動作) 允許自動換行
         row.getCell(11).alignment = { wrapText: true, vertical: 'middle' };
-
         const retCell = row.getCell(3); 
         if(r.ret >= 0) retCell.font = { color: { argb: 'FFEF4444' } }; else retCell.font = { color: { argb: 'FF10B981' } };
     });
-    
     startRow = ws.rowCount + 2;
     ws.getCell(`A${startRow}`).value = '📋 專屬診斷報告分析';
     ws.getCell(`A${startRow}`).font = { size: 14, bold: true };
@@ -1114,9 +1023,7 @@ async function exportUltimateXLSX() {
     ws.getCell(`A${startRow+1}`).value = content;
     ws.getCell(`A${startRow+1}`).alignment = { wrapText: true, vertical: 'top' };
     ws.mergeCells(`A${startRow+1}:K${startRow+15}`);
-
     ws.columns = [ { width: 6 }, { width: 5 }, { width: 8 }, { width: 8 }, { width: 12 }, { width: 12 }, { width: 10 }, { width: 12 }, { width: 10 }, { width: 12 }, { width: 45 } ];
-
     const buf = await wb.xlsx.writeBuffer();
     const link = document.createElement('a');
     link.href = URL.createObjectURL(new Blob([buf]));
