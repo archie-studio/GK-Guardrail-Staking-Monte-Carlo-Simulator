@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9.4.2</title>
+<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9.4.3</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -187,7 +187,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9.4.2 made by 阿奇</span></h2>
+    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9.4.3 made by 阿奇</span></h2>
     <div class="hero-desc">
       針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
     </div>
@@ -237,21 +237,27 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             <label>還債模式選擇 <span class="tip" data-tip="牛市獲利優先補滿預備金，剩餘才償債。選『維持率』將自動開啟下方質押引擎。">?</span></label>
             <div class="input-wrap">
                 <select id="repayMode" onchange="updateRepayUI()">
-                    <option value="NONE">不主動還債</option>
-                    <option value="AMOUNT" selected>還債至目標金額</option>
+                    <option value="NONE" selected>不主動還債</option>
+                    <option value="AMOUNT">還債至目標金額</option>
                     <option value="RATIO">還債至目標維持率</option>
                 </select>
             </div>
           </div>
           <div class="field" id="repay-target-wrapper">
-             <div id="repay-amount-input">
+             <div id="repay-none-input" style="display:block;">
+                <label>債務處理目標</label>
+                <div class="input-wrap">
+                    <input type="text" value="僅支付年度利息" disabled style="background:#f3f4f6; color:#6b7280; font-size:13px; font-weight:700; text-align:center;">
+                </div>
+             </div>
+             <div id="repay-amount-input" style="display:none;">
                 <label>目標債務金額</label>
                 <div class="input-wrap"><input type="number" id="repayTargetAmount" value="100" class="has-unit"><span class="input-unit">萬</span></div>
              </div>
              <div id="repay-ratio-input" style="display:none;">
-                <label>同步槓桿目標</label>
+                <label>債務處理目標</label>
                 <div class="input-wrap">
-                    <input type="text" value="已同步下方質押設定" disabled style="background:#f3f4f6; color:#6b7280; font-size:12px; font-weight:700; text-align:center;">
+                    <input type="text" value="同步下方引擎設定" disabled style="background:#f3f4f6; color:#6b7280; font-size:13px; font-weight:700; text-align:center;">
                 </div>
              </div>
           </div>
@@ -474,7 +480,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9.4.2 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9.4.3 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -505,12 +511,22 @@ function updateWithdrawUI() {
     $('fixed-rate-input').style.display = (mode === 'FIXED') ? 'block' : 'none';
 }
 
+/* [V1.9.4.3] 動態文字框切換與防呆連動邏輯 */
 function updateRepayUI() {
     const mode = $('repayMode').value;
-    $('repay-amount-input').style.display = (mode === 'AMOUNT') ? 'block' : 'none';
-    $('repay-ratio-input').style.display = (mode === 'RATIO') ? 'block' : 'none';
     
-    if (mode === 'RATIO') {
+    // 隱藏所有第四格的選項
+    $('repay-none-input').style.display = 'none';
+    $('repay-amount-input').style.display = 'none';
+    $('repay-ratio-input').style.display = 'none';
+    
+    if (mode === 'NONE') {
+        $('repay-none-input').style.display = 'block';
+    } else if (mode === 'AMOUNT') {
+        $('repay-amount-input').style.display = 'block';
+    } else if (mode === 'RATIO') {
+        $('repay-ratio-input').style.display = 'block';
+        // 如果選擇了維持率，強制開啟質押引擎
         const pledgeToggle = $('isPledgeEnabled');
         if (!pledgeToggle.checked) {
             pledgeToggle.checked = true;
@@ -556,7 +572,7 @@ window.onload = function() {
   $('isWithdrawLogicEnabled').checked = false; 
   updateEngineUI(); 
   updateWithdrawUI();
-  updateRepayUI(); 
+  updateRepayUI(); // 確保第四格正確顯示
   updateRateUI();
   updateMRUI();
   generateDynamicGrids();
@@ -690,7 +706,6 @@ function simPath(p, overrides) {
       if(ret < 0 && cash > 0 && p.isWithdrawEnabled) {
           let bailout = Math.min(cash, wa); cash -= bailout; wa -= bailout; mv -= wa; opStr = "🛡️ 股市回檔，消耗預備金。";
       } else { if (opStr === "") opStr = p.isWithdrawEnabled ? "✅ 正常提領。" : "✅ 靜態複利。"; }
-      // [V1.9.4.2 修正] 將 currentRate 正確傳入，不論是否啟用質押，都確保屬性存在以避免顯示錯亂
       rows.push({ y, year: p.startYear + y - 1, age: p.startAge + y, ret, mv, debt, cash, mr: 999, wa, mo: wa/12, gkRule, op: opStr, net: mv - debt, currentRate: 0 });
     }
   }
@@ -1012,7 +1027,6 @@ async function exportUltimateXLSX() {
     startRow++;
     
     rows.forEach(r => {
-        // [V1.9.4.2 修正] 確保 XLSX 中的利率也直接使用 r.currentRate 渲染
         const rateVal = r.currentRate !== undefined ? r.currentRate : 0; 
         const row = ws.addRow([r.year, r.age, (r.ret*100).toFixed(1)+'%', (rateVal*100).toFixed(1)+'%', parseFloat(r.mv.toFixed(2)), parseFloat(r.debt.toFixed(2)), p.isPledgeEnabled ? (r.mr*100).toFixed(0)+'%' : '—', parseFloat(r.cash.toFixed(2)), getBadgeText(r.gkRule), parseFloat(r.mo.toFixed(2)), r.op]);
         const retCell = row.getCell(3); 
