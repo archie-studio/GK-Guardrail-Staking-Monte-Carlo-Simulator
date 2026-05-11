@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9.4.6</title>
+<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9.6</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -139,7 +139,7 @@ th:nth-child(7), td:nth-child(7) { width: 7.5%; }
 th:nth-child(8), td:nth-child(8) { width: 8.5%; } 
 th:nth-child(9), td:nth-child(9) { width: 6.5%; } 
 th:nth-child(10), td:nth-child(10) { width: 9%; } 
-th:nth-child(11), td:nth-child(11) { width: 28%; white-space: normal; line-height: 1.2; font-size: 12px; }
+th:nth-child(11), td:nth-child(11) { width: 28%; white-space: normal; line-height: 1.6; font-size: 12px; }
 
 /* BADGES */
 .gk-badge { font-family: 'Noto Sans TC', sans-serif; font-weight: 700; font-size: 10px; padding: 3px 6px; border-radius: 4px; display: inline-block; }
@@ -187,7 +187,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9.4.6 made by 阿奇</span></h2>
+    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9.6 made by 阿奇</span></h2>
     <div class="hero-desc">
       針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
     </div>
@@ -227,11 +227,11 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
         <div class="inputs-row" style="margin-bottom: 20px;">
           <div class="field">
             <label>股票市值 (退休資產總值)</label>
-            <div class="input-wrap"><input type="number" id="mv" value="1600" class="has-unit"><span class="input-unit">萬</span></div>
+            <div class="input-wrap"><input type="number" id="mv" value="1300" class="has-unit"><span class="input-unit">萬</span></div>
           </div>
           <div class="field">
             <label>目前負債 (質押金額)</label>
-            <div class="input-wrap"><input type="number" id="debt" value="500" class="has-unit"><span class="input-unit">萬</span></div>
+            <div class="input-wrap"><input type="number" id="debt" value="300" class="has-unit"><span class="input-unit">萬</span></div>
           </div>
           <div class="field">
             <label>還債模式選擇 <span class="tip" data-tip="牛市獲利優先補滿預備金，剩餘才償債。選『維持率』將自動開啟下方質押引擎。">?</span></label>
@@ -273,7 +273,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
         <div class="inputs-row">
           <div class="field">
             <label>預期年化報酬率</label>
-            <div class="input-wrap"><input type="number" id="returnRate" value="8.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
+            <div class="input-wrap"><input type="number" id="returnRate" value="10.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
           </div>
           <div class="field">
             <label>現金備用金 <span class="tip" data-tip="股災時優先動用的桶金。">?</span></label>
@@ -333,18 +333,18 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
                 </div>
                 <div class="field">
                     <label>最高月薪上限</label>
-                    <div class="input-wrap"><input type="number" id="maxCeiling" value="20.0" step="1.0" class="has-unit"><span class="input-unit">萬</span></div>
+                    <div class="input-wrap"><input type="number" id="maxCeiling" value="10.0" step="1.0" class="has-unit"><span class="input-unit">萬</span></div>
                 </div>
              </div>
 
              <div id="gk-params" style="margin-top: 20px;">
                 <div class="inputs-row">
-                  <div class="field"><label>初始提領率 (%)</label><div class="input-wrap"><input type="number" id="initWithdrawRate" value="5.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
+                  <div class="field"><label>初始提領率 (%)</label><div class="input-wrap"><input type="number" id="initWithdrawRate" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
                   <div class="field"><label>上限護欄 (保本)</label><div class="input-wrap"><input type="number" id="upperGuard" value="6.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
                   <div class="field"><label>下限護欄 (繁榮)</label><div class="input-wrap"><input type="number" id="lowerGuard" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
                   <div class="field">
                     <label>免死金牌年數 <span class="tip" data-tip="退休後期的安全網。少於此值時不執行強制減薪。">?</span></label>
-                    <div class="input-wrap"><input type="number" id="lateLifeYears" value="15" class="has-unit"><span class="input-unit">年</span></div>
+                    <div class="input-wrap"><input type="number" id="lateLifeYears" value="5" class="has-unit"><span class="input-unit">年</span></div>
                   </div>
                 </div>
              </div>
@@ -361,7 +361,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
           <div class="engine-content" id="pledge-content">
             <div style="display: flex; gap: 36px; margin-bottom: 20px; flex-wrap: wrap;">
               <label style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px; cursor:pointer; color:#374151;">
-                <div class="sw"><input type="checkbox" id="preDeduct"><span class="sw-track"></span></div> 預扣一年利息
+                <div class="sw"><input type="checkbox" id="preDeduct" checked><span class="sw-track"></span></div> 預扣一年利息
               </label>
               <label id="reinvest-label" style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px; cursor:pointer; color:#374151;">
                 <div class="sw"><input type="checkbox" id="reinvest" checked><span class="sw-track"></span></div> 達標增貸再投入
@@ -385,18 +385,18 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
                 <div id="rate-fixed-ui" class="inputs-row">
                     <div class="field">
                         <label>質借年利率 (%)</label>
-                        <div class="input-wrap"><input type="number" id="pledgeRate" value="2.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
+                        <div class="input-wrap"><input type="number" id="pledgeRate" value="3.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
                     </div>
                 </div>
 
                 <div id="rate-pegged-ui" class="inputs-row" style="display:none;">
                     <div class="field">
                         <label>基礎利率</label>
-                        <div class="input-wrap"><input type="number" id="rateBase" value="2.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
+                        <div class="input-wrap"><input type="number" id="rateBase" value="3.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
                     </div>
                     <div class="field">
                         <label>利率下限 (Floor)</label>
-                        <div class="input-wrap"><input type="number" id="rateFloor" value="1.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
+                        <div class="input-wrap"><input type="number" id="rateFloor" value="2.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
                     </div>
                     <div class="field">
                         <label>利率上限 (Cap)</label>
@@ -487,7 +487,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9.4.6 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9.6 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -521,6 +521,7 @@ function updateWithdrawUI() {
 function updateRepayUI() {
     const mode = $('repayMode').value;
     
+    // 隱藏所有第四格的選項
     $('repay-placeholder-input').style.display = 'none';
     $('repay-none-input').style.display = 'none';
     $('repay-amount-input').style.display = 'none';
@@ -641,7 +642,6 @@ function simPath(p, overrides) {
   let wa = p.isWithdrawEnabled ? (p.withdrawMode === 'GK' ? mv * p.initWithdrawRate : mv * p.fixedWR) : 0;
   let rows = [], minMR = 999, protectCount = 0;
   
-  // [V1.9.4.6] 定義買借死終極駭客條件
   let isBBD = (p.isPledgeEnabled && p.isWithdrawEnabled && p.withdrawMode === 'FIXED' && p.fixedWR === 0);
   
   if (!p.isPledgeEnabled && debt > 0) { mv -= debt; debt = 0; }
@@ -677,31 +677,28 @@ function simPath(p, overrides) {
         wa = Math.max(p.survivalFloor * 12, Math.min(p.maxCeiling * 12, wa));
     }
 
-    let opStr = "", interest = debt * currentPledgeRate, cashNeed = wa + interest;
+    let ops = []; // [V1.9.6 修正] 改用陣列處理文字分行
+    let interest = debt * currentPledgeRate, cashNeed = wa + interest;
     let currentYearTargetMR = (p.mrMode === 'custom' && p.customMRs[y-1] !== null ? p.customMRs[y-1]/100 : p.targetMR);
 
     if (p.isPledgeEnabled) {
       let bbdTriggered = false;
 
-      // [V1.9.4.6] 1. 攔截 BBD (買借死) 邏輯：全額借款支付生活費與利息
       if (isBBD) {
           let projectedMR = (debt + cashNeed) > 0 ? mv / (debt + cashNeed) : 9999;
-          // 只要借出來之後，維持率還在危險紅線之上，銀行就會借你
           if (projectedMR >= p.dangerMR) {
               debt += cashNeed;
-              cashNeed = 0; // 帳單已被借款結清
+              cashNeed = 0; 
               bbdTriggered = true;
           } else {
-              opStr = "⚠️ 額度告急，暫停買借死。";
+              ops.push("⚠️ 額度告急，暫停買借死。");
           }
       }
 
-      // 2. 原本的牛市獲利處理 (回補與還債)
-      // 注意：如果是買借死模式，我們不主動賣股來還債或補現金，所以跳過。
       if (ret > 0 && !bbdTriggered) {
           let surplus = (mv - wa - interest);
           let refill = Math.min(surplus, Math.max(0, p.cashMax - cash));
-          if (refill > 0) { cash += refill; mv -= refill; surplus -= refill; opStr += `♻️ 回補預備金(+${fM(refill)})。`; }
+          if (refill > 0) { cash += refill; mv -= refill; surplus -= refill; ops.push(`♻️ 回補預備金(+${fM(refill)})。`); }
           
           let repayAmount = 0;
           if (p.repayMode === 'AMOUNT' && debt > p.repayTargetAmount) {
@@ -718,49 +715,50 @@ function simPath(p, overrides) {
               let payDebt = Math.min(repayAmount, debt); 
               debt -= payDebt; 
               mv -= payDebt; 
-              opStr += ` 償債(-${fM(payDebt)})。`; 
+              ops.push(`償債(-${fM(payDebt)})。`); 
           }
       }
       
-      // 3. 處理剩餘的 cashNeed (如果 BBD 啟動失敗，或是根本沒啟動)
       if (cashNeed > 0) {
           let postSellMR = debt > 0 ? (mv - cashNeed) / debt : 999;
           if ((postSellMR < p.dangerMR || ret < 0) && cash > 0) {
-            let bailout = Math.min(cash, cashNeed); cash -= bailout; cashNeed -= bailout; mv -= cashNeed; opStr += " 🛡️ 觸發防禦，動用預備金。";
+            let bailout = Math.min(cash, cashNeed); cash -= bailout; cashNeed -= bailout; mv -= cashNeed; ops.push("🛡️ 觸發防禦，動用預備金。");
           } else {
             mv -= cashNeed;
           }
       } else if (bbdTriggered) {
-          opStr += " 💳 買借死：全額增貸付息與生活。";
+          ops.push("💳 買借死：全額增貸付息與生活。");
       }
       
-      // 4. 達標增貸再投入 (無縫銜接)
       let curMR = debt > 0 ? mv / debt : 9999;
       if (p.reinvest && (p.repayMode === 'NONE' || p.repayMode === 'RATIO') && curMR > currentYearTargetMR) {
           let borrow = (mv - currentYearTargetMR * debt) / (currentYearTargetMR - 1 + (p.preDeduct ? currentPledgeRate : 0));
           if (borrow > 0) {
               debt += borrow; 
               mv += p.preDeduct ? borrow * (1 - currentPledgeRate) : borrow;
-              opStr += ` 📈 達標進攻，增貸 ${fM(borrow)} 萬。`;
+              ops.push(`📈 達標進攻，增貸 ${fM(borrow)} 萬。`);
           }
-      } else if(opStr === "") opStr = "✅ 正常執行。";
+      }
       
+      if (ops.length === 0) ops.push("✅ 正常執行。");
       let finalMR = debt > 0 ? mv / debt : 999;
-      rows.push({ y, year: p.startYear + y - 1, age: p.startAge + y, ret, mv, debt, cash, mr: finalMR, wa, mo: wa/12, gkRule, op: opStr, net: mv - debt, currentRate: currentPledgeRate });
+      rows.push({ y, year: p.startYear + y - 1, age: p.startAge + y, ret, mv, debt, cash, mr: finalMR, wa, mo: wa/12, gkRule, op: ops.join('<br>'), net: mv - debt, currentRate: currentPledgeRate });
     } else {
       if (ret > 0) {
           let surplus = mv - (p.isWithdrawEnabled ? wa : 0); 
           let refill = Math.min(surplus, Math.max(0, p.cashMax - cash));
-          if (refill > 0) { cash += refill; mv -= refill; surplus -= refill; opStr = `♻️ 回補預備金(+${fM(refill)})。`; }
+          if (refill > 0) { cash += refill; mv -= refill; surplus -= refill; ops.push(`♻️ 回補預備金(+${fM(refill)})。`); }
           
           let repayAmount = 0;
           if (p.repayMode === 'AMOUNT' && debt > p.repayTargetAmount) repayAmount = Math.min(surplus, debt - p.repayTargetAmount);
-          if (repayAmount > 0) { let payDebt = Math.min(repayAmount, debt); debt -= payDebt; mv -= payDebt; opStr += ` 償還舊債(-${fM(payDebt)})。`; }
+          if (repayAmount > 0) { let payDebt = Math.min(repayAmount, debt); debt -= payDebt; mv -= payDebt; ops.push(`償還舊債(-${fM(payDebt)})。`); }
       }
       if(ret < 0 && cash > 0 && p.isWithdrawEnabled) {
-          let bailout = Math.min(cash, wa); cash -= bailout; wa -= bailout; mv -= wa; opStr = "🛡️ 股市回檔，消耗預備金。";
-      } else { if (opStr === "") opStr = p.isWithdrawEnabled ? "✅ 正常提領。" : "✅ 靜態複利。"; }
-      rows.push({ y, year: p.startYear + y - 1, age: p.startAge + y, ret, mv, debt, cash, mr: 999, wa, mo: wa/12, gkRule, op: opStr, net: mv - debt, currentRate: 0 });
+          let bailout = Math.min(cash, wa); cash -= bailout; wa -= bailout; mv -= wa; ops.push("🛡️ 股市回檔，消耗預備金。");
+      }
+      
+      if (ops.length === 0) ops.push(p.isWithdrawEnabled ? "✅ 正常提領。" : "✅ 靜態複利。");
+      rows.push({ y, year: p.startYear + y - 1, age: p.startAge + y, ret, mv, debt, cash, mr: 999, wa, mo: wa/12, gkRule, op: ops.join('<br>'), net: mv - debt, currentRate: 0 });
     }
   }
   const last = rows[rows.length-1];
@@ -825,7 +823,6 @@ function generateStory(rows, p) {
   let story = `<p>${getRandomText(openings)}</p>`;
 
   let modeTitle = "", modeIntro = "";
-  // [V1.9.4.6] 新增買借死隱藏文案
   if (p.isPledgeEnabled && p.isWithdrawEnabled && p.withdrawMode === 'FIXED' && p.fixedWR === 0) {
       modeTitle = "【終極買借死模式 (Buy, Borrow, Die)】";
       modeIntro = getRandomText([
@@ -1098,7 +1095,14 @@ async function exportUltimateXLSX() {
     
     rows.forEach(r => {
         const rateVal = r.currentRate !== undefined ? r.currentRate : 0; 
-        const row = ws.addRow([r.year, r.age, (r.ret*100).toFixed(1)+'%', (rateVal*100).toFixed(1)+'%', parseFloat(r.mv.toFixed(2)), parseFloat(r.debt.toFixed(2)), p.isPledgeEnabled ? (r.mr*100).toFixed(0)+'%' : '—', parseFloat(r.cash.toFixed(2)), getBadgeText(r.gkRule), parseFloat(r.mo.toFixed(2)), r.op]);
+        // [V1.9.6] 將 HTML 的 <br> 標籤轉換為 Excel 能讀懂的換行符號 \n
+        const opExcel = r.op.replace(/<br>/g, '\n');
+        
+        const row = ws.addRow([r.year, r.age, (r.ret*100).toFixed(1)+'%', (rateVal*100).toFixed(1)+'%', parseFloat(r.mv.toFixed(2)), parseFloat(r.debt.toFixed(2)), p.isPledgeEnabled ? (r.mr*100).toFixed(0)+'%' : '—', parseFloat(r.cash.toFixed(2)), getBadgeText(r.gkRule), parseFloat(r.mo.toFixed(2)), opExcel]);
+        
+        // 設定第 11 欄 (執行動作) 允許自動換行
+        row.getCell(11).alignment = { wrapText: true, vertical: 'middle' };
+
         const retCell = row.getCell(3); 
         if(r.ret >= 0) retCell.font = { color: { argb: 'FFEF4444' } }; else retCell.font = { color: { argb: 'FF10B981' } };
     });
