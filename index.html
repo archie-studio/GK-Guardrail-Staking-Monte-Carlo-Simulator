@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9.4.4</title>
+<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9.5</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -187,7 +187,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9.4.4 made by 阿奇</span></h2>
+    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9.5 made by 阿奇</span></h2>
     <div class="hero-desc">
       針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
     </div>
@@ -237,14 +237,21 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             <label>還債模式選擇 <span class="tip" data-tip="牛市獲利優先補滿預備金，剩餘才償債。選『維持率』將自動開啟下方質押引擎。">?</span></label>
             <div class="input-wrap">
                 <select id="repayMode" onchange="updateRepayUI()">
-                    <option value="NONE" selected>不主動還債</option>
+                    <option value="" disabled selected>請選擇模式...</option>
+                    <option value="NONE">不主動還債</option>
                     <option value="AMOUNT">還債至目標金額</option>
                     <option value="RATIO">還債至目標維持率</option>
                 </select>
             </div>
           </div>
           <div class="field" id="repay-target-wrapper">
-             <div id="repay-none-input" style="display:block;">
+             <div id="repay-placeholder-input" style="display:block;">
+                <label>債務處理目標</label>
+                <div class="input-wrap">
+                    <input type="text" value="請先選擇處理模式" disabled style="background:#f3f4f6; color:#9ca3af; font-size:13px; font-weight:700; text-align:center;">
+                </div>
+             </div>
+             <div id="repay-none-input" style="display:none;">
                 <label>債務處理目標</label>
                 <div class="input-wrap">
                     <input type="text" value="僅支付年度利息" disabled style="background:#f3f4f6; color:#6b7280; font-size:13px; font-weight:700; text-align:center;">
@@ -347,7 +354,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
         <div id="pledge-card" class="engine-toggle-card card-purple">
           <div class="engine-header" onclick="toggleSwitch('isPledgeEnabled')">
             <label style="font-weight: 800; color: #4f46e5; font-size: 17px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-              🚀 啟動股票質押引擎
+              🚀 啟提股票質押引擎
             </label>
             <div class="sw"><input type="checkbox" id="isPledgeEnabled" onchange="updateEngineUI()"><span class="sw-track"></span></div>
           </div>
@@ -480,7 +487,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9.4.4 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9.5 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -511,14 +518,19 @@ function updateWithdrawUI() {
     $('fixed-rate-input').style.display = (mode === 'FIXED') ? 'block' : 'none';
 }
 
+/* [V1.9.5 修正] 動態文字框切換與空值處理 */
 function updateRepayUI() {
     const mode = $('repayMode').value;
     
+    // 隱藏所有第四格的選項
+    $('repay-placeholder-input').style.display = 'none';
     $('repay-none-input').style.display = 'none';
     $('repay-amount-input').style.display = 'none';
     $('repay-ratio-input').style.display = 'none';
     
-    if (mode === 'NONE') {
+    if (mode === "") {
+        $('repay-placeholder-input').style.display = 'block';
+    } else if (mode === 'NONE') {
         $('repay-none-input').style.display = 'block';
     } else if (mode === 'AMOUNT') {
         $('repay-amount-input').style.display = 'block';
@@ -569,7 +581,7 @@ window.onload = function() {
   $('isWithdrawLogicEnabled').checked = false; 
   updateEngineUI(); 
   updateWithdrawUI();
-  updateRepayUI(); 
+  updateRepayUI(); // 確保第四格正確顯示
   updateRateUI();
   updateMRUI();
   generateDynamicGrids();
@@ -597,7 +609,8 @@ function getP() {
     isWithdrawEnabled: $('isWithdrawLogicEnabled').checked,
     withdrawMode: $('withdrawMode').value,
     fixedWR: parseFloat($('fixedWithdrawRate').value) / 100 || 0,
-    initWithdrawRate: parseFloat($initWithdrawRate.value) / 100 || 0.05,
+    // [V1.9.5 修正] 修正打字錯誤，把 $initWithdrawRate 改回 $('initWithdrawRate')
+    initWithdrawRate: parseFloat($('initWithdrawRate').value) / 100 || 0.05,
     survivalFloor: parseFloat($('survivalFloor').value) || 0,
     maxCeiling: parseFloat($('maxCeiling').value) || 999,
     repayMode: $('repayMode').value,
@@ -951,7 +964,6 @@ function renderCharts(rows, p) {
       if (FAN_CHART) FAN_CHART.destroy();
       const ctxF = $('fanChart').getContext('2d');
       
-      // [V1.9.4.4] 優雅綻放 Bloom 動畫
       const animation = {
         y: {
           duration: 2000,             
