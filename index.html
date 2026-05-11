@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9.4</title>
+<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9.4.1</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -121,7 +121,7 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .analysis-text strong { color: #1a1d23; font-weight: 700; }
 .analysis-text h3 { font-size: 18px; margin-bottom: 10px; color: #4f46e5; font-weight: 800; }
 
-/* 表格優化 */
+/* 表格優化 (修復第11欄被擠壓的Bug) */
 .table-card { background: #fff; border: 1px solid #e8eaed; border-radius: 20px; overflow: hidden; margin-top: 32px; }
 .table-header { padding: 20px 24px; border-bottom: 1px solid #f0f1f3; font-weight: 800; color: #1a1d23; background: #fafafa; font-size: 17px;}
 .table-scroll { width: 100%; overflow: hidden; } 
@@ -129,16 +129,18 @@ table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: f
 th { padding: 12px 6px; text-align: left; background: #f9fafb; color: #4b5563; font-weight: 700; border-bottom: 2px solid #e5e7eb; white-space: nowrap; }
 td { padding: 12px 6px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', monospace; vertical-align: middle; white-space: nowrap; overflow: hidden; }
 
-th:nth-child(1), td:nth-child(1) { width: 4.5%; } 
-th:nth-child(2), td:nth-child(2) { width: 6.5%; } 
-th:nth-child(3), td:nth-child(3) { width: 6.5%; } 
-th:nth-child(4), td:nth-child(4) { width: 9%; } 
-th:nth-child(5), td:nth-child(5) { width: 9%; } 
-th:nth-child(6), td:nth-child(6) { width: 7.5%; } 
-th:nth-child(7), td:nth-child(7) { width: 9%; } 
-th:nth-child(8), td:nth-child(8) { width: 9.5%; } 
-th:nth-child(9), td:nth-child(9) { width: 9%; } 
-th:nth-child(10), td:nth-child(10) { width: 29.5%; white-space: normal; line-height: 1.2; font-size: 12px; }
+/* 重新分配 11 個欄位的寬度 (總和 100%) */
+th:nth-child(1), td:nth-child(1) { width: 5%; }   /* 西元 */
+th:nth-child(2), td:nth-child(2) { width: 4.5%; } /* 歲 */
+th:nth-child(3), td:nth-child(3) { width: 6.5%; } /* 報酬 */
+th:nth-child(4), td:nth-child(4) { width: 6.5%; } /* 利率 */
+th:nth-child(5), td:nth-child(5) { width: 8.5%; } /* 市值 */
+th:nth-child(6), td:nth-child(6) { width: 8.5%; } /* 負債 */
+th:nth-child(7), td:nth-child(7) { width: 7.5%; } /* 維持率 */
+th:nth-child(8), td:nth-child(8) { width: 8.5%; } /* 備用金 */
+th:nth-child(9), td:nth-child(9) { width: 6.5%; } /* GK */
+th:nth-child(10), td:nth-child(10) { width: 9%; } /* 月領 */
+th:nth-child(11), td:nth-child(11) { width: 29%; white-space: normal; line-height: 1.2; font-size: 12px; } /* 執行動作 (移轉換行屬性) */
 
 /* BADGES */
 .gk-badge { font-family: 'Noto Sans TC', sans-serif; font-weight: 700; font-size: 10px; padding: 3px 6px; border-radius: 4px; display: inline-block; }
@@ -186,7 +188,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9.4 made by 阿奇</span></h2>
+    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9.4.1 made by 阿奇</span></h2>
     <div class="hero-desc">
       針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
     </div>
@@ -473,7 +475,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9.4 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9.4.1 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -504,13 +506,11 @@ function updateWithdrawUI() {
     $('fixed-rate-input').style.display = (mode === 'FIXED') ? 'block' : 'none';
 }
 
-/* [V1.9.4 修正] 處理還債模式與質押開關的強制連動 */
 function updateRepayUI() {
     const mode = $('repayMode').value;
     $('repay-amount-input').style.display = (mode === 'AMOUNT') ? 'block' : 'none';
     $('repay-ratio-input').style.display = (mode === 'RATIO') ? 'block' : 'none';
     
-    // 如果選擇了「維持率」，強制開啟第三步的質押引擎
     if (mode === 'RATIO') {
         const pledgeToggle = $('isPledgeEnabled');
         if (!pledgeToggle.checked) {
@@ -574,7 +574,7 @@ function getP() {
 
   return {
     name: nameInput ? nameInput : "您",
-    startYear: parseInt($('startYear').value) || 2026, // [V1.9.4] 新增
+    startYear: parseInt($('startYear').value) || 2026,
     startAge: parseInt($('startAge').value) || 60,
     mv: parseFloat($('mv').value) || 0,
     debt: parseFloat($('debt').value) || 0,
@@ -680,12 +680,10 @@ function simPath(p, overrides) {
       rows.push({ y, year: p.startYear + y - 1, age: p.startAge + y, ret, mv, debt, cash, mr: finalMR, wa, mo: wa/12, gkRule, op: opStr, net: mv - debt, currentRate: currentPledgeRate });
     } else {
       if (ret > 0) {
-          // [V1.9.4] 修正不開質押時的備用金回補邏輯 (拿剩餘的錢回補)
           let surplus = mv - (p.isWithdrawEnabled ? wa : 0); 
           let refill = Math.min(surplus, Math.max(0, p.cashMax - cash));
           if (refill > 0) { cash += refill; mv -= refill; surplus -= refill; opStr = `♻️ 回補預備金(+${fM(refill)})。`; }
           
-          // [V1.9.4] 新增：不開質押但想還債 (情境一：純去槓桿)
           let repayAmount = 0;
           if (p.repayMode === 'AMOUNT' && debt > p.repayTargetAmount) repayAmount = Math.min(surplus, debt - p.repayTargetAmount);
           if (repayAmount > 0) { let payDebt = Math.min(repayAmount, debt); debt -= payDebt; mv -= payDebt; opStr += ` 償還舊債(-${fM(payDebt)})。`; }
@@ -730,7 +728,7 @@ function runSim() {
       p10_net: sims[99].history.map(r => Math.max(0, r.net)),
       p50_net: sims[499].history.map(r => Math.max(0, r.net)),
       p90_net: sims[899].history.map(r => Math.max(0, r.net)),
-      labels: sims[0].history.map(r => r.year + ' (' + r.age + '歲)') // [V1.9.4] 圖表標籤加上年份
+      labels: sims[0].history.map(r => r.year + ' (' + r.age + '歲)') 
     };
     
     ALL_PATHS = { p10: sims[99].history, p25: sims[249].history, p50: sims[499].history, p75: sims[749].history, p90: sims[899].history };
@@ -919,7 +917,7 @@ function renderCharts(rows, p) {
   LINE_CHART = new Chart(ctxL, {
     type: 'line',
     data: {
-      labels: rows.map(r => r.year + ' (' + r.age + '歲)'), // [V1.9.4] 圖表標籤加上年份
+      labels: rows.map(r => r.year + ' (' + r.age + '歲)'),
       datasets: [
         { label: '市值', data: rows.map(r => r.mv), borderColor: '#10b981', fill: true, backgroundColor: 'rgba(16,185,129,0.05)', tension: 0.3, yAxisID: 'y' },
         { label: '淨資產', data: rows.map(r => r.net), borderColor: '#6366f1', tension: 0.3, yAxisID: 'y' },
@@ -974,7 +972,7 @@ async function exportUltimateXLSX() {
     const wb = new ExcelJS.Workbook();
     const ws = wb.addWorksheet('退休精算報告');
     
-    ws.mergeCells('A1:K1'); // [V1.9.4] 因新增年份欄位，擴展至K
+    ws.mergeCells('A1:K1'); 
     const head = ws.getCell('A1'); 
     head.value = `${p.name} 的專屬退休精算報告 (${getTabName(CURRENT_TAB)})`;
     head.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
