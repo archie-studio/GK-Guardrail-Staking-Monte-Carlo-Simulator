@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9.2</title>
+<title>退休金動態提領精算機｜混合戰術沙盒版 V1.9.3</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -89,7 +89,6 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .metric-label { font-size: 13px; color: #9ca3af; margin-bottom: 8px; font-weight: 600; letter-spacing: 0.5px; }
 .metric-value { font-family: 'DM Mono', monospace; font-size: 28px; font-weight: 500; }
 
-/* 風險燈號樣式 */
 .risk-indicator-wrap { display: flex; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
 .risk-light { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); font-size: 13px; font-weight: 500; }
 .dot { width: 10px; height: 10px; border-radius: 50%; }
@@ -111,7 +110,6 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .pie-val-label { font-size: 12px; color: #9ca3af; font-weight: 600; margin-bottom: 4px; }
 .pie-val-num { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 700; margin-bottom: 6px; }
 
-/* [V1.9] 黑卡專屬圖表容器 */
 .dark-chart-container { margin: 30px 0; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); height: 350px; position: relative; }
 .dark-chart-title { position: absolute; top: 20px; left: 24px; color: #fff; font-size: 14px; font-weight: 700; z-index: 10; opacity: 0.8; letter-spacing: 1px;}
 
@@ -188,7 +186,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>退休金動態提領精算機</h1>
-    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9.2 made by 阿奇</span></h2>
+    <h2>- 含蒙地卡羅模擬與混合質押策略 - <span class="version-tag">ver 1.9.3 made by 阿奇</span></h2>
     <div class="hero-desc">
       針對「防禦時賣股，進攻時質押」的終極混合打法進行壓力測試。
     </div>
@@ -260,14 +258,14 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
       <div class="param-section">
         <div class="section-label">📉 第三步：退休金方式</div>
         
-        <div id="withdraw-logic-card" class="engine-toggle-card card-purple active">
+        <div id="withdraw-logic-card" class="engine-toggle-card card-purple">
           <div class="engine-header" onclick="toggleSwitch('isWithdrawLogicEnabled')">
             <label style="font-weight: 800; color: #4f46e5; font-size: 17px; display:flex; align-items:center; gap:8px; cursor:pointer;">
               🛡️ 提領邏輯設定
             </label>
-            <div class="sw"><input type="checkbox" id="isWithdrawLogicEnabled" checked onchange="updateEngineUI()"><span class="sw-track"></span></div>
+            <div class="sw"><input type="checkbox" id="isWithdrawLogicEnabled" onchange="updateEngineUI()"><span class="sw-track"></span></div>
           </div>
-          <div class="engine-content" id="withdraw-logic-content" style="display:block;">
+          <div class="engine-content" id="withdraw-logic-content">
              <div class="inputs-row">
                 <div class="field">
                     <label>提領模式選擇</label>
@@ -456,19 +454,19 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
   <div class="seo-inner">
     <div class="seo-item">
       <h3>📚 退休精算機：核心邏輯指南</h3>
-      <p><strong>1. 為什麼採用 GK 動態提領？</strong><br>比起死板的固定比例，GK 法則能隨市場波動進行「自適應調整」。股市大好時啟動「繁榮加薪」，市場低迷時則執行「保本減薪」。</p>
+      <p><strong>1. 為什麼採用 GK 動態提領？</strong><br>比起死板的固定比例，GK 法則能隨市場波動進行「自適應調整」。股市大好時啟動「繁榮加薪」，市場低迷時則執行「保本減薪」，透過動態護欄平衡資產長青與生活尊嚴。</p>
     </div>
     <div class="seo-item">
-      <p><strong>2. 退休戰術的靈活組合</strong><br>透過模組化開關，您可以自由定義出金順序。無論是追求一股不賣的「借貸退休」，或是穩健的「混合防禦策略」。</p>
+      <p><strong>2. 退休戰術的靈活組合</strong><br>透過模組化開關，您可以自由定義出金順序。無論是追求一股不賣的「借貸退休」，或是穩健的「混合防禦策略」，系統都能精準計算利息負債、通膨侵蝕與資產複利之間的動態平衡。</p>
     </div>
     <div class="seo-item">
-      <p><strong>3. 蒙地卡羅 1000 次壓力測試</strong><br>成功的定義不只是資產大於零，必須同時通過<strong>淨值安全、不被斷頭、維持基本尊嚴（生存底線）</strong>這三道紅線才算過關。</p>
+      <p><strong>3. 蒙地卡羅 1000 次壓力測試</strong><br>市場報酬並非直線。系統模擬千種極端路徑（如開局海嘯、滯脹情境）。成功的定義不只是資產大於零，必須同時通過<strong>淨值安全、不被斷頭、維持基本尊嚴（生存底線）</strong>這三道紅線才算過關。</p>
     </div>
   </div>
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9.2 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · 退休精算系統 Ver 1.9.3 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -555,6 +553,7 @@ function generateDynamicGrids() {
 }
 
 window.onload = function() { 
+  // [V1.9.3] 確保預設狀態為收合
   $('isPledgeEnabled').checked = false;
   $('mc-toggle').checked = false;
   $('isWithdrawLogicEnabled').checked = false; 
@@ -717,7 +716,7 @@ function runSim() {
       if (res.failType.survivalFail) RISK_STATS.survival++;
     }
     sims.sort((a,b) => a.finalNet - b.finalNet);
-    SUCCESS_RATE = (success / 1000) * 100;
+    SUCCESS_RATE = (success / 10).toFixed(1);
     RISK_STATS.bankrupt = (RISK_STATS.bankrupt/10).toFixed(1);
     RISK_STATS.marginCall = (RISK_STATS.marginCall/10).toFixed(1);
     RISK_STATS.survival = (RISK_STATS.survival/10).toFixed(1);
@@ -741,6 +740,7 @@ function getRandomText(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
+/* [V1.9.3] 完整保留動態文本引擎 */
 function generateStory(rows, p) {
   const last = rows[rows.length-1]; 
   const nameStr = p.name === "您" ? "您" : p.name;
@@ -798,7 +798,7 @@ function generateStory(rows, p) {
   if (ceil_years.length > 0) {
       events.push(getRandomText([
           `<strong>最高月薪上限：</strong>值得擊掌！${nameCall}，您的資產在 <strong>${ceil_years[0]} 歲</strong> 時衝破雲霄，觸發了月薪上限，成功為未來留下了更多種子。`,
-          `<strong>繁榮鎖利：</strong>恭喜！在 <strong>${ceil_years[0]} 歲</strong> 的大牛市中，系統成功為 ${nameStr} 踩下煞車，防止過度揮霍。`
+          `<strong>繁榮鎖利：</strong>恭喜！在 <strong>${ceil_years[0]} 歲</strong> 的大牛市中，系統成功為 ${nameStr} 踩下煞車，防止過度揮耗。`
       ]));
   }
   if (cash_years.length > 0) {
@@ -897,7 +897,7 @@ function renderDashboard() {
       </div>
 
       <div class="export-wrap" style="margin-top:24px; text-align:center;">
-        <button class="btn-primary" style="background:#059669; padding:15px; font-size:16px; width:auto; padding-left: 30px; padding-right: 30px;" onclick="exportUltimateXLSX()">💎 匯出 XLSX 終極全圖文報表</button>
+        <button class="btn-primary" style="background:#059669; padding:15px; font-size:16px; width:auto; padding-left: 30px; padding-right: 30px;" onclick="exportUltimateXLSX()">匯出 XLSX 全圖文報表</button>
       </div>
     </div>
   `;
@@ -935,7 +935,6 @@ function renderCharts(rows, p) {
   if (p.mc && MC_RESULTS) {
       if (FAN_CHART) FAN_CHART.destroy();
       const ctxF = $('fanChart').getContext('2d');
-      
       const totalDuration = 2000;
       const delayBetweenPoints = totalDuration / MC_RESULTS.labels.length;
       const previousY = (ctx) => ctx.index === 0 ? ctx.chart.scales.y.getPixelForValue(100) : ctx.chart.getDatasetMeta(ctx.datasetIndex).data[ctx.index - 1].getProps(['y'], true).y;
@@ -950,105 +949,58 @@ function renderCharts(rows, p) {
         data: {
           labels: MC_RESULTS.labels,
           datasets: [
-            { 
-              label: '樂觀 P90', 
-              data: MC_RESULTS.p90_net, 
-              borderColor: 'rgba(99, 102, 241, 0.4)', 
-              borderWidth: 1,
-              tension: 0.4, 
-              pointRadius: 0,
-              fill: '+1', 
-              backgroundColor: 'rgba(99, 102, 241, 0.15)'
-            },
-            { 
-              label: '中位數 P50', 
-              data: MC_RESULTS.p50_net, 
-              borderColor: '#fff', 
-              borderWidth: 2,
-              tension: 0.4, 
-              pointRadius: 0,
-              shadowBlur: 10,
-              shadowColor: '#fff'
-            },
-            { 
-              label: '悲觀 P10', 
-              data: MC_RESULTS.p10_net, 
-              borderColor: 'rgba(239, 68, 68, 0.4)', 
-              borderWidth: 1,
-              tension: 0.4, 
-              pointRadius: 0,
-              fill: '-1', 
-              backgroundColor: 'rgba(239, 68, 68, 0.15)'
-            }
+            { label: '樂觀 P90', data: MC_RESULTS.p90_net, borderColor: 'rgba(99, 102, 241, 0.4)', borderWidth: 1, tension: 0.4, pointRadius: 0, fill: '+1', backgroundColor: 'rgba(99, 102, 241, 0.15)' },
+            { label: '中位數 P50', data: MC_RESULTS.p50_net, borderColor: '#fff', borderWidth: 2, tension: 0.4, pointRadius: 0, shadowBlur: 10, shadowColor: '#fff' },
+            { label: '悲觀 P10', data: MC_RESULTS.p10_net, borderColor: 'rgba(239, 68, 68, 0.4)', borderWidth: 1, tension: 0.4, pointRadius: 0, fill: '-1', backgroundColor: 'rgba(239, 68, 68, 0.15)' }
           ]
         },
         options: { 
-            responsive: true, 
-            maintainAspectRatio: false,
-            animation,
+            responsive: true, maintainAspectRatio: false, animation,
             interaction: { mode: 'index', intersect: false },
-            plugins: { 
-                legend: { display: false },
-                tooltip: { backgroundColor: 'rgba(0,0,0,0.8)', titleColor: '#fff', bodyColor: '#ccc' }
-            },
-            scales: { 
-                x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } },
-                y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }
-            }
+            plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(0,0,0,0.8)', titleColor: '#fff', bodyColor: '#ccc' } },
+            scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } } }
         }
       });
   }
 }
 
-/* [V1.9.2] 核心：終極 XLSX 匯出引擎 */
 async function exportUltimateXLSX() {
     const p = getP(), rows = ALL_PATHS[CURRENT_TAB], last = rows[rows.length-1], totalW = rows.reduce((a,b)=>a+b.wa,0);
     const wb = new ExcelJS.Workbook();
     const ws = wb.addWorksheet('退休精算報告');
     
-    // 1. 設置標題
     ws.mergeCells('A1:J1');
     const head = ws.getCell('A1'); 
-    head.value = `${p.name} 的專屬退休精算終極報告 (${getTabName(CURRENT_TAB)})`;
+    head.value = `${p.name} 的專屬退休精算報告 (${getTabName(CURRENT_TAB)})`;
     head.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
     head.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1A1D23' } };
     head.alignment = { horizontal: 'center', vertical: 'middle' };
     ws.getRow(1).height = 30;
 
-    // 2. 關鍵數據指標
     ws.addRow(['成功率', `${SUCCESS_RATE}%`, '期末淨額', `$${fM(last.net)}萬`, '累計提領', `$${fM(totalW)}萬`, '末年平均月領', `$${fMo(last.wa)}萬`]);
     ws.getRow(2).font = { bold: true };
     ws.addRow([]); 
 
-    // 3. 圖表截圖嵌入 (自動補黑白底色防隱形)
     let startRow = 4;
-    const charts = [ 
-        { id: 'fanChart', title: '機率分布扇形圖 (P10/P50/P90)', isDark: true }, 
-        { id: 'lineChart', title: '戰術執行路徑 (市值/淨資產/月領)', isDark: false } 
-    ];
+    const charts = [ { id: 'fanChart', title: '機率分布扇形圖 (P10/P50/P90)', isDark: true }, { id: 'lineChart', title: '戰術執行路徑 (市值/淨資產/月領)', isDark: false } ];
     
     for (const c of charts) {
         const canv = $(c.id);
         if (canv) {
             ws.getCell(`A${startRow}`).value = `【${c.title}】`;
             ws.getCell(`A${startRow}`).font = { bold: true, color: { argb: 'FF4F46E5' } };
-            
-            // 創建暫存 Canvas 填滿背景色
             const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = canv.width;
-            tempCanvas.height = canv.height;
+            tempCanvas.width = canv.width; tempCanvas.height = canv.height;
             const ctx = tempCanvas.getContext('2d');
             ctx.fillStyle = c.isDark ? '#1a1d23' : '#ffffff';
             ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
             ctx.drawImage(canv, 0, 0);
-            
             const imgId = wb.addImage({ base64: tempCanvas.toDataURL('image/png'), extension: 'png' });
             ws.addImage(imgId, { tl: { col: 0, row: startRow }, ext: { width: 680, height: 320 } });
             startRow += 18;
         }
     }
 
-    // 4. 明細表格寫入與排版
     const tableHeader = ['歲', '報酬%', '利率%', '市值(萬)', '負債(萬)', '維持率', '備用金(萬)', 'GK狀態', '月領(萬)', '執行動作'];
     const headerRow = ws.getRow(startRow); 
     headerRow.values = tableHeader;
@@ -1058,24 +1010,11 @@ async function exportUltimateXLSX() {
     
     rows.forEach(r => {
         const rateVal = r.currentRate !== undefined ? r.currentRate : r.rate; 
-        const row = ws.addRow([
-            r.age, 
-            (r.ret*100).toFixed(1)+'%', 
-            (rateVal*100).toFixed(1)+'%', 
-            parseFloat(r.mv.toFixed(2)), 
-            parseFloat(r.debt.toFixed(2)), 
-            p.isPledgeEnabled ? (r.mr*100).toFixed(0)+'%' : '—', 
-            parseFloat(r.cash.toFixed(2)), 
-            getBadgeText(r.gkRule), 
-            parseFloat(r.mo.toFixed(2)), 
-            r.op
-        ]);
+        const row = ws.addRow([r.age, (r.ret*100).toFixed(1)+'%', (rateVal*100).toFixed(1)+'%', parseFloat(r.mv.toFixed(2)), parseFloat(r.debt.toFixed(2)), p.isPledgeEnabled ? (r.mr*100).toFixed(0)+'%' : '—', parseFloat(r.cash.toFixed(2)), getBadgeText(r.gkRule), parseFloat(r.mo.toFixed(2)), r.op]);
         const retCell = row.getCell(2); 
-        if(r.ret >= 0) retCell.font = { color: { argb: 'FFEF4444' } }; // 台股習慣：正報酬為紅色
-        else retCell.font = { color: { argb: 'FF10B981' } }; // 負報酬為綠色
+        if(r.ret >= 0) retCell.font = { color: { argb: 'FFEF4444' } }; else retCell.font = { color: { argb: 'FF10B981' } };
     });
     
-    // 5. 專屬分析文本寫入
     startRow = ws.rowCount + 2;
     ws.getCell(`A${startRow}`).value = '📋 專屬診斷報告分析';
     ws.getCell(`A${startRow}`).font = { size: 14, bold: true };
@@ -1084,17 +1023,12 @@ async function exportUltimateXLSX() {
     ws.getCell(`A${startRow+1}`).alignment = { wrapText: true, vertical: 'top' };
     ws.mergeCells(`A${startRow+1}:J${startRow+15}`);
 
-    // 6. 調整欄寬
-    ws.columns = [
-      { width: 5 }, { width: 8 }, { width: 8 }, { width: 12 }, { width: 12 }, 
-      { width: 10 }, { width: 12 }, { width: 10 }, { width: 12 }, { width: 45 }
-    ];
+    ws.columns = [ { width: 5 }, { width: 8 }, { width: 8 }, { width: 12 }, { width: 12 }, { width: 10 }, { width: 12 }, { width: 10 }, { width: 12 }, { width: 45 } ];
 
-    // 觸發下載
     const buf = await wb.xlsx.writeBuffer();
     const link = document.createElement('a');
     link.href = URL.createObjectURL(new Blob([buf]));
-    link.download = `退休精算終極報告_${p.name}_${new Date().toLocaleDateString()}.xlsx`;
+    link.download = `退休精算報告_${p.name}_${new Date().toLocaleDateString()}.xlsx`;
     link.click();
 }
 </script>
