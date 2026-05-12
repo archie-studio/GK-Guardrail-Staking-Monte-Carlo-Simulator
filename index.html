@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIRE 退休財富計算機｜Ver 1.9.6.2 (資安強化版)</title>
+<title>FIRE 退休財富計算機｜Ver 2.0.0 跨週期動態管理版</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -23,8 +23,8 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 /* ===== HERO ===== */
 .hero { background: #fff; border-bottom: 1px solid #e8eaed; padding: 60px 16px; text-align: center; }
 .hero-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
-.hero h1 { font-size: clamp(36px, 8vw, 52px); font-weight: 800; color: #1a1d23; margin-bottom: 12px; letter-spacing: -1.5px; }
-.hero h2 { font-size: 20px; font-weight: 600; color: #a78bfa; margin-bottom: 16px; display: flex; align-items: center; gap: 14px; text-align: center; }
+.hero h1 { font-size: clamp(32px, 6vw, 48px); font-weight: 800; color: #1a1d23; margin-bottom: 12px; letter-spacing: -1px; }
+.hero h2 { font-size: 18px; font-weight: 600; color: #a78bfa; margin-bottom: 16px; display: flex; align-items: center; gap: 14px; text-align: center; }
 .version-tag { font-size: 14px; color: #9ca3af; font-weight: 500; background: #f3f4f6; padding: 4px 14px; border-radius: 20px; border: 1px solid #e5e7eb; }
 .hero-desc { color: #6b7280; font-size: 16px; max-width: 800px; margin: 0 auto; line-height: 1.8; }
 
@@ -46,14 +46,10 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 @media (max-width: 480px) { .inputs-row { grid-template-columns: 1fr; } }
 
 .field label { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #6b7280; margin-bottom: 8px; }
-.input-wrap { position: relative; width: 100%; }
 .input-wrap input, .input-wrap select { width: 100%; border: 1.5px solid #e8eaed; border-radius: 10px; padding: 10px 14px; font-size: 15px; font-family: 'DM Mono', 'Noto Sans TC', sans-serif; outline: none; transition: .2s; background: #fff; appearance: none; }
 .input-wrap input.has-unit { padding-right: 38px; }
 .input-wrap input:focus, .input-wrap select:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.12); }
 .input-unit { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #9ca3af; pointer-events: none; }
-
-.dynamic-reveal { animation: slideDown 0.3s ease-out forwards; }
-@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ENGINE TOGGLE CARDS */
 .engine-toggle-card { background: #f9fafb; border: 1.5px solid #e8eaed; border-radius: 16px; padding: 20px; margin-bottom: 20px; transition: .3s; }
@@ -187,7 +183,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>FIRE 退休財富計算機</h1>
-    <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 - <span class="version-tag">ver 1.9.6.2 made by 阿奇</span></h2>
+    <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 - <span class="version-tag">ver 2.0.0 made by 阿奇</span></h2>
     <div class="hero-desc">
       「牛市鎖利增貸、熊市現金防禦、買借死傳承」打造的全天候財富沙盒，<br>透過 1000 次極端市場模擬，精算全方面抗通膨戰術。
     </div>
@@ -203,7 +199,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
         <div class="section-label">👤 第一步：建立個人檔案與退休目標</div>
         <div class="inputs-row">
           <div class="field">
-            <label>您的稱呼 <span class="tip" data-tip="若留白，報告將以『空白』為稱呼。">?</span></label>
+            <label>您的稱呼 <span class="tip" data-tip="預防 XSS：所有輸入將被過濾為純文字。">?</span></label>
             <div class="input-wrap"><input type="text" id="userName" placeholder="預設: 您"></div>
           </div>
           <div class="field">
@@ -234,7 +230,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             <div class="input-wrap"><input type="number" id="debt" value="300" class="has-unit"><span class="input-unit">萬</span></div>
           </div>
           <div class="field">
-            <label>還債模式選擇 <span class="tip" data-tip="牛市獲利優先補滿預備金，剩餘才償債。選『維持率』將自動開啟下方質押引擎。">?</span></label>
+            <label>還債模式選擇 <span class="tip" data-tip="牛市獲利優先補滿預備金。若維持率低於目標，將與生活費合併淨額結算一次性賣股。">?</span></label>
             <div class="input-wrap">
                 <select id="repayMode" onchange="updateRepayUI()">
                     <option value="" disabled selected>請選擇模式...</option>
@@ -276,7 +272,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             <div class="input-wrap"><input type="number" id="returnRate" value="10.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
           </div>
           <div class="field">
-            <label>現金備用金 <span class="tip" data-tip="股災時優先動用的桶金。">?</span></label>
+            <label>現金備用金 <span class="tip" data-tip="逆週期防禦：熊市時優先動用的桶金，以規避報酬順序風險。">?</span></label>
             <div class="input-wrap"><input type="number" id="cash" value="150" class="has-unit"><span class="input-unit">萬</span></div>
           </div>
           <div class="field">
@@ -305,41 +301,41 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
         <div id="withdraw-logic-card" class="engine-toggle-card card-purple">
           <div class="engine-header" onclick="toggleSwitch('isWithdrawLogicEnabled')">
             <label style="font-weight: 800; color: #4f46e5; font-size: 17px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-              🛡️ 提領邏輯設定
+              🛡️ 提領預算核算 (GK 引擎)
             </label>
             <div class="sw"><input type="checkbox" id="isWithdrawLogicEnabled" onchange="updateEngineUI()"><span class="sw-track"></span></div>
           </div>
           <div class="engine-content" id="withdraw-logic-content">
              <div class="inputs-row">
                 <div class="field">
-                    <label>提領模式選擇</label>
+                    <label>預算核算模式</label>
                     <div class="input-wrap">
                         <select id="withdrawMode" onchange="updateWithdrawUI()">
-                            <option value="GK">GK 動態護欄提領</option>
-                            <option value="FIXED">固定比例提領 (%)</option>
+                            <option value="GK">GK 動態護欄 (智能加減薪)</option>
+                            <option value="FIXED">固定比例 (傳統 FIRE)</option>
                         </select>
                     </div>
                 </div>
                 <div id="fixed-rate-input" class="field" style="display:none;">
-                    <label>年度固定提領 (%)</label>
+                    <label>年度預算比例 (%)</label>
                     <div class="input-wrap"><input type="number" id="fixedWithdrawRate" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
                 </div>
              </div>
 
              <div class="inputs-row" style="margin-top:20px;">
                 <div class="field">
-                    <label>生存底線 (月領)</label>
+                    <label>生存底線 (地板月領)</label>
                     <div class="input-wrap"><input type="number" id="survivalFloor" value="3.0" step="0.1" class="has-unit"><span class="input-unit">萬</span></div>
                 </div>
                 <div class="field">
-                    <label>最高月薪上限</label>
+                    <label>最高月薪 (天花板)</label>
                     <div class="input-wrap"><input type="number" id="maxCeiling" value="10.0" step="1.0" class="has-unit"><span class="input-unit">萬</span></div>
                 </div>
              </div>
 
              <div id="gk-params" style="margin-top: 20px;">
                 <div class="inputs-row">
-                  <div class="field"><label>初始提領率 (%)</label><div class="input-wrap"><input type="number" id="initWithdrawRate" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
+                  <div class="field"><label>初始預算率 (%)</label><div class="input-wrap"><input type="number" id="initWithdrawRate" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
                   <div class="field"><label>上限護欄 (保本)</label><div class="input-wrap"><input type="number" id="upperGuard" value="6.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
                   <div class="field"><label>下限護欄 (繁榮)</label><div class="input-wrap"><input type="number" id="lowerGuard" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
                   <div class="field">
@@ -354,7 +350,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
         <div id="pledge-card" class="engine-toggle-card card-purple">
           <div class="engine-header" onclick="toggleSwitch('isPledgeEnabled')">
             <label style="font-weight: 800; color: #4f46e5; font-size: 17px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-              🚀 啟動股票質押引擎
+              🚀 質押流動性引擎 (優先來源)
             </label>
             <div class="sw"><input type="checkbox" id="isPledgeEnabled" onchange="updateEngineUI()"><span class="sw-track"></span></div>
           </div>
@@ -371,7 +367,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             <div class="vertical-stack">
                 <div class="inputs-row">
                     <div class="field">
-                        <div class="sub-label-header">1. 質借年利率調整模式</div>
+                        <div class="sub-label-header">1. 質借年利率設定</div>
                         <div class="input-wrap">
                             <select id="rateSelect" onchange="updateRateUI()">
                                 <option value="fixed">固定利率</option>
@@ -408,7 +404,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 
                 <div class="inputs-row">
                     <div class="field">
-                        <div class="sub-label-header">2. 維持率設定模式 (兼還債目標)</div>
+                        <div class="sub-label-header">2. 風控邊界 (維持率)</div>
                         <div class="input-wrap">
                             <select id="mrSelect" onchange="updateMRUI()">
                                 <option value="fixed">固定維持率</option>
@@ -443,7 +439,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
         <div id="mc-card" class="engine-toggle-card card-green">
           <div class="engine-header" onclick="toggleSwitch('mc-toggle')">
             <label style="font-weight: 800; color: #16a34a; font-size: 17px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-              🎲 啟用蒙地卡羅模擬（1000 次診斷）
+              🎲 蒙地卡羅模擬 (1000 次診斷)
             </label>
             <div class="sw"><input type="checkbox" id="mc-toggle" onchange="updateEngineUI()"><span class="sw-track"></span></div>
           </div>
@@ -464,7 +460,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
         </div>
       </div>
       
-      <button class="btn-primary" onclick="runSim()">🚀 生成專屬退休精算報告</button>
+      <button class="btn-primary" onclick="runSim()">🚀 生成專業級退休診斷報告</button>
     </div>
   </div>
 
@@ -475,19 +471,19 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
   <div class="seo-inner">
     <div class="seo-item">
       <h3>📚 FIRE 精算機：核心邏輯指南</h3>
-      <p><strong>1. 為什麼採用 GK 動態提領？</strong><br>比起死板的固定比例，GK 法則能隨市場波動進行「自適應調整」。股市大好時啟動「繁榮加薪」，市場低迷時則執行「保本減薪」，透過動態護欄平衡資產長青與生活尊嚴。</p>
+      <p><strong>1. 為何選擇 V2.0 智能結算？</strong><br>傳統計算機只會死板提領，而 V2.0 模擬了專業的資產負債管理。系統會根據市場牛熊動態分流現金來源，確保每一分資金都能發揮最大的複利效應並規避摩擦成本。</p>
     </div>
     <div class="seo-item">
-      <p><strong>2. 退休戰術的靈活組合</strong><br>透過模組化開關，您可以自由定義出金順序。無論是追求一股不賣的「借貸退休」，或是穩健的「混合防禦策略」，系統都能精準計算利息負債、通膨侵蝕與資產複利之間的動態平衡。</p>
+      <p><strong>2. Lombard Defense（質押防禦機制）</strong><br>質押不僅是多頭的加速器，更是空頭的救命傘。在槓桿可控的前提下，透過「流動性橋接」以債支應生活，能避免在股災低點賣出股票，保留反彈時的母本實力。</p>
     </div>
     <div class="seo-item">
-      <p><strong>3. 蒙地卡羅 1000 次壓力測試</strong><br>市場報酬並非直線。系統模擬千種極端路徑（如開局海嘯、滯脹情境）。成功的定義不只是資產大於零，必須同時通過<strong>淨值安全、不被斷頭、維持基本尊嚴（生存底線）</strong>這三道紅線才算過關。</p>
+      <p><strong>3. 報酬順序風險 (SRR)</strong><br>退休初期的大崩盤是所有退休計畫的殺手。透過 GK 動態護欄與現金備用金的雙重屏障，系統能大幅提升在極端情境下的生存機率，實現真正的資產長青。</p>
     </div>
   </div>
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 1.9.6.2 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.0.0 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -495,7 +491,6 @@ const $ = id => document.getElementById(id);
 const fM = n => (Math.round(n * 10) / 10).toLocaleString();
 const fMo = n => (Math.round(n / 12 * 10) / 10).toLocaleString();
 
-// [V1.9.6.2 資安更新] 新增 XSS 基礎防護過濾器
 function escapeHTML(str) {
     return str.replace(/[&<>'"]/g, tag => ({
         '&': '&amp;',
@@ -512,7 +507,7 @@ let CURRENT_TAB = "p50";
 let LINE_CHART = null;
 let PIE_CHART = null;
 let FAN_CHART = null; 
-let RISK_STATS = { bankrupt: 0, marginCall: 0, survival: 0, protectTriggerRatio: 0 };
+let RISK_STATS = { bankrupt: 0, marginCall: 0, survival: 0 };
 let MC_RESULTS = null; 
 
 function toggleSwitch(id) { $(id).click(); }
@@ -531,26 +526,16 @@ function updateWithdrawUI() {
 
 function updateRepayUI() {
     const mode = $('repayMode').value;
-    
-    // 隱藏所有第四格的選項
     $('repay-placeholder-input').style.display = 'none';
     $('repay-none-input').style.display = 'none';
     $('repay-amount-input').style.display = 'none';
     $('repay-ratio-input').style.display = 'none';
-    
-    if (mode === "") {
-        $('repay-placeholder-input').style.display = 'block';
-    } else if (mode === 'NONE') {
-        $('repay-none-input').style.display = 'block';
-    } else if (mode === 'AMOUNT') {
-        $('repay-amount-input').style.display = 'block';
-    } else if (mode === 'RATIO') {
+    if (mode === "") $('repay-placeholder-input').style.display = 'block';
+    else if (mode === 'NONE') $('repay-none-input').style.display = 'block';
+    else if (mode === 'AMOUNT') $('repay-amount-input').style.display = 'block';
+    else if (mode === 'RATIO') {
         $('repay-ratio-input').style.display = 'block';
-        const pledgeToggle = $('isPledgeEnabled');
-        if (!pledgeToggle.checked) {
-            pledgeToggle.checked = true;
-            updateEngineUI();
-        }
+        if (!$('isPledgeEnabled').checked) { $('isPledgeEnabled').checked = true; updateEngineUI(); }
     }
 }
 
@@ -569,249 +554,205 @@ function updateMRUI() {
 
 function generateDynamicGrids() {
     const y = parseInt($('years').value) || 0;
-    const mrGrid = $('custom-mr-grid');
-    const rateGrid = $('custom-rate-grid');
-    mrGrid.innerHTML = '';
-    rateGrid.innerHTML = '';
+    const mrGrid = $('custom-mr-grid'), rateGrid = $('custom-rate-grid');
+    mrGrid.innerHTML = ''; rateGrid.innerHTML = '';
     for(let i=1; i<=y; i++) {
-        const divMr = document.createElement('div');
-        divMr.className = 'dynamic-field';
-        divMr.innerHTML = `<label>Y${i}</label><input type="number" id="custMR_${i}" placeholder="300">`;
-        mrGrid.appendChild(divMr);
-        const divRt = document.createElement('div');
-        divRt.className = 'dynamic-field';
-        divRt.innerHTML = `<label>Y${i}</label><input type="number" id="custRate_${i}" placeholder="3.5">`;
-        rateGrid.appendChild(divRt);
+        const dMr = document.createElement('div'); dMr.className = 'dynamic-field';
+        dMr.innerHTML = `<label>Y${i}</label><input type="number" id="custMR_${i}" placeholder="300">`;
+        mrGrid.appendChild(dMr);
+        const dRt = document.createElement('div'); dRt.className = 'dynamic-field';
+        dRt.innerHTML = `<label>Y${i}</label><input type="number" id="custRate_${i}" placeholder="3.5">`;
+        rateGrid.appendChild(dRt);
     }
 }
 
 window.onload = function() { 
-  $('isPledgeEnabled').checked = false;
-  $('mc-toggle').checked = false;
-  $('isWithdrawLogicEnabled').checked = false; 
-  updateEngineUI(); 
-  updateWithdrawUI();
-  updateRepayUI(); 
-  updateRateUI();
-  updateMRUI();
-  generateDynamicGrids();
+  $('isPledgeEnabled').checked = false; $('mc-toggle').checked = false; $('isWithdrawLogicEnabled').checked = false; 
+  updateEngineUI(); updateWithdrawUI(); updateRepayUI(); updateRateUI(); updateMRUI(); generateDynamicGrids();
 }
 
 function getP() {
-  let nameInput = $('userName').value.trim();
-  // [V1.9.6.2 資安更新] 在取得使用者輸入時立刻進行跳脫過濾，防止 XSS 攻擊
-  nameInput = nameInput ? escapeHTML(nameInput) : "您";
-
-  let customRates = [], customMRs = [];
-  const yLen = parseInt($('years').value) || 0;
+  let name = $('userName').value.trim(); name = name ? escapeHTML(name) : "您";
+  let cR = [], cM = []; const yLen = parseInt($('years').value) || 0;
   for(let i=1; i<=yLen; i++) {
-      customRates.push(parseFloat($('custRate_'+i).value) || null);
-      customMRs.push(parseFloat($('custMR_'+i).value) || null);
+      cR.push(parseFloat($('custRate_'+i).value) || null);
+      cM.push(parseFloat($('custMR_'+i).value) || null);
   }
-
   return {
-    name: nameInput,
-    startYear: parseInt($('startYear').value) || 2026,
-    startAge: parseInt($('startAge').value) || 60,
-    mv: parseFloat($('mv').value) || 0,
-    debt: parseFloat($('debt').value) || 0,
-    cash: parseFloat($('cash').value) || 0,
-    cashMax: parseFloat($('cash').value) || 0,
-    years: yLen,
-    adjRate: 0.10,
-    isWithdrawEnabled: $('isWithdrawLogicEnabled').checked,
-    withdrawMode: $('withdrawMode').value,
-    fixedWR: parseFloat($('fixedWithdrawRate').value) / 100 || 0,
-    initWithdrawRate: parseFloat($('initWithdrawRate').value) / 100 || 0.04,
-    survivalFloor: parseFloat($('survivalFloor').value) || 0,
-    maxCeiling: parseFloat($('maxCeiling').value) || 999,
-    repayMode: $('repayMode').value,
-    repayTargetAmount: parseFloat($('repayTargetAmount').value) || 0,
-    inflation: parseFloat($('inflation').value)/100,
-    inflationMode: $('inflationMode').value,
-    upperGuard: parseFloat($('upperGuard').value)/100,
-    lowerGuard: parseFloat($('lowerGuard').value)/100,
-    lateLifeYears: parseInt($('lateLifeYears').value) || 5,
-    returnRate: parseFloat($('returnRate').value)/100,
-    isPledgeEnabled: $('isPledgeEnabled').checked,
-    preDeduct: $('preDeduct').checked,
-    reinvest: $('reinvest').checked,
-    rateMode: $('rateSelect').value,
-    pledgeRate: parseFloat($('pledgeRate').value)/100,
-    rateBase: parseFloat($('rateBase').value)/100,
-    rateFloor: parseFloat($('rateFloor').value)/100,
-    rateCap: parseFloat($('rateCap').value)/100,
-    customRates: customRates,
-    dangerMR: parseFloat($('dangerMR').value)/100,
-    targetMR: parseFloat($('targetMR').value)/100,
-    mrMode: $('mrSelect').value,
-    customMRs: customMRs,
-    mc: $('mc-toggle').checked,
-    vol: parseFloat($('vol').value)/100
+    name, startYear: parseInt($('startYear').value), startAge: parseInt($('startAge').value),
+    mv: parseFloat($('mv').value), debt: parseFloat($('debt').value), cash: parseFloat($('cash').value), cashMax: parseFloat($('cash').value),
+    years: yLen, adjRate: 0.10, isW: $('isWithdrawLogicEnabled').checked, wMode: $('withdrawMode').value,
+    fixedWR: parseFloat($('fixedWithdrawRate').value) / 100, initWR: parseFloat($('initWithdrawRate').value) / 100,
+    survivalFloor: parseFloat($('survivalFloor').value), maxCeiling: parseFloat($('maxCeiling').value),
+    repayMode: $('repayMode').value, repayTarget: parseFloat($('repayTargetAmount').value),
+    inflation: parseFloat($('inflation').value)/100, inflationMode: $('inflationMode').value,
+    upG: parseFloat($('upperGuard').value)/100, loG: parseFloat($('lowerGuard').value)/100, lateLife: parseInt($('lateLifeYears').value),
+    retR: parseFloat($('returnRate').value)/100, isP: $('isPledgeEnabled').checked, preD: $('preDeduct').checked, reinvest: $('reinvest').checked,
+    rateMode: $('rateSelect').value, pRate: parseFloat($('pledgeRate').value)/100, rBase: parseFloat($('rateBase').value)/100, rFloor: parseFloat($('rateFloor').value)/100, rCap: parseFloat($('rateCap').value)/100,
+    cRates: cR, dangerMR: parseFloat($('dangerMR').value)/100, targetMR: parseFloat($('targetMR').value)/100, mrMode: $('mrSelect').value, cMRs: cM, mc: $('mc-toggle').checked, vol: parseFloat($('vol').value)/100
   };
 }
 
+/**
+ * [V2.0.0 核心演算法] 跨週期智能 ALM
+ */
 function simPath(p, overrides) {
   let mv = p.mv, debt = p.debt, cash = p.cash;
-  let wa = p.isWithdrawEnabled ? (p.withdrawMode === 'GK' ? mv * p.initWithdrawRate : mv * p.fixedWR) : 0;
-  let rows = [], minMR = 999, protectCount = 0;
-  
-  let isBBD = (p.isPledgeEnabled && p.isWithdrawEnabled && p.withdrawMode === 'FIXED' && p.fixedWR === 0);
-  
-  if (!p.isPledgeEnabled && debt > 0) { mv -= debt; debt = 0; }
-  
+  let wa = p.isW ? (p.wMode === 'GK' ? p.mv * p.initWR : p.mv * p.fixedWR) : 0;
+  let rows = [], protectCount = 0;
+  let isBBD = (p.isP && p.isW && p.wMode === 'FIXED' && p.fixedWR === 0);
+
   for (let y = 1; y <= p.years; y++) {
-    const ret = overrides ? overrides[y-1] : p.returnRate;
+    const ret = overrides ? overrides[y-1] : p.retR;
     mv *= (1 + ret);
 
-    let yearlyInflation = p.inflation;
-    if(p.inflationMode === 'random') yearlyInflation += (Math.random() - 0.5) * 0.02;
-    else if(p.inflationMode === 'inverse') yearlyInflation += (p.returnRate - ret) * 0.15;
-
-    let currentPledgeRate = p.pledgeRate;
-    if(p.rateMode === 'pegged') {
-        currentPledgeRate = Math.max(p.rateFloor, Math.min(p.rateCap, p.rateBase + (yearlyInflation - 0.02)));
-    } else if(p.rateMode === 'custom') {
-        currentPledgeRate = (p.customRates[y-1] !== null ? p.customRates[y-1]/100 : p.pledgeRate);
-    }
+    // 1. 預算核算 (GK 大腦)
+    let yInf = p.inflation;
+    if(p.inflationMode === 'random') yInf += (Math.random() - 0.5) * 0.02;
+    else if(p.inflationMode === 'inverse') yInf += (p.retR - ret) * 0.15;
     
     let gkRule = 'none';
-    if(p.isWithdrawEnabled) {
-        if(p.withdrawMode === 'GK') {
-            if(ret >= 0) wa *= (1 + yearlyInflation);
-            else gkRule = 'inflation';
-            let currentWR = wa / mv, isImmune = (y > p.years - p.lateLifeYears);
-            if (currentWR > p.upperGuard) {
-              if (!isImmune) { wa *= (1 - p.adjRate); gkRule = 'danger'; protectCount++; }
-              else gkRule = 'immune';
-            } else if (currentWR < p.lowerGuard) {
-              wa *= (1 + p.adjRate); gkRule = 'boom';
-            }
-        } else { wa *= (1 + yearlyInflation); }
+    if(p.isW) {
+        if(p.wMode === 'GK') {
+            if(ret >= 0) wa *= (1 + yInf); else gkRule = 'inflation';
+            let curWR = wa / mv, isImmune = (y > p.years - p.lateLife);
+            if (curWR > p.upG && !isImmune) { wa *= (1 - p.adjRate); gkRule = 'danger'; protectCount++; }
+            else if (curWR > p.upG && isImmune) gkRule = 'immune';
+            else if (curWR < p.loG) { wa *= (1 + p.adjRate); gkRule = 'boom'; }
+        } else { wa *= (1 + yInf); }
         wa = Math.max(p.survivalFloor * 12, Math.min(p.maxCeiling * 12, wa));
     }
 
-    let ops = []; 
-    let interest = debt * currentPledgeRate, cashNeed = wa + interest;
-    let currentYearTargetMR = (p.mrMode === 'custom' && p.customMRs[y-1] !== null ? p.customMRs[y-1]/100 : p.targetMR);
+    // 2. 利率與風控校準
+    let curRate = p.pRate;
+    if(p.rateMode === 'pegged') curRate = Math.max(p.rFloor, Math.min(p.rCap, p.rBase + (yInf - 0.02)));
+    else if(p.rateMode === 'custom') curRate = (p.cRates[y-1] !== null ? p.cRates[y-1]/100 : p.pRate);
+    let curTargetMR = (p.mrMode === 'custom' && p.cMRs[y-1] !== null ? p.cMRs[y-1]/100 : p.targetMR);
+    let interest = debt * curRate;
+    let budgetNeeded = wa + interest;
+    let ops = [];
 
-    if (p.isPledgeEnabled) {
-      let bbdTriggered = false;
+    // 3. 智能分流執行 (ALM Engine)
+    if (p.isP) {
+        let currentMR = debt > 0 ? mv / debt : 999;
+        
+        // --- 情境一：大牛市 且 維持率健康 (擴張/橋接模式) ---
+        if (ret >= 0 && currentMR >= curTargetMR) {
+            if (isBBD || p.isW) {
+                // 優先使用借貸支付生活費 (避免摩擦)
+                let projectedMR = (debt + budgetNeeded) > 0 ? mv / (debt + budgetNeeded) : 999;
+                if (projectedMR >= p.dangerMR) {
+                    debt += budgetNeeded; budgetNeeded = 0;
+                    ops.push(isBBD ? "💳 買借死：全額增貸支應生活與利息" : "💳 順週期借貸：質押代償生活預算");
+                }
+            }
+            // 檢查是否再投入
+            if (p.reinvest && (p.repayMode === 'NONE' || p.repayMode === 'RATIO')) {
+                let curMR_afterWa = debt > 0 ? mv / debt : 999;
+                if (curMR_afterWa > curTargetMR) {
+                    let borrow = (mv - curTargetMR * debt) / (curTargetMR - 1 + (p.preD ? curRate : 0));
+                    if (borrow > 0) { debt += borrow; mv += p.preD ? borrow*(1-curRate) : borrow; ops.push(`📈 活化擔保：再投入 ${fM(borrow)} 萬`); }
+                }
+            }
+        } 
+        // --- 情境二：大牛市 但 維持率低於目標 (停利降槓桿模式) ---
+        else if (ret >= 0 && currentMR < curTargetMR) {
+            // 淨額結算公式精算一次性賣股
+            let r_sell = (curTargetMR * debt - mv + budgetNeeded) / (curTargetMR - 1);
+            if (r_sell > 0) {
+                let totalSell = r_sell + budgetNeeded;
+                mv -= totalSell; debt -= r_sell; budgetNeeded = 0;
+                ops.push(`⚖️ 高檔停利：合併結算生活與償債 (賣股 ${fM(totalSell)} 萬)`);
+            }
+        }
+        // --- 情境三：大熊市 (逆週期防禦模式) ---
+        else {
+            // 1. 優先燒備用金
+            if (cash > 0) {
+                let bailout = Math.min(cash, budgetNeeded); cash -= bailout; budgetNeeded -= bailout;
+                ops.push(`🛡️ 逆週期防禦：動用現金備用金 (-${fM(bailout)})`);
+            }
+            // 2. 次要：如果維持率還高，啟動流動性橋接 (不賣股)
+            if (budgetNeeded > 0) {
+                let projectedMR = (debt + budgetNeeded) > 0 ? mv / (debt + budgetNeeded) : 999;
+                if (projectedMR >= p.dangerMR) {
+                    debt += budgetNeeded; budgetNeeded = 0;
+                    ops.push("🌉 流動性橋接：以債支應避免低點砍倉");
+                }
+            }
+            // 3. 最後防線：被迫賣股
+            if (budgetNeeded > 0) {
+                mv -= budgetNeeded; budgetNeeded = 0;
+                ops.push("🚑 最後防線：備用金與額度耗盡，被迫賣股");
+            }
+        }
 
-      if (isBBD) {
-          let projectedMR = (debt + cashNeed) > 0 ? mv / (debt + cashNeed) : 9999;
-          if (projectedMR >= p.dangerMR) {
-              debt += cashNeed;
-              cashNeed = 0; 
-              bbdTriggered = true;
-          } else {
-              ops.push("⚠️ 額度告急，暫停買借死。");
-          }
-      }
+        // 4. 救命錢補滿機制 (僅在牛市且有餘裕時)
+        if (ret > 0 && cash < p.cashMax) {
+            let surplus = mv * 0.05; // 限制最多賣 5% 補血
+            let fill = Math.min(surplus, p.cashMax - cash);
+            if (fill > 0) { cash += fill; mv -= fill; ops.push(`♻️ 補血機制：高點回補備用金 (+${fM(fill)})`); }
+        }
 
-      if (ret > 0 && !bbdTriggered) {
-          let surplus = (mv - wa - interest);
-          let refill = Math.min(surplus, Math.max(0, p.cashMax - cash));
-          if (refill > 0) { cash += refill; mv -= refill; surplus -= refill; ops.push(`♻️ 回補預備金(+${fM(refill)})。`); }
-          
-          let repayAmount = 0;
-          if (p.repayMode === 'AMOUNT' && debt > p.repayTargetAmount) {
-              repayAmount = Math.min(surplus, debt - p.repayTargetAmount);
-          } else if (p.repayMode === 'RATIO' && debt > 0) {
-              let theoreticalMV = mv - cashNeed; 
-              if (theoreticalMV / debt < currentYearTargetMR) {
-                  let payNeed = (currentYearTargetMR * debt - theoreticalMV) / (currentYearTargetMR - 1);
-                  repayAmount = Math.max(0, Math.min(surplus, payNeed));
-              }
-          }
-          
-          if (repayAmount > 0) { 
-              let payDebt = Math.min(repayAmount, debt); 
-              debt -= payDebt; 
-              mv -= payDebt; 
-              ops.push(`償債(-${fM(payDebt)})。`); 
-          }
-      }
-      
-      if (cashNeed > 0) {
-          let postSellMR = debt > 0 ? (mv - cashNeed) / debt : 999;
-          if ((postSellMR < p.dangerMR || ret < 0) && cash > 0) {
-            let bailout = Math.min(cash, cashNeed); cash -= bailout; cashNeed -= bailout; mv -= cashNeed; ops.push("🛡️ 觸發防禦，動用預備金。");
-          } else {
-            mv -= cashNeed;
-          }
-      } else if (bbdTriggered) {
-          ops.push("💳 買借死：全額增貸付息與生活。");
-      }
-      
-      let curMR = debt > 0 ? mv / debt : 9999;
-      if (p.reinvest && (p.repayMode === 'NONE' || p.repayMode === 'RATIO') && curMR > currentYearTargetMR) {
-          let borrow = (mv - currentYearTargetMR * debt) / (currentYearTargetMR - 1 + (p.preDeduct ? currentPledgeRate : 0));
-          if (borrow > 0) {
-              debt += borrow; 
-              mv += p.preDeduct ? borrow * (1 - currentPledgeRate) : borrow;
-              ops.push(`📈 達標進攻，增貸 ${fM(borrow)} 萬。`);
-          }
-      }
-      
-      if (ops.length === 0) ops.push("✅ 正常執行。");
-      let finalMR = debt > 0 ? mv / debt : 999;
-      rows.push({ y, year: p.startYear + y - 1, age: p.startAge + y, ret, mv, debt, cash, mr: finalMR, wa, mo: wa/12, gkRule, op: ops.join('<br>'), net: mv - debt, currentRate: currentPledgeRate });
+        // 5. 斷頭紅線強制介入
+        let finalMR = debt > 0 ? mv / debt : 999;
+        if (finalMR < p.dangerMR) {
+            let forceSell = (p.dangerMR * debt - mv) / (p.dangerMR - 1);
+            if (forceSell > 0) { mv -= forceSell; debt -= forceSell; ops.push(`🚨 追繳警報：強制斷頭償債 ${fM(forceSell)} 萬`); }
+        }
     } else {
-      if (ret > 0) {
-          let surplus = mv - (p.isWithdrawEnabled ? wa : 0); 
-          let refill = Math.min(surplus, Math.max(0, p.cashMax - cash));
-          if (refill > 0) { cash += refill; mv -= refill; surplus -= refill; ops.push(`♻️ 回補預備金(+${fM(refill)})。`); }
-          
-          let repayAmount = 0;
-          if (p.repayMode === 'AMOUNT' && debt > p.repayTargetAmount) repayAmount = Math.min(surplus, debt - p.repayTargetAmount);
-          if (repayAmount > 0) { let payDebt = Math.min(repayAmount, debt); debt -= payDebt; mv -= payDebt; ops.push(`償還舊債(-${fM(payDebt)})。`); }
-      }
-      if(ret < 0 && cash > 0 && p.isWithdrawEnabled) {
-          let bailout = Math.min(cash, wa); cash -= bailout; wa -= bailout; mv -= wa; ops.push("🛡️ 股市回檔，消耗預備金。");
-      }
-      
-      if (ops.length === 0) ops.push(p.isWithdrawEnabled ? "✅ 正常提領。" : "✅ 靜態複利。");
-      rows.push({ y, year: p.startYear + y - 1, age: p.startAge + y, ret, mv, debt, cash, mr: 999, wa, mo: wa/12, gkRule, op: ops.join('<br>'), net: mv - debt, currentRate: 0 });
+        // 純提領模式邏輯 (無槓桿)
+        if (ret < 0 && cash > 0) {
+            let bailout = Math.min(cash, wa); cash -= bailout; wa -= bailout; ops.push(`🛡️ 現金防禦：動用備用金 (-${fM(bailout)})`);
+        }
+        mv -= wa; 
+        if (ret > 0 && cash < p.cashMax) {
+            let fill = Math.min(mv*0.05, p.cashMax - cash);
+            cash += fill; mv -= fill; ops.push(`♻️ 回補預備金 (+${fM(fill)})`);
+        }
+        if (ops.length === 0) ops.push(p.isW ? "✅ 正常提領" : "✅ 靜態複利");
     }
+
+    if (ops.length === 0) ops.push("✅ 正常執行");
+    let finalMR = debt > 0 ? mv / debt : 999;
+    rows.push({ y, year: p.startYear+y-1, age: p.startAge+y, ret, mv, debt, cash, mr: finalMR, wa, mo: wa/12, gkRule, op: ops.join('<br>'), net: mv-debt, curRate });
   }
   const last = rows[rows.length-1];
-  return { history: rows, finalNet: last.net, minMR: Math.min(...rows.map(r=>r.mr)), survived: last.net > 0 && Math.min(...rows.map(r=>r.mr)) >= 1.4, failType: { bankrupt: last.net<=0, marginCall: Math.min(...rows.map(r=>r.mr))<1.4, survivalFail: rows.some(r=>r.mo < p.survivalFloor*0.95) }, protectTriggerRatio: protectCount / p.years };
+  return { 
+      history: rows, finalNet: last.net, survived: last.net > 0 && Math.min(...rows.map(r=>r.mr)) >= p.dangerMR, 
+      failType: { bankrupt: last.net<=0, marginCall: Math.min(...rows.map(r=>r.mr)) < p.dangerMR, survival: rows.some(r=>r.mo < p.survivalFloor*0.95) } 
+  };
 }
 
 function runSim() {
-  const p = getP(); RISK_STATS = { bankrupt: 0, marginCall: 0, survival: 0 };
-  MC_RESULTS = null; 
-  
+  const p = getP(); RISK_STATS = { bankrupt: 0, marginCall: 0, survival: 0 }; MC_RESULTS = null; 
   if (!p.mc) {
     const res = simPath(p); ALL_PATHS = { default: res.history }; SUCCESS_RATE = res.survived ? 100 : 0;
     if (res.failType.bankrupt) RISK_STATS.bankrupt = 100;
     if (res.failType.marginCall) RISK_STATS.marginCall = 100;
-    if (res.failType.survivalFail) RISK_STATS.survival = 100;
+    if (res.failType.survival) RISK_STATS.survival = 100;
     CURRENT_TAB = "default";
   } else {
     let sims = [], success = 0;
     for (let i = 0; i < 1000; i++) {
-      let rets = Array.from({length: p.years}, () => p.returnRate + p.vol * Math.sqrt(-2*Math.log(Math.random())) * Math.cos(2*Math.PI*Math.random()));
+      let rets = Array.from({length: p.years}, () => p.retR + p.vol * Math.sqrt(-2*Math.log(Math.random())) * Math.cos(2*Math.PI*Math.random()));
       const res = simPath(p, rets); sims.push(res);
       if (res.survived) success++;
       if (res.failType.bankrupt) RISK_STATS.bankrupt++;
       if (res.failType.marginCall) RISK_STATS.marginCall++;
-      if (res.failType.survivalFail) RISK_STATS.survival++;
+      if (res.failType.survival) RISK_STATS.survival++;
     }
     sims.sort((a,b) => a.finalNet - b.finalNet);
-    SUCCESS_RATE = (success / 1000) * 100;
+    SUCCESS_RATE = (success / 10).toFixed(1);
     RISK_STATS.bankrupt = (RISK_STATS.bankrupt/10).toFixed(1);
     RISK_STATS.marginCall = (RISK_STATS.marginCall/10).toFixed(1);
     RISK_STATS.survival = (RISK_STATS.survival/10).toFixed(1);
-    
     MC_RESULTS = {
       p10_net: sims[99].history.map(r => Math.max(0, r.net)),
       p50_net: sims[499].history.map(r => Math.max(0, r.net)),
       p90_net: sims[899].history.map(r => Math.max(0, r.net)),
       labels: sims[0].history.map(r => r.year + ' (' + r.age + '歲)') 
     };
-    
     ALL_PATHS = { p10: sims[99].history, p25: sims[249].history, p50: sims[499].history, p75: sims[749].history, p90: sims[899].history };
     CURRENT_TAB = "p50";
   }
@@ -819,185 +760,86 @@ function runSim() {
 }
 
 function setTab(t) { CURRENT_TAB = t; renderDashboard(); }
-
-function getRandomText(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-}
+function getBadgeClass(rule) { return { 'danger': 'badge-danger', 'boom': 'badge-boom', 'immune': 'badge-immune', 'inflation': 'badge-inflation', 'none': 'badge-normal' }[rule]; }
+function getBadgeText(rule) { return { 'danger': '保護', 'boom': '繁榮', 'immune': '免死', 'inflation': '通膨', 'none': '正常' }[rule]; }
+function getTabName(t) { return {p10:"悲觀 P10", p25:"保守 P25", p50:"中位數 P50", p75:"穩健 P75", p90:"樂觀 P90", default:"理想路徑"}[t]; }
 
 function generateStory(rows, p) {
   const last = rows[rows.length-1]; 
-  const nameStr = p.name === "您" ? "您" : p.name;
   const nameCall = p.name === "您" ? "親愛的投資者" : p.name;
-  
-  const openings = [
-      `<strong>${nameCall}</strong>，歡迎來到您的退休沙盒。透過上千次平行宇宙的壓力測試，我們為您定調了這份計畫的靈魂。`,
-      `您好，<strong>${nameCall}</strong>。這是一份專屬於您的財務韌性報告。我們模擬了從牛市繁榮到地獄級股災的各種情境。`,
-      `<strong>${nameCall}</strong>，投資是一場馬拉松，而退休則是終點前的關鍵佈局。根據您的參數設定，我們觀察到了以下趨勢。`
-  ];
-  let story = `<p>${getRandomText(openings)}</p>`;
+  let story = `<p><strong>${nameCall}</strong>，這是一份基於 V2.0 跨週期智能演算法生成的專業報告。我們模擬了市場劇震與通膨滯脹的極端情境。</p>`;
 
-  let modeTitle = "", modeIntro = "";
-  if (p.isPledgeEnabled && p.isWithdrawEnabled && p.withdrawMode === 'FIXED' && p.fixedWR === 0) {
-      modeTitle = "【終極買借死模式 (Buy, Borrow, Die)】";
-      modeIntro = getRandomText([
-          `這是隱藏版的富豪避稅戰術。${nameStr}選擇『一股不賣』，將所有生活費與利息透過質押增貸來支付，完美展現了資本的魔法。`,
-          `終極槓桿藝術。${nameStr}利用系統底線設定，成功繞過賣股機制，用銀行資金支應人生，把資產雪球留給下個世代。`
-      ]);
-  }
-  else if (!p.isWithdrawEnabled && !p.isPledgeEnabled) { 
-      modeTitle = "【純去槓桿/存股模式】"; 
-      modeIntro = getRandomText([
-          `這是最純粹的資產長跑，${nameStr}選擇不提領生活費，讓本金在時間的沃野中進行原始積累或專注於清償債務。`,
-          `此模式展示了複利最強大的一面，${nameStr}的耐心將是最大的武器。`
-      ]); 
-  }
-  else if (p.isWithdrawEnabled && !p.isPledgeEnabled) { 
-      modeTitle = "【傳統提領退休模式】"; 
-      modeIntro = getRandomText([
-          `這是一套穩健的提領紀律。${nameStr}完全透過資產消融與股息來對抗通膨。`,
-          `標準的現金流提領策略。關鍵在於${nameStr}的提領率是否能跑贏市場的殘酷波動。`
-      ]); 
-  }
-  else if (!p.isWithdrawEnabled && p.isPledgeEnabled) { 
-      modeTitle = "【純借貸退休模式】"; 
-      modeIntro = getRandomText([
-          `這是一套『一股不賣』的貴族戰術。${nameStr}的退休金完全依賴跨越週期的債務藝術來支應。`,
-          `資產零摩擦模式。${nameStr}透過質押借款，完美避開了賣股帶來的稅務與機會成本。`
-      ]); 
-  }
-  else { 
-      modeTitle = "【混合防禦退休模式】"; 
-      modeIntro = getRandomText([
-          `這是一套攻守兼備的高階戰術。${nameStr}完美詮釋了『進攻即防禦』的理念。`,
-          `最為靈活的決策。${nameStr}讓金融槓桿與現金流在此進行了完美的共舞，股災時切換質押避免了低點砍倉。`
-      ]); 
+  let modeTitle = "【動態資產負債管理模式】", modeIntro = "系統正自動執行『順週期活化擔保、逆週期流動性橋接』的高階戰術。";
+  if (p.isP && p.isW && p.wMode === 'FIXED' && p.fixedWR === 0) {
+      modeTitle = "【終極買借死模式 (BBD)】";
+      modeIntro = "一股不賣的貴族戰術。系統精確利用維持率餘裕進行『以債養老』，最大化避開交易摩擦與報酬順序風險。";
   }
   story += `<h3>${modeTitle}</h3><p>${modeIntro}</p>`;
 
   let events = [];
   const s_years = rows.filter(r => r.gkRule === 'danger').map(r => r.age);
-  const ceil_years = rows.filter(r => r.op.includes("月薪上限")).map(r => r.age);
-  const cash_years = rows.filter(r => r.op.includes("預備金") && r.op.includes("觸發防禦")).map(r => r.age);
+  const bridge_years = rows.filter(r => r.op.includes("橋接")).map(r => r.age);
+  const risk_years = rows.filter(r => r.op.includes("追繳")).map(r => r.age);
   
-  if (s_years.length > 0) {
-      events.push(getRandomText([
-          `<strong>保護規則介入：</strong>${nameCall}，請注意 <strong>${s_years[0]} 歲</strong> 那年的轉折，『保護規則』像自動導航一樣介入了，強制下修提領以保護本金。`,
-          `<strong>啟動保本盾牌：</strong>我們在路徑中看到 ${nameStr} 在 <strong>${s_years[0]} 歲</strong> 時觸發了減薪。這並非失敗，而是為了確保計畫能走得更遠。`
-      ]));
-  }
-  if (ceil_years.length > 0) {
-      events.push(getRandomText([
-          `<strong>最高月薪上限：</strong>值得擊掌！${nameCall}，您的資產在 <strong>${ceil_years[0]} 歲</strong> 時衝破雲霄，觸發了月薪上限，成功為未來留下了更多種子。`,
-          `<strong>繁榮鎖利：</strong>恭喜！在 <strong>${ceil_years[0]} 歲</strong> 的大牛市中，系統成功為 ${nameStr} 踩下煞車，防止過度揮耗。`
-      ]));
-  }
-  if (cash_years.length > 0) {
-      events.push(getRandomText([
-          `<strong>救命錢救援：</strong>在 <strong>${cash_years[0]} 歲</strong> 的股災期，現金預備金發揮了定海神針的作用。`,
-          `<strong>防禦啟動：</strong>${nameStr} 預留的現金桶在 <strong>${cash_years[0]} 歲</strong> 完美擋下了市場的致命一擊，免於斷頭危機。`
-      ]));
-  }
-  if (events.length > 0) story += `<p><strong>【關鍵生存事件復盤】</strong><br>${events.join('<br><br>')}</p>`;
-
-  let conclusion = "";
-  if (SUCCESS_RATE > 95) {
-      conclusion = getRandomText([
-          `這是一份滿分的退休卷宗。${nameCall}，您的佈局磐石般穩定，您可以安心入睡了。`,
-          `極度穩健的結構！${nameStr}，晚年的尊嚴與富足已是您的囊中物。`
-      ]);
-  } else if (RISK_STATS.marginCall > 10) {
-      conclusion = `<strong>斷頭風險警示：</strong>${nameCall}，您的船很穩，但槓桿這把雙面刃在股災時顯得有些尖銳，建議調高現金備用金或降低目標維持率。`;
-  } else if (RISK_STATS.survival > 10) {
-      conclusion = `<strong>生存底線警示：</strong>${nameStr}，資產雖在，但生活品質可能在極端情境下大幅縮水。建議您考慮調降初始提領率，以換取長期的安穩。`;
-  } else {
-      conclusion = `目前的參數具備一定可行性，但 ${nameCall} 仍需在面臨連續空頭時，具備果斷縮減開支的決心。`;
-  }
-  story += `<p><strong>【報告結語】</strong><br>${conclusion}</p>`;
-
+  if (s_years.length > 0) events.push(`<strong>預算護欄介入：</strong>在 <strong>${s_years[0]} 歲</strong> 觸發了減薪機制。這並非失敗，而是為了確保在低迷市場中保全資產母本。`);
+  if (bridge_years.length > 0) events.push(`<strong>流動性橋接啟動：</strong>我們觀察到 <strong>${bridge_years[0]} 歲</strong> 股市大跌，系統成功封印賣股，改由質押支應生活，規避了低點砍倉的損失。`);
+  if (risk_years.length > 0) events.push(`<strong>追繳風險警示：</strong>注意 <strong>${risk_years[0]} 歲</strong> 觸發了斷頭賣出。建議調降目標維持率或增加初始備用金以提升韌性。`);
+  
+  if (events.length > 0) story += `<p><strong>【核心事件復盤】</strong><br>${events.join('<br><br>')}</p>`;
+  story += `<p><strong>【診斷結語】</strong><br>${SUCCESS_RATE > 90 ? '結構極度穩健，具備穿越牛熊的實力。' : '風險集中在退休初期的順序報酬風險，建議優化槓桿水位。'}</p>`;
   return story;
 }
 
 function renderDashboard() {
   const p = getP(); const rows = ALL_PATHS[CURRENT_TAB]; const last = rows[rows.length-1]; const totalW = rows.reduce((a,b)=>a+b.wa,0);
-  const tabsHTML = p.mc ? `<div class="tab-group fade-in">` + ["p10","p25","p50","p75","p90"].map(t => `<button class="tab-btn ${CURRENT_TAB===t?'active '+t:''}" onclick="setTab('${t}')">${getTabName(t)}</button>`).join('') + `</div>` : '';
+  const tabsHTML = p.mc ? `<div class="tab-group">` + ["p10","p25","p50","p75","p90"].map(t => `<button class="tab-btn ${CURRENT_TAB===t?'active':''}" onclick="setTab('${t}')">${getTabName(t)}</button>`).join('') + `</div>` : '';
 
   $('results-area').innerHTML = `
     <div class="fade-in">
       ${tabsHTML}
-      
       <div class="summary-box">
-        <h3>🎯 退休成功率：${SUCCESS_RATE}%</h3>
-        
+        <h3>🎯 跨週期模擬成功率：${SUCCESS_RATE}%</h3>
         <div class="metric-grid">
           <div class="metric"><div class="metric-label">期末淨資產</div><div class="metric-value ${last.net>0?'val-green':'val-red'}">$${fM(last.net)}萬</div></div>
-          <div class="metric"><div class="metric-label">最低維持率</div><div class="metric-value ${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))>p.dangerMR/100?'val-green':'val-red'):'val-green'}">${p.isPledgeEnabled?(Math.min(...rows.map(r=>r.mr))*100).toFixed(0)+'%':'—'}</div></div>
+          <div class="metric"><div class="metric-label">最低維持率</div><div class="metric-value ${p.isP?(Math.min(...rows.map(r=>r.mr))>p.dangerMR?'val-green':'val-red'):'val-green'}">${p.isP?(Math.min(...rows.map(r=>r.mr))*100).toFixed(0)+'%':'—'}</div></div>
           <div class="metric"><div class="metric-label">累計總提領</div><div class="metric-value val-amber">$${fM(totalW)}萬</div></div>
           <div class="metric"><div class="metric-label">末年平均月領</div><div class="metric-value val-green">$${fMo(last.wa)}萬</div></div>
         </div>
-
-        ${p.mc ? `
-        <div class="dark-chart-container">
-            <div class="dark-chart-title">🌌 淨資產機率分布 (P10 / P50 / P90)</div>
-            <div class="chart-inner"><canvas id="fanChart"></canvas></div>
-        </div>
-        ` : ''}
-
+        ${p.mc ? `<div class="dark-chart-container"><div class="dark-chart-title">🌌 淨資產機率分布 (P10 / P50 / P90)</div><div class="chart-inner"><canvas id="fanChart"></canvas></div></div>` : ''}
         <div class="risk-indicator-wrap" style="margin-top:0;">
             <div class="risk-light"><div class="dot ${RISK_STATS.bankrupt > 10 ? 'dot-red' : 'dot-green'}"></div>🔴 破產風險：${RISK_STATS.bankrupt}%</div>
             <div class="risk-light"><div class="dot ${RISK_STATS.marginCall > 10 ? 'dot-red' : 'dot-yellow'}"></div>🟡 斷頭風險：${RISK_STATS.marginCall}%</div>
             <div class="risk-light"><div class="dot ${RISK_STATS.survival > 10 ? 'dot-red' : 'dot-blue'}"></div>🔵 生存風險：${RISK_STATS.survival}%</div>
         </div>
       </div>
-
       <div class="charts-grid">
-        <div class="chart-card">
-            <div style="font-weight:700; color:#4b5563; margin-bottom:15px;">📊 戰術執行路徑 (${getTabName(CURRENT_TAB)})</div>
-            <div class="chart-inner" style="height:350px;"><canvas id="lineChart"></canvas></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-inner" style="height:350px;"><canvas id="pieChart"></canvas></div>
-          <div class="pie-center-text"><div class="pie-val-label">累計提領</div><div class="pie-val-num" style="color:#f59e0b">$${fM(totalW)}萬</div><div class="pie-val-label">期末淨額</div><div class="pie-val-num" style="color:#6366f1">$${fM(last.net)}萬</div></div>
-        </div>
+        <div class="chart-card"><div style="font-weight:700; color:#4b5563; margin-bottom:15px;">📊 戰術路徑 (${getTabName(CURRENT_TAB)})</div><div class="chart-inner" style="height:350px;"><canvas id="lineChart"></canvas></div></div>
+        <div class="chart-card"><div class="chart-inner" style="height:350px;"><canvas id="pieChart"></canvas></div><div class="pie-center-text"><div class="pie-val-label">累計提領</div><div class="pie-val-num" style="color:#f59e0b">$${fM(totalW)}萬</div><div class="pie-val-label">期末淨額</div><div class="pie-val-num" style="color:#6366f1">$${fM(last.net)}萬</div></div></div>
       </div>
-
       <div class="table-card">
         <div class="table-header">📝 執行明細表 (${getTabName(CURRENT_TAB)})</div>
         <div class="table-scroll">
           <table>
-            <thead><tr><th>西元</th><th>歲</th><th>報酬</th><th>利率</th><th>市值</th><th>負債</th><th>維持率</th><th>備用金</th><th>GK</th><th>月領</th><th>執行動作</th></tr></thead>
+            <thead><tr><th>西元</th><th>歲</th><th>報酬</th><th>利率</th><th>市值</th><th>負債</th><th>維持率</th><th>現金</th><th>GK</th><th>月領</th><th>智能分流動作</th></tr></thead>
             <tbody>${rows.map(r => `<tr>
-              <td style="color:#6b7280;">${r.year}</td>
-              <td><b>${r.age}</b></td>
-              <td class="${r.ret>=0?'val-red':'val-green'}">${(r.ret*100).toFixed(1)}%</td>
-              <td>${(r.currentRate * 100).toFixed(1)}%</td>
-              <td>${fM(r.mv)}<span class="unit-label">萬</span></td>
-              <td>${fM(r.debt)}<span class="unit-label">萬</span></td>
-              <td style="font-weight:700;">${p.isPledgeEnabled?(r.mr*100).toFixed(0)+'%':'—'}</td>
-              <td>${fM(r.cash)}<span class="unit-label">萬</span></td>
+              <td>${r.year}</td><td><b>${r.age}</b></td><td class="${r.ret>=0?'val-red':'val-green'}">${(r.ret*100).toFixed(1)}%</td>
+              <td>${p.isP?(r.curRate*100).toFixed(1)+'%':'—'}</td><td>${fM(r.mv)}</td><td>${fM(r.debt)}</td>
+              <td style="font-weight:700;">${p.isP?(r.mr*100).toFixed(0)+'%':'—'}</td><td>${fM(r.cash)}</td>
               <td><span class="gk-badge ${getBadgeClass(r.gkRule)}">${getBadgeText(r.gkRule)}</span></td>
-              <td style="font-weight:700;">$${fM(r.mo)}<span class="unit-label">萬</span></td>
-              <td>${r.op}</td>
+              <td style="font-weight:700;">$${fM(r.mo)}</td><td>${r.op}</td>
             </tr>`).join('')}</tbody>
           </table>
         </div>
       </div>
-      
       <div class="analysis-card">
-        <h4>📋 ${p.name === "您" ? "" : `[${p.name}] 的`}專屬退休壓力測試報告 (${getTabName(CURRENT_TAB)})</h4>
+        <h4>📋 V2.0 智能資產負債管理報告</h4>
         <div class="analysis-text" id="analysis-content">${generateStory(rows, p)}</div>
       </div>
-
-      <div class="export-wrap" style="margin-top:24px; text-align:center;">
-        <button class="btn-primary" style="background:#059669; padding:15px; font-size:16px; width:auto; padding-left: 30px; padding-right: 30px;" onclick="exportUltimateXLSX()">匯出 XLSX 全圖文報表</button>
-      </div>
+      <div class="export-wrap" style="margin-top:24px; text-align:center;"><button class="btn-primary" style="background:#059669; padding:15px; font-size:16px; width:auto;" onclick="exportUltimateXLSX()">匯出 XLSX 全圖文報表</button></div>
     </div>
   `;
   renderCharts(rows, p);
 }
-
-function getBadgeClass(rule) { return { 'danger': 'badge-danger', 'boom': 'badge-boom', 'immune': 'badge-immune', 'inflation': 'badge-inflation', 'none': 'badge-normal' }[rule]; }
-function getBadgeText(rule) { return { 'danger': '保護', 'boom': '繁榮', 'immune': '免死', 'inflation': '通膨', 'none': '正常' }[rule]; }
-function getTabName(t) { return {p10:"悲觀 P10", p25:"保守 P25", p50:"中位數 P50", p75:"穩健 P75", p90:"樂觀 P90", default:"理想路徑"}[t]; }
 
 function renderCharts(rows, p) {
   if (LINE_CHART) LINE_CHART.destroy();
@@ -1026,114 +868,41 @@ function renderCharts(rows, p) {
   if (p.mc && MC_RESULTS) {
       if (FAN_CHART) FAN_CHART.destroy();
       const ctxF = $('fanChart').getContext('2d');
-      
-      const animation = {
-        y: {
-          duration: 2000,             
-          easing: 'easeOutQuart',     
-          from: (ctx) => {
-            if (ctx.type === 'data') {
-                return ctx.chart.scales.y ? ctx.chart.scales.y.getPixelForValue(MC_RESULTS.p50_net[0]) : 0;
-            }
-          }
-        },
-        x: {
-          duration: 1500,
-          easing: 'easeOutQuart'
-        }
-      };
-
       FAN_CHART = new Chart(ctxF, {
         type: 'line',
         data: {
           labels: MC_RESULTS.labels,
           datasets: [
             { label: '樂觀 P90', data: MC_RESULTS.p90_net, borderColor: 'rgba(99, 102, 241, 0.4)', borderWidth: 1, tension: 0.4, pointRadius: 0, fill: '+1', backgroundColor: 'rgba(99, 102, 241, 0.15)' },
-            { label: '中位數 P50', data: MC_RESULTS.p50_net, borderColor: '#fff', borderWidth: 2, tension: 0.4, pointRadius: 0, shadowBlur: 10, shadowColor: '#fff' },
+            { label: '中位數 P50', data: MC_RESULTS.p50_net, borderColor: '#fff', borderWidth: 2, tension: 0.4, pointRadius: 0 },
             { label: '悲觀 P10', data: MC_RESULTS.p10_net, borderColor: 'rgba(239, 68, 68, 0.4)', borderWidth: 1, tension: 0.4, pointRadius: 0, fill: '-1', backgroundColor: 'rgba(239, 68, 68, 0.15)' }
           ]
         },
-        options: { 
-            responsive: true, maintainAspectRatio: false, animation,
-            interaction: { mode: 'index', intersect: false },
-            plugins: { legend: { display: false }, tooltip: { backgroundColor: 'rgba(0,0,0,0.8)', titleColor: '#fff', bodyColor: '#ccc' } },
-            scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } }, y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#9ca3af' } } }
-        }
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' } }, y: { grid: { color: 'rgba(255,255,255,0.05)' } } } }
       });
   }
 }
 
 async function exportUltimateXLSX() {
     const p = getP(), rows = ALL_PATHS[CURRENT_TAB], last = rows[rows.length-1], totalW = rows.reduce((a,b)=>a+b.wa,0);
-    const wb = new ExcelJS.Workbook();
-    const ws = wb.addWorksheet('退休精算報告');
-    
-    ws.mergeCells('A1:K1'); 
-    const head = ws.getCell('A1'); 
-    head.value = `${p.name} 的專屬退休精算報告 (${getTabName(CURRENT_TAB)})`;
-    head.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } };
-    head.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1A1D23' } };
-    head.alignment = { horizontal: 'center', vertical: 'middle' };
-    ws.getRow(1).height = 30;
-
+    const wb = new ExcelJS.Workbook(); const ws = wb.addWorksheet('退休精算報告');
+    ws.mergeCells('A1:K1'); const head = ws.getCell('A1'); head.value = `${p.name} 的專業退休診斷報告 (${getTabName(CURRENT_TAB)})`;
+    head.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } }; head.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1A1D23' } };
+    head.alignment = { horizontal: 'center', vertical: 'middle' }; ws.getRow(1).height = 30;
     ws.addRow(['成功率', `${SUCCESS_RATE}%`, '期末淨額', `$${fM(last.net)}萬`, '累計提領', `$${fM(totalW)}萬`, '末年平均月領', `$${fMo(last.wa)}萬`]);
-    ws.getRow(2).font = { bold: true };
-    ws.addRow([]); 
-
-    let startRow = 4;
-    const charts = [ { id: 'fanChart', title: '機率分布扇形圖 (P10/P50/P90)', isDark: true }, { id: 'lineChart', title: '戰術執行路徑 (市值/淨資產/月領)', isDark: false } ];
-    
-    for (const c of charts) {
-        const canv = $(c.id);
-        if (canv) {
-            ws.getCell(`A${startRow}`).value = `【${c.title}】`;
-            ws.getCell(`A${startRow}`).font = { bold: true, color: { argb: 'FF4F46E5' } };
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = canv.width; tempCanvas.height = canv.height;
-            const ctx = tempCanvas.getContext('2d');
-            ctx.fillStyle = c.isDark ? '#1a1d23' : '#ffffff';
-            ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-            ctx.drawImage(canv, 0, 0);
-            const imgId = wb.addImage({ base64: tempCanvas.toDataURL('image/png'), extension: 'png' });
-            ws.addImage(imgId, { tl: { col: 0, row: startRow }, ext: { width: 680, height: 320 } });
-            startRow += 18;
-        }
-    }
-
-    const tableHeader = ['西元', '歲', '報酬%', '利率%', '市值(萬)', '負債(萬)', '維持率', '備用金(萬)', 'GK狀態', '月領(萬)', '執行動作'];
-    const headerRow = ws.getRow(startRow); 
-    headerRow.values = tableHeader;
-    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    headerRow.eachCell(c => c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4F46E5' } });
+    ws.addRow([]); let startRow = 4;
+    const tableHeader = ['西元', '歲', '報酬%', '利率%', '市值', '負債', '維持率', '現金', 'GK狀態', '月領(萬)', '智能分流動作'];
+    const hR = ws.getRow(startRow); hR.values = tableHeader; hR.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    hR.eachCell(c => c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4F46E5' } });
     startRow++;
-    
     rows.forEach(r => {
-        const rateVal = r.currentRate !== undefined ? r.currentRate : 0; 
         const opExcel = r.op.replace(/<br>/g, '\n');
-        
-        const row = ws.addRow([r.year, r.age, (r.ret*100).toFixed(1)+'%', (rateVal*100).toFixed(1)+'%', parseFloat(r.mv.toFixed(2)), parseFloat(r.debt.toFixed(2)), p.isPledgeEnabled ? (r.mr*100).toFixed(0)+'%' : '—', parseFloat(r.cash.toFixed(2)), getBadgeText(r.gkRule), parseFloat(r.mo.toFixed(2)), opExcel]);
-        
+        const row = ws.addRow([r.year, r.age, (r.ret*100).toFixed(1)+'%', p.isP?(r.curRate*100).toFixed(1)+'%':'—', parseFloat(r.mv.toFixed(2)), parseFloat(r.debt.toFixed(2)), p.isP ? (r.mr*100).toFixed(0)+'%' : '—', parseFloat(r.cash.toFixed(2)), getBadgeText(r.gkRule), parseFloat(r.mo.toFixed(2)), opExcel]);
         row.getCell(11).alignment = { wrapText: true, vertical: 'middle' };
-
-        const retCell = row.getCell(3); 
-        if(r.ret >= 0) retCell.font = { color: { argb: 'FFEF4444' } }; else retCell.font = { color: { argb: 'FF10B981' } };
+        if(r.ret >= 0) row.getCell(3).font = { color: { argb: 'FFEF4444' } }; else row.getCell(3).font = { color: { argb: 'FF10B981' } };
     });
-    
-    startRow = ws.rowCount + 2;
-    ws.getCell(`A${startRow}`).value = '📋 專屬診斷報告分析';
-    ws.getCell(`A${startRow}`).font = { size: 14, bold: true };
-    const content = $('analysis-content').innerText;
-    ws.getCell(`A${startRow+1}`).value = content;
-    ws.getCell(`A${startRow+1}`).alignment = { wrapText: true, vertical: 'top' };
-    ws.mergeCells(`A${startRow+1}:K${startRow+15}`);
-
-    ws.columns = [ { width: 6 }, { width: 5 }, { width: 8 }, { width: 8 }, { width: 12 }, { width: 12 }, { width: 10 }, { width: 12 }, { width: 10 }, { width: 12 }, { width: 45 } ];
-
-    const buf = await wb.xlsx.writeBuffer();
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(new Blob([buf]));
-    link.download = `退休精算報告_${p.name}_${new Date().toLocaleDateString()}.xlsx`;
-    link.click();
+    const buf = await wb.xlsx.writeBuffer(); const link = document.createElement('a');
+    link.href = URL.createObjectURL(new Blob([buf])); link.download = `FIRE_Retirement_Report_${p.name}.xlsx`; link.click();
 }
 </script>
 </body>
