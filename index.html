@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIRE 退休財富計算機｜Ver 2.0.0 跨週期動態管理版</title>
+<title>FIRE 退休財富計算機｜Ver 2.0.1 跨週期動態管理版</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -49,6 +49,7 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .input-wrap input, .input-wrap select { width: 100%; border: 1.5px solid #e8eaed; border-radius: 10px; padding: 10px 14px; font-size: 15px; font-family: 'DM Mono', 'Noto Sans TC', sans-serif; outline: none; transition: .2s; background: #fff; appearance: none; }
 .input-wrap input.has-unit { padding-right: 38px; }
 .input-wrap input:focus, .input-wrap select:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.12); }
+.input-wrap select:disabled { background: #f3f4f6; color: #9ca3af; cursor: not-allowed; }
 .input-unit { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #9ca3af; pointer-events: none; }
 
 /* ENGINE TOGGLE CARDS */
@@ -65,6 +66,8 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .sw-track::before { content: ''; position: absolute; width: 18px; height: 18px; background: #fff; border-radius: 50%; top: 3px; left: 3px; transition: .2s; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
 .sw input:checked + .sw-track { background: #667eea; }
 .sw input:checked + .sw-track::before { transform: translateX(18px); }
+.sw input:disabled + .sw-track { opacity: 0.5; cursor: not-allowed; }
+.sw input:disabled + .sw-track::before { box-shadow: none; }
 
 /* VOL PRESETS */
 .vol-presets { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 16px; }
@@ -183,7 +186,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>FIRE 退休財富計算機</h1>
-    <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 - <span class="version-tag">ver 2.0.0 made by 阿奇</span></h2>
+    <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 - <span class="version-tag">ver 2.0.1 made by 阿奇</span></h2>
     <div class="hero-desc">
       「牛市鎖利增貸、熊市現金防禦、買借死傳承」打造的全天候財富沙盒，<br>透過 1000 次極端市場模擬，精算全方面抗通膨戰術。
     </div>
@@ -355,12 +358,16 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             <div class="sw"><input type="checkbox" id="isPledgeEnabled" onchange="updateEngineUI()"><span class="sw-track"></span></div>
           </div>
           <div class="engine-content" id="pledge-content">
-            <div style="display: flex; gap: 36px; margin-bottom: 20px; flex-wrap: wrap;">
+            <div style="display: flex; gap: 36px; margin-bottom: 20px; flex-wrap: wrap; background: #f3f4f6; padding: 15px; border-radius: 12px; border: 1px solid #e5e7eb;">
               <label style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px; cursor:pointer; color:#374151;">
                 <div class="sw"><input type="checkbox" id="preDeduct" checked><span class="sw-track"></span></div> 預扣一年利息
               </label>
               <label id="reinvest-label" style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px; cursor:pointer; color:#374151;">
                 <div class="sw"><input type="checkbox" id="reinvest" checked><span class="sw-track"></span></div> 達標增貸再投入
+              </label>
+              <label style="display:flex; align-items:center; gap:10px; font-weight:800; font-size:14px; cursor:pointer; color:#ef4444; margin-left: auto;">
+                <div class="sw"><input type="checkbox" id="bbdToggle" onchange="updateBBDUI()"><span class="sw-track"></span></div> 啟用買.借.死 (BBD) 策略
+                <span class="tip" data-tip="以 GK 提領設定（初始預算率與護欄）作為精算基準，生活費 100% 由質押支應。不到斷頭或生存底線，絕不賣出任何一股。">?</span>
               </label>
             </div>
 
@@ -474,7 +481,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
       <p><strong>1. 為何選擇 V2.0 智能結算？</strong><br>傳統計算機只會死板提領，而 V2.0 模擬了專業的資產負債管理。系統會根據市場牛熊動態分流現金來源，確保每一分資金都能發揮最大的複利效應並規避摩擦成本。</p>
     </div>
     <div class="seo-item">
-      <p><strong>2. Lombard Defense（質押防禦機制）</strong><br>質押不僅是多頭的加速器，更是空頭的救命傘。在槓桿可控的前提下，透過「流動性橋接」以債支應生活，能避免在股災低點賣出股票，保留反彈時的母本實力。</p>
+      <p><strong>2. 買.借.死 (BBD) 求生覆寫機制</strong><br>開啟 BBD 戰術時，系統強制執行「一股不賣」紀律。但遇到銀行收傘且備用金耗盡的生死存亡之際，系統會自動啟動「求生覆寫」，暫時打破誓言僅賣出維持生存底線之額度，展現最真實的避險本能。</p>
     </div>
     <div class="seo-item">
       <p><strong>3. 報酬順序風險 (SRR)</strong><br>退休初期的大崩盤是所有退休計畫的殺手。透過 GK 動態護欄與現金備用金的雙重屏障，系統能大幅提升在極端情境下的生存機率，實現真正的資產長青。</p>
@@ -483,7 +490,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.0.0 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.0.1 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -510,12 +517,34 @@ let FAN_CHART = null;
 let RISK_STATS = { bankrupt: 0, marginCall: 0, survival: 0 };
 let MC_RESULTS = null; 
 
-function toggleSwitch(id) { $(id).click(); }
+function toggleSwitch(id) { 
+    if(!$(id).disabled) $(id).click(); 
+}
+
 function updateEngineUI() {
   $('pledge-card').className = $('isPledgeEnabled').checked ? 'engine-toggle-card card-purple active' : 'engine-toggle-card card-purple';
   $('mc-card').className = $('mc-toggle').checked ? 'engine-toggle-card card-green active' : 'engine-toggle-card card-green';
   $('withdraw-logic-card').className = $('isWithdrawLogicEnabled').checked ? 'engine-toggle-card card-purple active' : 'engine-toggle-card card-purple';
 }
+
+function updateBBDUI() {
+    const isBBD = $('bbdToggle').checked;
+    const wLogic = $('isWithdrawLogicEnabled');
+    const wMode = $('withdrawMode');
+
+    if (isBBD) {
+        wLogic.checked = true;
+        wLogic.disabled = true;
+        wMode.value = 'GK';
+        wMode.disabled = true;
+    } else {
+        wLogic.disabled = false;
+        wMode.disabled = false;
+    }
+    updateEngineUI();
+    updateWithdrawUI();
+}
+
 function setVol(v) { $('vol').value = v; }
 
 function updateWithdrawUI() {
@@ -567,8 +596,8 @@ function generateDynamicGrids() {
 }
 
 window.onload = function() { 
-  $('isPledgeEnabled').checked = false; $('mc-toggle').checked = false; $('isWithdrawLogicEnabled').checked = false; 
-  updateEngineUI(); updateWithdrawUI(); updateRepayUI(); updateRateUI(); updateMRUI(); generateDynamicGrids();
+  $('isPledgeEnabled').checked = false; $('mc-toggle').checked = false; $('isWithdrawLogicEnabled').checked = false; $('bbdToggle').checked = false;
+  updateBBDUI(); updateEngineUI(); updateWithdrawUI(); updateRepayUI(); updateRateUI(); updateMRUI(); generateDynamicGrids();
 }
 
 function getP() {
@@ -588,21 +617,23 @@ function getP() {
     inflation: parseFloat($('inflation').value)/100, inflationMode: $('inflationMode').value,
     upG: parseFloat($('upperGuard').value)/100, loG: parseFloat($('lowerGuard').value)/100, lateLife: parseInt($('lateLifeYears').value),
     retR: parseFloat($('returnRate').value)/100, isP: $('isPledgeEnabled').checked, preD: $('preDeduct').checked, reinvest: $('reinvest').checked,
+    isBBD: $('bbdToggle').checked,
     rateMode: $('rateSelect').value, pRate: parseFloat($('pledgeRate').value)/100, rBase: parseFloat($('rateBase').value)/100, rFloor: parseFloat($('rateFloor').value)/100, rCap: parseFloat($('rateCap').value)/100,
     cRates: cR, dangerMR: parseFloat($('dangerMR').value)/100, targetMR: parseFloat($('targetMR').value)/100, mrMode: $('mrSelect').value, cMRs: cM, mc: $('mc-toggle').checked, vol: parseFloat($('vol').value)/100
   };
 }
 
 /**
- * [V2.0.0 核心演算法] 跨週期智能 ALM
+ * [V2.0.1 核心演算法] BBD 買借死與求生覆寫機制
  */
 function simPath(p, overrides) {
   let mv = p.mv, debt = p.debt, cash = p.cash;
   let wa = p.isW ? (p.wMode === 'GK' ? p.mv * p.initWR : p.mv * p.fixedWR) : 0;
   let rows = [], protectCount = 0;
-  let isBBD = (p.isP && p.isW && p.wMode === 'FIXED' && p.fixedWR === 0);
+  let isBBD = p.isBBD;
 
   for (let y = 1; y <= p.years; y++) {
+    let bbdBroken = false;
     const ret = overrides ? overrides[y-1] : p.retR;
     mv *= (1 + ret);
 
@@ -639,14 +670,12 @@ function simPath(p, overrides) {
         // --- 情境一：大牛市 且 維持率健康 (擴張/橋接模式) ---
         if (ret >= 0 && currentMR >= curTargetMR) {
             if (isBBD || p.isW) {
-                // 優先使用借貸支付生活費 (避免摩擦)
                 let projectedMR = (debt + budgetNeeded) > 0 ? mv / (debt + budgetNeeded) : 999;
                 if (projectedMR >= p.dangerMR) {
                     debt += budgetNeeded; budgetNeeded = 0;
-                    ops.push(isBBD ? "💳 買借死：全額增貸支應生活與利息" : "💳 順週期借貸：質押代償生活預算");
+                    ops.push(isBBD ? "👑 BBD 買借死：全額增貸支應生活與利息" : "💳 順週期借貸：質押代償生活預算");
                 }
             }
-            // 檢查是否再投入
             if (p.reinvest && (p.repayMode === 'NONE' || p.repayMode === 'RATIO')) {
                 let curMR_afterWa = debt > 0 ? mv / debt : 999;
                 if (curMR_afterWa > curTargetMR) {
@@ -657,7 +686,6 @@ function simPath(p, overrides) {
         } 
         // --- 情境二：大牛市 但 維持率低於目標 (停利降槓桿模式) ---
         else if (ret >= 0 && currentMR < curTargetMR) {
-            // 淨額結算公式精算一次性賣股
             let r_sell = (curTargetMR * debt - mv + budgetNeeded) / (curTargetMR - 1);
             if (r_sell > 0) {
                 let totalSell = r_sell + budgetNeeded;
@@ -665,14 +693,14 @@ function simPath(p, overrides) {
                 ops.push(`⚖️ 高檔停利：合併結算生活與償債 (賣股 ${fM(totalSell)} 萬)`);
             }
         }
-        // --- 情境三：大熊市 (逆週期防禦模式) ---
+        // --- 情境三：大熊市 (逆週期防禦與求生覆寫模式) ---
         else {
             // 1. 優先燒備用金
             if (cash > 0) {
                 let bailout = Math.min(cash, budgetNeeded); cash -= bailout; budgetNeeded -= bailout;
                 ops.push(`🛡️ 逆週期防禦：動用現金備用金 (-${fM(bailout)})`);
             }
-            // 2. 次要：如果維持率還高，啟動流動性橋接 (不賣股)
+            // 2. 次要：如果維持率還高，啟動流動性橋接
             if (budgetNeeded > 0) {
                 let projectedMR = (debt + budgetNeeded) > 0 ? mv / (debt + budgetNeeded) : 999;
                 if (projectedMR >= p.dangerMR) {
@@ -680,16 +708,22 @@ function simPath(p, overrides) {
                     ops.push("🌉 流動性橋接：以債支應避免低點砍倉");
                 }
             }
-            // 3. 最後防線：被迫賣股
+            // 3. 最後防線 / 求生覆寫：被迫賣股
             if (budgetNeeded > 0) {
-                mv -= budgetNeeded; budgetNeeded = 0;
-                ops.push("🚑 最後防線：備用金與額度耗盡，被迫賣股");
+                mv -= budgetNeeded; 
+                if (isBBD) {
+                    bbdBroken = true;
+                    ops.push("⚠️ 求生覆寫：備用金耗盡，打破 BBD 誓言緊急賣股");
+                } else {
+                    ops.push("🚑 最後防線：備用金與額度耗盡，被迫賣股");
+                }
+                budgetNeeded = 0;
             }
         }
 
-        // 4. 救命錢補滿機制 (僅在牛市且有餘裕時)
+        // 4. 救命錢補滿機制
         if (ret > 0 && cash < p.cashMax) {
-            let surplus = mv * 0.05; // 限制最多賣 5% 補血
+            let surplus = mv * 0.05; 
             let fill = Math.min(surplus, p.cashMax - cash);
             if (fill > 0) { cash += fill; mv -= fill; ops.push(`♻️ 補血機制：高點回補備用金 (+${fM(fill)})`); }
         }
@@ -715,7 +749,7 @@ function simPath(p, overrides) {
 
     if (ops.length === 0) ops.push("✅ 正常執行");
     let finalMR = debt > 0 ? mv / debt : 999;
-    rows.push({ y, year: p.startYear+y-1, age: p.startAge+y, ret, mv, debt, cash, mr: finalMR, wa, mo: wa/12, gkRule, op: ops.join('<br>'), net: mv-debt, curRate });
+    rows.push({ y, year: p.startYear+y-1, age: p.startAge+y, ret, mv, debt, cash, mr: finalMR, wa, mo: wa/12, gkRule, op: ops.join('<br>'), net: mv-debt, curRate, bbdBroken });
   }
   const last = rows[rows.length-1];
   return { 
@@ -770,9 +804,9 @@ function generateStory(rows, p) {
   let story = `<p><strong>${nameCall}</strong>，這是一份基於 V2.0 跨週期智能演算法生成的專業報告。我們模擬了市場劇震與通膨滯脹的極端情境。</p>`;
 
   let modeTitle = "【動態資產負債管理模式】", modeIntro = "系統正自動執行『順週期活化擔保、逆週期流動性橋接』的高階戰術。";
-  if (p.isP && p.isW && p.wMode === 'FIXED' && p.fixedWR === 0) {
-      modeTitle = "【終極買借死模式 (BBD)】";
-      modeIntro = "一股不賣的貴族戰術。系統精確利用維持率餘裕進行『以債養老』，最大化避開交易摩擦與報酬順序風險。";
+  if (p.isBBD) {
+      modeTitle = "【終極買.借.死 (BBD) 戰術】";
+      modeIntro = "一股不賣的貴族戰術。系統精確利用 GK 護欄算出的預算，100% 由維持率餘裕進行『以債養老』，最大化避開交易摩擦與報酬順序風險。";
   }
   story += `<h3>${modeTitle}</h3><p>${modeIntro}</p>`;
 
@@ -780,9 +814,11 @@ function generateStory(rows, p) {
   const s_years = rows.filter(r => r.gkRule === 'danger').map(r => r.age);
   const bridge_years = rows.filter(r => r.op.includes("橋接")).map(r => r.age);
   const risk_years = rows.filter(r => r.op.includes("追繳")).map(r => r.age);
+  const bbd_broken_years = rows.filter(r => r.bbdBroken).map(r => r.age);
   
   if (s_years.length > 0) events.push(`<strong>預算護欄介入：</strong>在 <strong>${s_years[0]} 歲</strong> 觸發了減薪機制。這並非失敗，而是為了確保在低迷市場中保全資產母本。`);
   if (bridge_years.length > 0) events.push(`<strong>流動性橋接啟動：</strong>我們觀察到 <strong>${bridge_years[0]} 歲</strong> 股市大跌，系統成功封印賣股，改由質押支應生活，規避了低點砍倉的損失。`);
+  if (p.isBBD && bbd_broken_years.length > 0) events.push(`<strong><span style="color:#ef4444;">⚠️ 【求生覆寫機制觸發】</span>：</strong>在 <strong>${bbd_broken_years[0]} 歲</strong> 時，遭遇極端市場導致銀行額度凍結且備用金耗盡。為維持生存底線，系統被迫打破買借死『一股不賣』的紀律，啟動緊急賣股。建議您在初始設定時提高現金備用金水位，以提升 BBD 戰術的完整度。`);
   if (risk_years.length > 0) events.push(`<strong>追繳風險警示：</strong>注意 <strong>${risk_years[0]} 歲</strong> 觸發了斷頭賣出。建議調降目標維持率或增加初始備用金以提升韌性。`);
   
   if (events.length > 0) story += `<p><strong>【核心事件復盤】</strong><br>${events.join('<br><br>')}</p>`;
