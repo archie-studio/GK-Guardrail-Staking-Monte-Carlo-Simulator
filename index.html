@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIRE 退休財富計算機｜Ver 2.0.5 跨週期動態管理版</title>
+<title>FIRE 退休財富計算機｜Ver 2.0.6 跨週期動態管理版</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -82,7 +82,7 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .btn-primary { width: 100%; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: none; border-radius: 14px; font-size: 20px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 20px rgba(102,126,234,0.3); transition: .2s; margin-top: 16px; }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
 
-/* DASHBOARD & ANIMATION (純實體展開 1.5秒) */
+/* DASHBOARD & ANIMATION */
 #results-area { scroll-margin-top: 20px; }
 .results-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 1.5s cubic-bezier(0.25, 1, 0.5, 1); margin-top: 0; overflow: hidden; }
 .results-wrapper.expanded { grid-template-rows: 1fr; margin-top: 24px; }
@@ -192,7 +192,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
     <!-- 標題絕對定位魔術：完美置中且懸浮版本號 -->
     <div style="position: relative; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px;">
         <h1>FIRE 退休財富計算機</h1>
-        <span style="position: absolute; left: 100%; bottom: 6px; margin-left: 12px; font-size: 14px; color: #9ca3af; white-space: nowrap; font-weight: 500;">ver 2.0.5 made by 阿奇</span>
+        <span style="position: absolute; left: 100%; bottom: 6px; margin-left: 12px; font-size: 14px; color: #9ca3af; white-space: nowrap; font-weight: 500;">ver 2.0.6 made by 阿奇</span>
     </div>
     <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 -</h2>
     <div class="hero-desc">
@@ -498,7 +498,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.0.5 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.0.6 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -638,7 +638,7 @@ function getP() {
 }
 
 /**
- * [V2.0.5 核心演算法] BBD 買借死與求生覆寫機制
+ * [V2.0.6 核心演算法] BBD 買借死與求生覆寫機制
  */
 function simPath(p, overrides) {
   let mv = p.mv, debt = p.debt, cash = p.cash;
@@ -863,7 +863,7 @@ function renderDashboard() {
             <div class="metric"><div class="metric-label">累計總提領</div><div class="metric-value val-amber">$${fM(totalW)}萬</div></div>
             <div class="metric"><div class="metric-label">末年平均月領</div><div class="metric-value val-green">$${fMo(last.wa)}萬</div></div>
           </div>
-          ${p.mc ? `<div class="dark-chart-container"><div class="dark-chart-title">🌌 淨資產機率分布 (P10 / P50 / P90)</div><div class="chart-inner"><canvas id="fanChart" style="background-color: transparent;"></canvas></div></div>` : ''}
+          ${p.mc ? `<div class="dark-chart-container" id="anchor-fan"><div class="dark-chart-title">🌌 淨資產機率分布 (P10 / P50 / P90)</div><div class="chart-inner"><canvas id="fanChart" style="background-color: transparent;"></canvas></div></div>` : ''}
           <div class="risk-indicator-wrap" style="margin-top:0;">
               <div class="risk-light"><div class="dot ${RISK_STATS.bankrupt > 10 ? 'dot-red' : 'dot-green'}"></div>🔴 破產風險：${RISK_STATS.bankrupt}%</div>
               <div class="risk-light"><div class="dot ${RISK_STATS.marginCall > 10 ? 'dot-red' : 'dot-yellow'}"></div>🟡 斷頭風險：${RISK_STATS.marginCall}%</div>
@@ -904,7 +904,6 @@ function renderDashboard() {
   `;
   renderCharts(rows, p);
 
-  // 導演級運鏡：延遲 100 毫秒給 DOM 渲染，再用 JS 暴力滾動精準對齊
   if (isFirstRun) {
       setTimeout(() => {
           $('results-wrapper').classList.add('expanded');
@@ -912,11 +911,10 @@ function renderDashboard() {
           setTimeout(() => {
               const chartsEl = $('anchor-charts');
               if (chartsEl) {
-                  // 強制鎖定要滾動到的 Y 座標，避開 DOM 高度變動的干擾
                   const targetY = chartsEl.getBoundingClientRect().bottom + window.scrollY - window.innerHeight + 40; 
                   window.scrollTo({ top: targetY, behavior: 'smooth' });
               }
-          }, 50); // 微延遲確保 offset 已經計算
+          }, 50);
 
           isFirstRun = false;
       }, 100);
@@ -924,7 +922,6 @@ function renderDashboard() {
 }
 
 function renderCharts(rows, p) {
-  // 動畫參數：放慢到 1.5秒，與卡片展開節奏一致
   const animConfig = { duration: 1500, easing: 'easeOutExpo' };
 
   if (LINE_CHART) LINE_CHART.destroy();
@@ -970,16 +967,41 @@ function renderCharts(rows, p) {
 
 async function exportUltimateXLSX() {
     const p = getP(), rows = ALL_PATHS[CURRENT_TAB], last = rows[rows.length-1], totalW = rows.reduce((a,b)=>a+b.wa,0);
-    const wb = new ExcelJS.Workbook(); const ws = wb.addWorksheet('退休精算報告');
+    const wb = new ExcelJS.Workbook(); 
     
+    // 開啟純白畫布 (隱藏網格線)
+    const ws = wb.addWorksheet('退休精算報告', { views: [{ showGridLines: false }] });
+    
+    // 【專業佈局：設定固定欄寬】
+    ws.columns = [
+        { width: 12 }, // A: 歲數
+        { width: 10 }, // B: 報酬%
+        { width: 10 }, // C: 利率%
+        { width: 15 }, // D: 市值
+        { width: 15 }, // E: 負債
+        { width: 12 }, // F: 維持率
+        { width: 15 }, // G: 備用金
+        { width: 12 }, // H: GK狀態
+        { width: 15 }, // I: 月領
+        { width: 50 }  // J: 執行動作 (專屬超大格子)
+    ];
+    
+    // 標題區
     ws.mergeCells('A1:J1'); const head = ws.getCell('A1'); head.value = `${p.name} 的專業退休診斷報告 (${getTabName(CURRENT_TAB)})`;
     head.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } }; head.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1A1D23' } };
     head.alignment = { horizontal: 'center', vertical: 'middle' }; ws.getRow(1).height = 30;
-    ws.addRow(['成功率', `${SUCCESS_RATE}%`, '期末淨額', `$${fM(last.net)}萬`, '累計提領', `$${fM(totalW)}萬`, '末年平均月領', `$${fMo(last.wa)}萬`]);
+    
+    // 數據概要區
+    ws.addRow(['成功率', `${SUCCESS_RATE}%`, '期末淨額', last.net, '累計提領', totalW, '末年平均月領', last.wa/12]);
+    const summaryRow = ws.getRow(2);
+    summaryRow.getCell(4).numFmt = '#,##0.0"萬"'; 
+    summaryRow.getCell(6).numFmt = '#,##0.0"萬"'; 
+    summaryRow.getCell(8).numFmt = '#,##0.0"萬"';
     ws.addRow([]); 
     
     let startRow = 4;
 
+    // 圖表插入區 (加入更多物理空間)
     try {
         const canvasL = document.getElementById('lineChart');
         if (canvasL) {
@@ -992,9 +1014,9 @@ async function exportUltimateXLSX() {
         if (canvasP) {
             const imgDataP = canvasP.toDataURL('image/png').split(',')[1];
             const imgIdP = wb.addImage({ base64: imgDataP, extension: 'png' });
-            ws.addImage(imgIdP, { tl: { col: 5, row: startRow }, ext: { width: 320, height: 320 } });
+            ws.addImage(imgIdP, { tl: { col: 6, row: startRow }, ext: { width: 320, height: 320 } });
         }
-        startRow += 17;
+        startRow += 18; // 給圖表 18 列的空間
 
         if (p.mc) {
             const canvasF = document.getElementById('fanChart');
@@ -1002,14 +1024,14 @@ async function exportUltimateXLSX() {
                 const imgDataF = canvasF.toDataURL('image/png').split(',')[1];
                 const imgIdF = wb.addImage({ base64: imgDataF, extension: 'png' });
                 ws.addImage(imgIdF, { tl: { col: 0, row: startRow }, ext: { width: 650, height: 320 } });
-                startRow += 17;
+                startRow += 18;
             }
         }
     } catch(e) {
         console.error("圖表匯出失敗:", e);
     }
 
-    // 將個人資產分析報告寫入 Excel
+    // 專屬：個人資產分析報告區塊
     startRow += 1;
     ws.mergeCells(`A${startRow}:J${startRow}`);
     const reportTitle = ws.getCell(`A${startRow}`);
@@ -1034,17 +1056,21 @@ async function exportUltimateXLSX() {
         const pCell = ws.getCell(`A${startRow}`);
         pCell.value = pg.trim();
         pCell.alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
-        let lines = Math.ceil(pg.length / 80); 
+        pCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0F5FF' } }; // 淡藍色背景
+        
+        let lines = Math.ceil(pg.length / 70); 
         ws.getRow(startRow).height = lines * 18 + 10;
         startRow++;
     });
-    startRow += 1;
+    startRow += 2; // 留白
 
-    const tableHeader = ['歲數', '報酬%', '利率%', '市值', '負債', '維持率', '備用金', 'GK狀態', '月領(萬)', '執行動作'];
+    // 執行明細表 Header
+    const tableHeader = ['歲數', '報酬%', '利率%', '市值', '負債', '維持率', '備用金', 'GK狀態', '月領', '執行動作'];
     const hR = ws.getRow(startRow); hR.values = tableHeader; hR.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    hR.eachCell(c => c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4F46E5' } });
+    hR.eachCell(c => c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1A1D23' } });
     startRow++;
     
+    // 寫入明細資料 (套用數字格式)
     rows.forEach(r => {
         const opExcel = r.op.replace(/<br>/g, '\n').replace(/<[^>]+>/g, ''); 
         const row = ws.addRow([
@@ -1059,8 +1085,21 @@ async function exportUltimateXLSX() {
             parseFloat(r.mo.toFixed(2)), 
             opExcel
         ]);
+        
+        // 數字格式化設定：加入千分位與"萬"字
+        row.getCell(4).numFmt = '#,##0.0"萬"';
+        row.getCell(5).numFmt = '#,##0.0"萬"';
+        row.getCell(7).numFmt = '#,##0.0"萬"';
+        row.getCell(9).numFmt = '#,##0.0"萬"';
+
         row.getCell(10).alignment = { wrapText: true, vertical: 'middle' };
         if(r.ret >= 0) row.getCell(2).font = { color: { argb: 'FFEF4444' } }; else row.getCell(2).font = { color: { argb: 'FF10B981' } };
+        
+        // 加入淡淡的下邊框
+        row.eachCell(c => {
+            c.border = { bottom: { style: 'thin', color: { argb: 'FFE8EAED' } } };
+            c.alignment = c.alignment || { vertical: 'middle' };
+        });
     });
     
     const buf = await wb.xlsx.writeBuffer(); const link = document.createElement('a');
