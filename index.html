@@ -23,10 +23,9 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 /* ===== HERO ===== */
 .hero { background: #fff; border-bottom: 1px solid #e8eaed; padding: 60px 16px; text-align: center; }
 .hero-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
-.hero h1 { font-size: clamp(32px, 6vw, 48px); font-weight: 800; color: #1a1d23; margin-bottom: 12px; letter-spacing: -1px; }
-.hero h2 { font-size: 18px; font-weight: 600; color: #a78bfa; margin-bottom: 16px; display: flex; align-items: center; gap: 14px; text-align: center; }
-.version-tag { font-size: 14px; color: #9ca3af; font-weight: 500; background: #f3f4f6; padding: 4px 14px; border-radius: 20px; border: 1px solid #e5e7eb; }
-.hero-desc { color: #6b7280; font-size: 16px; max-width: 800px; margin: 0 auto; line-height: 1.8; }
+.hero h1 { font-size: clamp(32px, 6vw, 48px); font-weight: 800; color: #1a1d23; letter-spacing: -1px; margin: 0; }
+.hero h2 { font-size: 18px; font-weight: 600; color: #a78bfa; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 14px; text-align: center; width: 100%;}
+.hero-desc { color: #6b7280; font-size: 16px; max-width: 800px; margin: 0 auto; line-height: 1.8; text-align: center; }
 
 /* 提示詞修正：加入 max-width 與 align-right 防截斷 */
 .tip { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: #e5e7eb; border-radius: 50%; font-size: 10px; cursor: help; color: #6b7280; margin-left: 4px; position: relative; }
@@ -36,7 +35,6 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 
 /* ===== LAYOUT ===== */
 .main-wrap { max-width: 1100px; margin: 0 auto; padding: 32px 16px; }
-/* 修正溢斷：移除 overflow: hidden 以確保 Tooltip 完整顯示，並將圓角移至 Header */
 .card { background: #fff; border: 1px solid #e8eaed; border-radius: 16px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
 .card-header { padding: 16px 20px; border-bottom: 1px solid #f0f1f3; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: #374151; background: #fafafa; border-top-left-radius: 16px; border-top-right-radius: 16px;}
 .card-body { padding: 32px 24px; }
@@ -84,7 +82,13 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .btn-primary { width: 100%; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: none; border-radius: 14px; font-size: 20px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 20px rgba(102,126,234,0.3); transition: .2s; margin-top: 16px; }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
 
-/* RESULTS DASHBOARD */
+/* DASHBOARD & ANIMATION */
+#results-area { scroll-margin-top: 80px; }
+.results-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 1s cubic-bezier(0.25, 1, 0.5, 1); margin-top: 0; }
+.results-wrapper.expanded { grid-template-rows: 1fr; margin-top: 24px; }
+.results-inner { overflow: hidden; opacity: 0; transition: opacity 0.8s ease-in 0.2s; }
+.results-wrapper.expanded .results-inner { opacity: 1; }
+
 .summary-box { background: #1a1d23; border-radius: 24px; padding: 36px; color: #fff; margin-bottom: 24px; }
 .summary-box h3 { font-size: 28px; margin-bottom: 28px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; font-weight: 800; }
 .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 24px; }
@@ -124,7 +128,7 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .analysis-text strong { color: #1a1d23; font-weight: 700; }
 .analysis-text h3 { font-size: 18px; margin-bottom: 10px; color: #4f46e5; font-weight: 800; }
 
-/* 表格優化：重新分配 10 個欄位寬度 */
+/* 表格優化 */
 .table-card { background: #fff; border: 1px solid #e8eaed; border-radius: 20px; overflow: hidden; margin-top: 32px; }
 .table-header { padding: 20px 24px; border-bottom: 1px solid #f0f1f3; font-weight: 800; color: #1a1d23; background: #fafafa; font-size: 17px;}
 .table-scroll { width: 100%; overflow: hidden; } 
@@ -188,8 +192,12 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 
 <section class="hero">
   <div class="hero-inner">
-    <h1>FIRE 退休財富計算機</h1>
-    <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 - <span class="version-tag">ver 2.0.3 made by 阿奇</span></h2>
+    <!-- 標題絕對定位魔術：完美置中且懸浮版本號 -->
+    <div style="position: relative; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+        <h1>FIRE 退休財富計算機</h1>
+        <span style="position: absolute; left: 100%; bottom: 6px; margin-left: 12px; font-size: 14px; color: #9ca3af; white-space: nowrap; font-weight: 500;">ver 2.0.3 made by 阿奇</span>
+    </div>
+    <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 -</h2>
     <div class="hero-desc">
       「牛市鎖利增貸、熊市現金防禦、買借死傳承」<br>透過 1000 次極端市場模擬，精算全方面抗通膨戰術。
     </div>
@@ -368,6 +376,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
               <label id="reinvest-label" style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px; cursor:pointer; color:#374151;">
                 <div class="sw"><input type="checkbox" id="reinvest" checked><span class="sw-track"></span></div> 達標增貸再投入
               </label>
+              <!-- BBD 開關向左移，消除空格 -->
               <label style="display:flex; align-items:center; gap:10px; font-weight:800; font-size:14px; cursor:pointer; color:#ef4444;">
                 <div class="sw"><input type="checkbox" id="bbdToggle" onchange="updateBBDUI()"><span class="sw-track"></span></div> 啟用買.借.死 (BBD) 策略
                 <span class="tip align-right" data-tip="以 GK 提領設定（初始預算率與護欄）作為精算基準，生活費 100% 由質押支應。不到斷頭或生存底線，絕不賣出任何一股。">?</span>
@@ -519,6 +528,7 @@ let PIE_CHART = null;
 let FAN_CHART = null; 
 let RISK_STATS = { bankrupt: 0, marginCall: 0, survival: 0 };
 let MC_RESULTS = null; 
+let isFirstRun = true; // 追蹤是否為第一次生成報表
 
 function toggleSwitch(id) { 
     if(!$(id).disabled) $(id).click(); 
@@ -768,6 +778,7 @@ function simPath(p, overrides) {
 
 function runSim() {
   const p = getP(); RISK_STATS = { bankrupt: 0, marginCall: 0, survival: 0 }; MC_RESULTS = null; 
+  isFirstRun = true; // 每次重新點擊生成報告，重置卡片展開狀態
   if (!p.mc) {
     const res = simPath(p); ALL_PATHS = { default: res.history }; SUCCESS_RATE = res.survived ? 100 : 0;
     if (res.failType.bankrupt) RISK_STATS.bankrupt = 100;
@@ -801,7 +812,11 @@ function runSim() {
   renderDashboard();
 }
 
-function setTab(t) { CURRENT_TAB = t; renderDashboard(); }
+function setTab(t) { 
+    CURRENT_TAB = t; 
+    isFirstRun = false; // 切換 Tab 時保持卡片展開
+    renderDashboard(); 
+}
 function getBadgeClass(rule) { return { 'danger': 'badge-danger', 'boom': 'badge-boom', 'immune': 'badge-immune', 'inflation': 'badge-inflation', 'none': 'badge-normal' }[rule]; }
 function getBadgeText(rule) { return { 'danger': '保護', 'boom': '繁榮', 'immune': '免死', 'inflation': '通膨', 'none': '正常' }[rule]; }
 function getTabName(t) { return {p10:"悲觀 P10", p25:"保守 P25", p50:"中位數 P50", p75:"穩健 P75", p90:"樂觀 P90", default:"理想路徑"}[t]; }
@@ -838,59 +853,75 @@ function renderDashboard() {
   const p = getP(); const rows = ALL_PATHS[CURRENT_TAB]; const last = rows[rows.length-1]; const totalW = rows.reduce((a,b)=>a+b.wa,0);
   const tabsHTML = p.mc ? `<div class="tab-group">` + ["p10","p25","p50","p75","p90"].map(t => `<button class="tab-btn ${CURRENT_TAB===t?'active':''}" onclick="setTab('${t}')">${getTabName(t)}</button>`).join('') + `</div>` : '';
 
+  const wrapperClass = isFirstRun ? 'results-wrapper' : 'results-wrapper expanded';
+
   $('results-area').innerHTML = `
-    <div class="fade-in">
-      ${tabsHTML}
-      <div class="summary-box">
-        <h3>🎯 跨週期模擬成功率：${SUCCESS_RATE}%</h3>
-        <div class="metric-grid">
-          <div class="metric"><div class="metric-label">期末淨資產</div><div class="metric-value ${last.net>0?'val-green':'val-red'}">$${fM(last.net)}萬</div></div>
-          <div class="metric"><div class="metric-label">最低維持率</div><div class="metric-value ${p.isP?(Math.min(...rows.map(r=>r.mr))>p.dangerMR?'val-green':'val-red'):'val-green'}">${p.isP?(Math.min(...rows.map(r=>r.mr))*100).toFixed(0)+'%':'—'}</div></div>
-          <div class="metric"><div class="metric-label">累計總提領</div><div class="metric-value val-amber">$${fM(totalW)}萬</div></div>
-          <div class="metric"><div class="metric-label">末年平均月領</div><div class="metric-value val-green">$${fMo(last.wa)}萬</div></div>
+    <div class="${wrapperClass}" id="results-wrapper">
+      <div class="results-inner">
+        ${tabsHTML}
+        <div class="summary-box">
+          <h3>🎯 跨週期模擬成功率：${SUCCESS_RATE}%</h3>
+          <div class="metric-grid">
+            <div class="metric"><div class="metric-label">期末淨資產</div><div class="metric-value ${last.net>0?'val-green':'val-red'}">$${fM(last.net)}萬</div></div>
+            <div class="metric"><div class="metric-label">最低維持率</div><div class="metric-value ${p.isP?(Math.min(...rows.map(r=>r.mr))>p.dangerMR?'val-green':'val-red'):'val-green'}">${p.isP?(Math.min(...rows.map(r=>r.mr))*100).toFixed(0)+'%':'—'}</div></div>
+            <div class="metric"><div class="metric-label">累計總提領</div><div class="metric-value val-amber">$${fM(totalW)}萬</div></div>
+            <div class="metric"><div class="metric-label">末年平均月領</div><div class="metric-value val-green">$${fMo(last.wa)}萬</div></div>
+          </div>
+          ${p.mc ? `<div class="dark-chart-container"><div class="dark-chart-title">🌌 淨資產機率分布 (P10 / P50 / P90)</div><div class="chart-inner"><canvas id="fanChart" style="background-color: transparent;"></canvas></div></div>` : ''}
+          <div class="risk-indicator-wrap" style="margin-top:0;">
+              <div class="risk-light"><div class="dot ${RISK_STATS.bankrupt > 10 ? 'dot-red' : 'dot-green'}"></div>🔴 破產風險：${RISK_STATS.bankrupt}%</div>
+              <div class="risk-light"><div class="dot ${RISK_STATS.marginCall > 10 ? 'dot-red' : 'dot-yellow'}"></div>🟡 斷頭風險：${RISK_STATS.marginCall}%</div>
+              <div class="risk-light"><div class="dot ${RISK_STATS.survival > 10 ? 'dot-red' : 'dot-blue'}"></div>🔵 生存風險：${RISK_STATS.survival}%</div>
+          </div>
         </div>
-        ${p.mc ? `<div class="dark-chart-container"><div class="dark-chart-title">🌌 淨資產機率分布 (P10 / P50 / P90)</div><div class="chart-inner"><canvas id="fanChart" style="background-color: transparent;"></canvas></div></div>` : ''}
-        <div class="risk-indicator-wrap" style="margin-top:0;">
-            <div class="risk-light"><div class="dot ${RISK_STATS.bankrupt > 10 ? 'dot-red' : 'dot-green'}"></div>🔴 破產風險：${RISK_STATS.bankrupt}%</div>
-            <div class="risk-light"><div class="dot ${RISK_STATS.marginCall > 10 ? 'dot-red' : 'dot-yellow'}"></div>🟡 斷頭風險：${RISK_STATS.marginCall}%</div>
-            <div class="risk-light"><div class="dot ${RISK_STATS.survival > 10 ? 'dot-red' : 'dot-blue'}"></div>🔵 生存風險：${RISK_STATS.survival}%</div>
+        <div class="charts-grid">
+          <div class="chart-card"><div style="font-weight:700; color:#4b5563; margin-bottom:15px;">📊 戰術路徑 (${getTabName(CURRENT_TAB)})</div><div class="chart-inner" style="height:350px;"><canvas id="lineChart" style="background-color: white;"></canvas></div></div>
+          <div class="chart-card"><div class="chart-inner" style="height:350px;"><canvas id="pieChart" style="background-color: white;"></canvas></div><div class="pie-center-text"><div class="pie-val-label">累計提領</div><div class="pie-val-num" style="color:#f59e0b">$${fM(totalW)}萬</div><div class="pie-val-label">期末淨額</div><div class="pie-val-num" style="color:#6366f1">$${fM(last.net)}萬</div></div></div>
         </div>
-      </div>
-      <div class="charts-grid">
-        <div class="chart-card"><div style="font-weight:700; color:#4b5563; margin-bottom:15px;">📊 戰術路徑 (${getTabName(CURRENT_TAB)})</div><div class="chart-inner" style="height:350px;"><canvas id="lineChart" style="background-color: white;"></canvas></div></div>
-        <div class="chart-card"><div class="chart-inner" style="height:350px;"><canvas id="pieChart" style="background-color: white;"></canvas></div><div class="pie-center-text"><div class="pie-val-label">累計提領</div><div class="pie-val-num" style="color:#f59e0b">$${fM(totalW)}萬</div><div class="pie-val-label">期末淨額</div><div class="pie-val-num" style="color:#6366f1">$${fM(last.net)}萬</div></div></div>
-      </div>
-      <div class="table-card">
-        <div class="table-header">📝 執行明細表 (${getTabName(CURRENT_TAB)})</div>
-        <div class="table-scroll">
-          <table>
-            <thead><tr><th>歲數</th><th>報酬</th><th>利率</th><th>市值</th><th>負債</th><th>維持率</th><th>備用金</th><th>GK狀態</th><th>月領</th><th>執行動作</th></tr></thead>
-            <tbody>${rows.map(r => `<tr>
-              <td><b>${r.age}</b> <span style="color:#9ca3af;font-size:11px;">(${r.year})</span></td>
-              <td class="${r.ret>=0?'val-red':'val-green'}">${(r.ret*100).toFixed(1)}%</td>
-              <td>${p.isP?(r.curRate*100).toFixed(1)+'%':'—'}</td>
-              <td>${fM(r.mv)}<span class="unit-label">萬</span></td>
-              <td>${fM(r.debt)}<span class="unit-label">萬</span></td>
-              <td style="font-weight:700;">${p.isP?(r.mr*100).toFixed(0)+'%':'—'}</td>
-              <td>${fM(r.cash)}<span class="unit-label">萬</span></td>
-              <td><span class="gk-badge ${getBadgeClass(r.gkRule)}">${getBadgeText(r.gkRule)}</span></td>
-              <td style="font-weight:700;">$${fM(r.mo)}<span class="unit-label">萬</span></td>
-              <td>${r.op}</td>
-            </tr>`).join('')}</tbody>
-          </table>
+        <div class="table-card">
+          <div class="table-header">📝 執行明細表 (${getTabName(CURRENT_TAB)})</div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>歲數</th><th>報酬</th><th>利率</th><th>市值</th><th>負債</th><th>維持率</th><th>備用金</th><th>GK狀態</th><th>月領</th><th>執行動作</th></tr></thead>
+              <tbody>${rows.map(r => `<tr>
+                <td><b>${r.age}</b> <span style="color:#9ca3af;font-size:11px;">(${r.year})</span></td>
+                <td class="${r.ret>=0?'val-red':'val-green'}">${(r.ret*100).toFixed(1)}%</td>
+                <td>${p.isP?(r.curRate*100).toFixed(1)+'%':'—'}</td>
+                <td>${fM(r.mv)}<span class="unit-label">萬</span></td>
+                <td>${fM(r.debt)}<span class="unit-label">萬</span></td>
+                <td style="font-weight:700;">${p.isP?(r.mr*100).toFixed(0)+'%':'—'}</td>
+                <td>${fM(r.cash)}<span class="unit-label">萬</span></td>
+                <td><span class="gk-badge ${getBadgeClass(r.gkRule)}">${getBadgeText(r.gkRule)}</span></td>
+                <td style="font-weight:700;">$${fM(r.mo)}<span class="unit-label">萬</span></td>
+                <td>${r.op}</td>
+              </tr>`).join('')}</tbody>
+            </table>
+          </div>
         </div>
+        <div class="analysis-card">
+          <h4>📋 個人資產分析報告</h4>
+          <div class="analysis-text" id="analysis-content">${generateStory(rows, p)}</div>
+        </div>
+        <div class="export-wrap" style="margin-top:24px; text-align:center;"><button class="btn-primary" style="background:#059669; padding:15px; font-size:16px; width:auto;" onclick="exportUltimateXLSX()">匯出 XLSX 全圖文報表</button></div>
       </div>
-      <div class="analysis-card">
-        <h4>📋 個人資產分析報告</h4>
-        <div class="analysis-text" id="analysis-content">${generateStory(rows, p)}</div>
-      </div>
-      <div class="export-wrap" style="margin-top:24px; text-align:center;"><button class="btn-primary" style="background:#059669; padding:15px; font-size:16px; width:auto;" onclick="exportUltimateXLSX()">匯出 XLSX 全圖文報表</button></div>
     </div>
   `;
   renderCharts(rows, p);
+
+  // 觸發卡片展開與畫面滾動
+  if (isFirstRun) {
+      setTimeout(() => {
+          $('results-wrapper').classList.add('expanded');
+          $('results-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          isFirstRun = false;
+      }, 50);
+  }
 }
 
 function renderCharts(rows, p) {
+  // 動畫參數：選項A (華麗重播)
+  const animConfig = { duration: 1200, easing: 'easeOutExpo' };
+
   if (LINE_CHART) LINE_CHART.destroy();
   const ctxL = $('lineChart').getContext('2d');
   LINE_CHART = new Chart(ctxL, {
@@ -903,7 +934,7 @@ function renderCharts(rows, p) {
         { label: '月領', data: rows.map(r => r.mo), borderColor: '#f59e0b', borderDash:[5,5], tension: 0.3, yAxisID: 'y2' }
       ]
     },
-    options: { responsive: true, maintainAspectRatio: false, animation: { duration: 0 }, scales: { y2:{position:'right', grid:{drawOnChartArea:false}} } }
+    options: { responsive: true, maintainAspectRatio: false, animation: animConfig, scales: { y2:{position:'right', grid:{drawOnChartArea:false}} } }
   });
 
   if (PIE_CHART) PIE_CHART.destroy();
@@ -911,7 +942,7 @@ function renderCharts(rows, p) {
   PIE_CHART = new Chart(ctxP, {
     type: 'doughnut',
     data: { labels: ['累計提領', '期末淨額'], datasets: [{ data: [rows.reduce((a,b)=>a+b.wa,0), Math.max(0,rows[rows.length-1].net)], backgroundColor: ['#f59e0b', '#6366f1'], borderWidth: 0 }] },
-    options: { responsive: true, maintainAspectRatio: false, cutout: '78%', animation: { duration: 0 }, plugins: { legend: { display: false } } }
+    options: { responsive: true, maintainAspectRatio: false, cutout: '78%', animation: { animateScale: true, animateRotate: true, duration: 1200, easing: 'easeOutExpo' }, plugins: { legend: { display: false } } }
   });
 
   if (p.mc && MC_RESULTS) {
@@ -927,7 +958,7 @@ function renderCharts(rows, p) {
             { label: '悲觀 P10', data: MC_RESULTS.p10_net, borderColor: 'rgba(239, 68, 68, 0.4)', borderWidth: 1, tension: 0.4, pointRadius: 0, fill: '-1', backgroundColor: 'rgba(239, 68, 68, 0.15)' }
           ]
         },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 0 }, plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' } }, y: { grid: { color: 'rgba(255,255,255,0.05)' } } } }
+        options: { responsive: true, maintainAspectRatio: false, animation: animConfig, plugins: { legend: { display: false } }, scales: { x: { grid: { color: 'rgba(255,255,255,0.05)' } }, y: { grid: { color: 'rgba(255,255,255,0.05)' } } } }
       });
   }
 }
