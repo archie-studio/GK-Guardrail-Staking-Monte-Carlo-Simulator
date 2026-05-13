@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIRE 退休財富計算機｜Ver 2.0.6 跨週期動態管理版</title>
+<title>FIRE 退休財富計算機｜Ver 2.0.7 跨週期動態管理版</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- 載入核心引擎：Chart.js (圖表), ExcelJS (報表), Html2Canvas (高畫質截圖) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 /* ===== RESET & BASE ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -81,6 +83,7 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 /* ACTION BUTTON */
 .btn-primary { width: 100%; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border: none; border-radius: 14px; font-size: 20px; font-weight: 700; cursor: pointer; box-shadow: 0 6px 20px rgba(102,126,234,0.3); transition: .2s; margin-top: 16px; }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
+.btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
 
 /* DASHBOARD & ANIMATION */
 #results-area { scroll-margin-top: 20px; }
@@ -189,10 +192,9 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 
 <section class="hero">
   <div class="hero-inner">
-    <!-- 標題絕對定位魔術：完美置中且懸浮版本號 -->
     <div style="position: relative; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px;">
         <h1>FIRE 退休財富計算機</h1>
-        <span style="position: absolute; left: 100%; bottom: 6px; margin-left: 12px; font-size: 14px; color: #9ca3af; white-space: nowrap; font-weight: 500;">ver 2.0.6 made by 阿奇</span>
+        <span style="position: absolute; left: 100%; bottom: 6px; margin-left: 12px; font-size: 14px; color: #9ca3af; white-space: nowrap; font-weight: 500;">ver 2.0.7 made by 阿奇</span>
     </div>
     <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 -</h2>
     <div class="hero-desc">
@@ -475,7 +477,9 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
         </div>
       </div>
       
-      <button class="btn-primary" onclick="runSim()">🚀 生成專業級退休診斷報告</button>
+      <div class="export-wrap" style="text-align: center;">
+        <button class="btn-primary" onclick="runSim()">🚀 生成專業級退休診斷報告</button>
+      </div>
     </div>
   </div>
 
@@ -498,7 +502,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.0.6 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.0.7 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -638,7 +642,7 @@ function getP() {
 }
 
 /**
- * [V2.0.6 核心演算法] BBD 買借死與求生覆寫機制
+ * [V2.0.7 核心演算法] BBD 買借死與求生覆寫機制
  */
 function simPath(p, overrides) {
   let mv = p.mv, debt = p.debt, cash = p.cash;
@@ -651,7 +655,6 @@ function simPath(p, overrides) {
     const ret = overrides ? overrides[y-1] : p.retR;
     mv *= (1 + ret);
 
-    // 1. 預算核算 (GK 大腦)
     let yInf = p.inflation;
     if(p.inflationMode === 'random') yInf += (Math.random() - 0.5) * 0.02;
     else if(p.inflationMode === 'inverse') yInf += (p.retR - ret) * 0.15;
@@ -668,7 +671,6 @@ function simPath(p, overrides) {
         wa = Math.max(p.survivalFloor * 12, Math.min(p.maxCeiling * 12, wa));
     }
 
-    // 2. 利率與風控校準
     let curRate = p.pRate;
     if(p.rateMode === 'pegged') curRate = Math.max(p.rFloor, Math.min(p.rCap, p.rBase + (yInf - 0.02)));
     else if(p.rateMode === 'custom') curRate = (p.cRates[y-1] !== null ? p.cRates[y-1]/100 : p.pRate);
@@ -677,11 +679,9 @@ function simPath(p, overrides) {
     let budgetNeeded = wa + interest;
     let ops = [];
 
-    // 3. 智能分流執行 (ALM Engine)
     if (p.isP) {
         let currentMR = debt > 0 ? mv / debt : 999;
         
-        // --- 情境一：大牛市 且 維持率健康 (擴張/橋接模式) ---
         if (ret >= 0 && currentMR >= curTargetMR) {
             if (isBBD || p.isW) {
                 let projectedMR = (debt + budgetNeeded) > 0 ? mv / (debt + budgetNeeded) : 999;
@@ -698,7 +698,6 @@ function simPath(p, overrides) {
                 }
             }
         } 
-        // --- 情境二：大牛市 但 維持率低於目標 (停利降槓桿模式) ---
         else if (ret >= 0 && currentMR < curTargetMR) {
             let r_sell = (curTargetMR * debt - mv + budgetNeeded) / (curTargetMR - 1);
             if (r_sell > 0) {
@@ -707,14 +706,11 @@ function simPath(p, overrides) {
                 ops.push(`⚖️ 高檔停利：合併結算生活與償債 (賣股 ${fM(totalSell)}<span class="unit-label">萬</span>)`);
             }
         }
-        // --- 情境三：大熊市 (逆週期防禦與求生覆寫模式) ---
         else {
-            // 1. 優先燒備用金
             if (cash > 0) {
                 let bailout = Math.min(cash, budgetNeeded); cash -= bailout; budgetNeeded -= bailout;
                 ops.push(`🛡️ 逆週期防禦：動用現金備用金 (-${fM(bailout)})`);
             }
-            // 2. 次要：如果維持率還高，啟動流動性橋接
             if (budgetNeeded > 0) {
                 let projectedMR = (debt + budgetNeeded) > 0 ? mv / (debt + budgetNeeded) : 999;
                 if (projectedMR >= p.dangerMR) {
@@ -722,7 +718,6 @@ function simPath(p, overrides) {
                     ops.push("🌉 流動性橋接：以債支應避免低點砍倉");
                 }
             }
-            // 3. 最後防線 / 求生覆寫：被迫賣股
             if (budgetNeeded > 0) {
                 mv -= budgetNeeded; 
                 if (isBBD) {
@@ -735,21 +730,18 @@ function simPath(p, overrides) {
             }
         }
 
-        // 4. 救命錢補滿機制
         if (ret > 0 && cash < p.cashMax) {
             let surplus = mv * 0.05; 
             let fill = Math.min(surplus, p.cashMax - cash);
             if (fill > 0) { cash += fill; mv -= fill; ops.push(`♻️ 補血機制：高點回補備用金 (+${fM(fill)})`); }
         }
 
-        // 5. 斷頭紅線強制介入
         let finalMR = debt > 0 ? mv / debt : 999;
         if (finalMR < p.dangerMR) {
             let forceSell = (p.dangerMR * debt - mv) / (p.dangerMR - 1);
             if (forceSell > 0) { mv -= forceSell; debt -= forceSell; ops.push(`🚨 追繳警報：強制斷頭償債 ${fM(forceSell)}<span class="unit-label">萬</span>`); }
         }
     } else {
-        // 純提領模式邏輯 (無槓桿)
         if (ret < 0 && cash > 0) {
             let bailout = Math.min(cash, wa); cash -= bailout; wa -= bailout; ops.push(`🛡️ 現金防禦：動用備用金 (-${fM(bailout)})`);
         }
@@ -855,7 +847,8 @@ function renderDashboard() {
     <div class="${wrapperClass}" id="results-wrapper">
       <div class="results-inner">
         ${tabsHTML}
-        <div class="summary-box">
+        <!-- Html2Canvas 匯出抓取目標 1: export-summary -->
+        <div class="summary-box" id="export-summary">
           <h3>🎯 跨週期模擬成功率：${SUCCESS_RATE}%</h3>
           <div class="metric-grid">
             <div class="metric"><div class="metric-label">期末淨資產</div><div class="metric-value ${last.net>0?'val-green':'val-red'}">$${fM(last.net)}萬</div></div>
@@ -863,7 +856,7 @@ function renderDashboard() {
             <div class="metric"><div class="metric-label">累計總提領</div><div class="metric-value val-amber">$${fM(totalW)}萬</div></div>
             <div class="metric"><div class="metric-label">末年平均月領</div><div class="metric-value val-green">$${fMo(last.wa)}萬</div></div>
           </div>
-          ${p.mc ? `<div class="dark-chart-container" id="anchor-fan"><div class="dark-chart-title">🌌 淨資產機率分布 (P10 / P50 / P90)</div><div class="chart-inner"><canvas id="fanChart" style="background-color: transparent;"></canvas></div></div>` : ''}
+          ${p.mc ? `<div class="dark-chart-container"><div class="dark-chart-title">🌌 淨資產機率分布 (P10 / P50 / P90)</div><div class="chart-inner"><canvas id="fanChart" style="background-color: transparent;"></canvas></div></div>` : ''}
           <div class="risk-indicator-wrap" style="margin-top:0;">
               <div class="risk-light"><div class="dot ${RISK_STATS.bankrupt > 10 ? 'dot-red' : 'dot-green'}"></div>🔴 破產風險：${RISK_STATS.bankrupt}%</div>
               <div class="risk-light"><div class="dot ${RISK_STATS.marginCall > 10 ? 'dot-red' : 'dot-yellow'}"></div>🟡 斷頭風險：${RISK_STATS.marginCall}%</div>
@@ -871,8 +864,10 @@ function renderDashboard() {
           </div>
         </div>
         <div class="charts-grid" id="anchor-charts">
-          <div class="chart-card"><div style="font-weight:700; color:#4b5563; margin-bottom:15px;">📊 戰術路徑 (${getTabName(CURRENT_TAB)})</div><div class="chart-inner" style="height:350px;"><canvas id="lineChart" style="background-color: white;"></canvas></div></div>
-          <div class="chart-card"><div class="chart-inner" style="height:350px;"><canvas id="pieChart" style="background-color: white;"></canvas></div><div class="pie-center-text"><div class="pie-val-label">累計提領</div><div class="pie-val-num" style="color:#f59e0b">$${fM(totalW)}萬</div><div class="pie-val-label">期末淨額</div><div class="pie-val-num" style="color:#6366f1">$${fM(last.net)}萬</div></div></div>
+          <!-- Html2Canvas 匯出抓取目標 2: export-line -->
+          <div class="chart-card" id="export-line"><div style="font-weight:700; color:#4b5563; margin-bottom:15px;">📊 戰術路徑 (${getTabName(CURRENT_TAB)})</div><div class="chart-inner" style="height:350px;"><canvas id="lineChart" style="background-color: white;"></canvas></div></div>
+          <!-- Html2Canvas 匯出抓取目標 3: export-pie -->
+          <div class="chart-card" id="export-pie"><div class="chart-inner" style="height:350px;"><canvas id="pieChart" style="background-color: white;"></canvas></div><div class="pie-center-text"><div class="pie-val-label">累計提領</div><div class="pie-val-num" style="color:#f59e0b">$${fM(totalW)}萬</div><div class="pie-val-label">期末淨額</div><div class="pie-val-num" style="color:#6366f1">$${fM(last.net)}萬</div></div></div>
         </div>
         <div class="table-card">
           <div class="table-header">📝 執行明細表 (${getTabName(CURRENT_TAB)})</div>
@@ -898,7 +893,9 @@ function renderDashboard() {
           <h4>📋 個人資產分析報告</h4>
           <div class="analysis-text" id="analysis-content">${generateStory(rows, p)}</div>
         </div>
-        <div class="export-wrap" style="margin-top:24px; text-align:center;"><button class="btn-primary" style="background:#059669; padding:15px; font-size:16px; width:auto;" onclick="exportUltimateXLSX()">匯出 XLSX 全圖文報表</button></div>
+        <div class="export-wrap" style="margin-top:24px; text-align:center;">
+            <button class="btn-primary" id="exportBtn" style="background:#059669; padding:15px; font-size:16px; width:auto;" onclick="exportUltimateXLSX()">匯出 XLSX 全圖文報表</button>
+        </div>
       </div>
     </div>
   `;
@@ -907,7 +904,6 @@ function renderDashboard() {
   if (isFirstRun) {
       setTimeout(() => {
           $('results-wrapper').classList.add('expanded');
-          
           setTimeout(() => {
               const chartsEl = $('anchor-charts');
               if (chartsEl) {
@@ -915,7 +911,6 @@ function renderDashboard() {
                   window.scrollTo({ top: targetY, behavior: 'smooth' });
               }
           }, 50);
-
           isFirstRun = false;
       }, 100);
   }
@@ -966,144 +961,126 @@ function renderCharts(rows, p) {
 }
 
 async function exportUltimateXLSX() {
-    const p = getP(), rows = ALL_PATHS[CURRENT_TAB], last = rows[rows.length-1], totalW = rows.reduce((a,b)=>a+b.wa,0);
-    const wb = new ExcelJS.Workbook(); 
-    
-    // 開啟純白畫布 (隱藏網格線)
-    const ws = wb.addWorksheet('退休精算報告', { views: [{ showGridLines: false }] });
-    
-    // 【專業佈局：設定固定欄寬】
-    ws.columns = [
-        { width: 12 }, // A: 歲數
-        { width: 10 }, // B: 報酬%
-        { width: 10 }, // C: 利率%
-        { width: 15 }, // D: 市值
-        { width: 15 }, // E: 負債
-        { width: 12 }, // F: 維持率
-        { width: 15 }, // G: 備用金
-        { width: 12 }, // H: GK狀態
-        { width: 15 }, // I: 月領
-        { width: 50 }  // J: 執行動作 (專屬超大格子)
-    ];
-    
-    // 標題區
-    ws.mergeCells('A1:J1'); const head = ws.getCell('A1'); head.value = `${p.name} 的專業退休診斷報告 (${getTabName(CURRENT_TAB)})`;
-    head.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } }; head.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1A1D23' } };
-    head.alignment = { horizontal: 'center', vertical: 'middle' }; ws.getRow(1).height = 30;
-    
-    // 數據概要區
-    ws.addRow(['成功率', `${SUCCESS_RATE}%`, '期末淨額', last.net, '累計提領', totalW, '末年平均月領', last.wa/12]);
-    const summaryRow = ws.getRow(2);
-    summaryRow.getCell(4).numFmt = '#,##0.0"萬"'; 
-    summaryRow.getCell(6).numFmt = '#,##0.0"萬"'; 
-    summaryRow.getCell(8).numFmt = '#,##0.0"萬"';
-    ws.addRow([]); 
-    
-    let startRow = 4;
+    const btn = $('exportBtn');
+    btn.innerHTML = '⏳ 報表生成中，請稍候...';
+    btn.disabled = true;
 
-    // 圖表插入區 (加入更多物理空間)
     try {
-        const canvasL = document.getElementById('lineChart');
-        if (canvasL) {
+        const p = getP(), rows = ALL_PATHS[CURRENT_TAB];
+        const wb = new ExcelJS.Workbook(); 
+        const ws = wb.addWorksheet('退休精算報告', { views: [{ showGridLines: false }] });
+        
+        ws.columns = [
+            { width: 12 }, { width: 9 }, { width: 9 }, { width: 14 }, { width: 14 }, 
+            { width: 11 }, { width: 14 }, { width: 11 }, { width: 14 }, { width: 50 } 
+        ];
+        
+        ws.mergeCells('A1:J1'); const head = ws.getCell('A1'); head.value = `${p.name} 的專業退休診斷報告 (${getTabName(CURRENT_TAB)})`;
+        head.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } }; head.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1A1D23' } };
+        head.alignment = { horizontal: 'center', vertical: 'middle' }; ws.getRow(1).height = 30;
+        
+        let startRow = 2;
+
+        // 使用 html2canvas 擷取大卡片與圖表 (scale:2 保證高畫質)
+        const summaryEl = document.getElementById('export-summary');
+        if (summaryEl) {
+            const canvasS = await html2canvas(summaryEl, { scale: 2, useCORS: true, backgroundColor: '#1a1d23' });
+            const imgDataS = canvasS.toDataURL('image/png').split(',')[1];
+            const imgIdS = wb.addImage({ base64: imgDataS, extension: 'png' });
+            const w = 880; const h = w * (canvasS.height / canvasS.width);
+            ws.addImage(imgIdS, { tl: { col: 0, row: startRow }, ext: { width: w, height: h } });
+            startRow += Math.ceil(h / 19) + 1;
+        }
+
+        const lineEl = document.getElementById('export-line');
+        if (lineEl) {
+            const canvasL = await html2canvas(lineEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
             const imgDataL = canvasL.toDataURL('image/png').split(',')[1];
             const imgIdL = wb.addImage({ base64: imgDataL, extension: 'png' });
-            ws.addImage(imgIdL, { tl: { col: 0, row: startRow }, ext: { width: 550, height: 320 } });
+            const w = 550; const h = w * (canvasL.height / canvasL.width);
+            ws.addImage(imgIdL, { tl: { col: 0, row: startRow }, ext: { width: w, height: h } });
         }
         
-        const canvasP = document.getElementById('pieChart');
-        if (canvasP) {
+        const pieEl = document.getElementById('export-pie');
+        if (pieEl) {
+            const canvasP = await html2canvas(pieEl, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
             const imgDataP = canvasP.toDataURL('image/png').split(',')[1];
             const imgIdP = wb.addImage({ base64: imgDataP, extension: 'png' });
-            ws.addImage(imgIdP, { tl: { col: 6, row: startRow }, ext: { width: 320, height: 320 } });
+            const w = 310; const h = w * (canvasP.height / canvasP.width);
+            ws.addImage(imgIdP, { tl: { col: 6, row: startRow }, ext: { width: w, height: h } });
         }
-        startRow += 18; // 給圖表 18 列的空間
+        startRow += 22; // 留白給折線圖
 
-        if (p.mc) {
-            const canvasF = document.getElementById('fanChart');
-            if (canvasF) {
-                const imgDataF = canvasF.toDataURL('image/png').split(',')[1];
-                const imgIdF = wb.addImage({ base64: imgDataF, extension: 'png' });
-                ws.addImage(imgIdF, { tl: { col: 0, row: startRow }, ext: { width: 650, height: 320 } });
-                startRow += 18;
-            }
-        }
-    } catch(e) {
-        console.error("圖表匯出失敗:", e);
-    }
-
-    // 專屬：個人資產分析報告區塊
-    startRow += 1;
-    ws.mergeCells(`A${startRow}:J${startRow}`);
-    const reportTitle = ws.getCell(`A${startRow}`);
-    reportTitle.value = '📋 個人資產分析報告';
-    reportTitle.font = { size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
-    reportTitle.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4F46E5' } };
-    reportTitle.alignment = { vertical: 'middle', horizontal: 'center' };
-    ws.getRow(startRow).height = 25;
-    startRow++;
-
-    const rawStory = document.getElementById('analysis-content').innerHTML;
-    const storyText = rawStory.replace(/<br\s*\/?>/gi, '\n')
-                              .replace(/<\/p>/gi, '\n\n')
-                              .replace(/<[^>]+>/g, '')
-                              .replace(/&nbsp;/g, ' ')
-                              .trim();
-    
-    const paragraphs = storyText.split('\n\n');
-    paragraphs.forEach(pg => {
-        if(pg.trim() === '') return;
+        startRow += 1;
         ws.mergeCells(`A${startRow}:J${startRow}`);
-        const pCell = ws.getCell(`A${startRow}`);
-        pCell.value = pg.trim();
-        pCell.alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
-        pCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0F5FF' } }; // 淡藍色背景
-        
-        let lines = Math.ceil(pg.length / 70); 
-        ws.getRow(startRow).height = lines * 18 + 10;
+        const reportTitle = ws.getCell(`A${startRow}`);
+        reportTitle.value = '📋 個人資產分析報告';
+        reportTitle.font = { size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
+        reportTitle.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4F46E5' } };
+        reportTitle.alignment = { vertical: 'middle', horizontal: 'center' };
+        ws.getRow(startRow).height = 25;
         startRow++;
-    });
-    startRow += 2; // 留白
 
-    // 執行明細表 Header
-    const tableHeader = ['歲數', '報酬%', '利率%', '市值', '負債', '維持率', '備用金', 'GK狀態', '月領', '執行動作'];
-    const hR = ws.getRow(startRow); hR.values = tableHeader; hR.font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    hR.eachCell(c => c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1A1D23' } });
-    startRow++;
-    
-    // 寫入明細資料 (套用數字格式)
-    rows.forEach(r => {
-        const opExcel = r.op.replace(/<br>/g, '\n').replace(/<[^>]+>/g, ''); 
-        const row = ws.addRow([
-            `${r.age} (${r.year})`, 
-            (r.ret*100).toFixed(1)+'%', 
-            p.isP?(r.curRate*100).toFixed(1)+'%':'—', 
-            parseFloat(r.mv.toFixed(2)), 
-            parseFloat(r.debt.toFixed(2)), 
-            p.isP ? (r.mr*100).toFixed(0)+'%' : '—', 
-            parseFloat(r.cash.toFixed(2)), 
-            getBadgeText(r.gkRule), 
-            parseFloat(r.mo.toFixed(2)), 
-            opExcel
-        ]);
-        
-        // 數字格式化設定：加入千分位與"萬"字
-        row.getCell(4).numFmt = '#,##0.0"萬"';
-        row.getCell(5).numFmt = '#,##0.0"萬"';
-        row.getCell(7).numFmt = '#,##0.0"萬"';
-        row.getCell(9).numFmt = '#,##0.0"萬"';
-
-        row.getCell(10).alignment = { wrapText: true, vertical: 'middle' };
-        if(r.ret >= 0) row.getCell(2).font = { color: { argb: 'FFEF4444' } }; else row.getCell(2).font = { color: { argb: 'FF10B981' } };
-        
-        // 加入淡淡的下邊框
-        row.eachCell(c => {
-            c.border = { bottom: { style: 'thin', color: { argb: 'FFE8EAED' } } };
-            c.alignment = c.alignment || { vertical: 'middle' };
+        const rawStory = document.getElementById('analysis-content').innerHTML;
+        const storyText = rawStory.replace(/<br\s*\/?>/gi, '\n').replace(/<\/p>/gi, '\n\n').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
+        const paragraphs = storyText.split('\n\n');
+        paragraphs.forEach(pg => {
+            if(pg.trim() === '') return;
+            ws.mergeCells(`A${startRow}:J${startRow}`);
+            const pCell = ws.getCell(`A${startRow}`);
+            pCell.value = pg.trim();
+            pCell.alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+            pCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF0F5FF' } }; 
+            let lines = Math.ceil(pg.length / 70); 
+            ws.getRow(startRow).height = lines * 18 + 10;
+            startRow++;
         });
-    });
-    
-    const buf = await wb.xlsx.writeBuffer(); const link = document.createElement('a');
-    link.href = URL.createObjectURL(new Blob([buf])); link.download = `FIRE_Retirement_Report_${p.name}.xlsx`; link.click();
+        startRow += 2; 
+
+        const tableHeader = ['歲數', '報酬%', '利率%', '市值', '負債', '維持率', '備用金', 'GK狀態', '月領', '執行動作'];
+        const hR = ws.getRow(startRow); hR.values = tableHeader; hR.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+        hR.eachCell(c => c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1A1D23' } });
+        startRow++;
+        
+        rows.forEach(r => {
+            const opExcel = r.op.replace(/<br>/g, '\n').replace(/<[^>]+>/g, ''); 
+            const row = ws.addRow([
+                `${r.age} (${r.year})`, 
+                (r.ret*100).toFixed(1)+'%', 
+                p.isP?(r.curRate*100).toFixed(1)+'%':'—', 
+                parseFloat(r.mv.toFixed(2)), 
+                parseFloat(r.debt.toFixed(2)), 
+                p.isP ? (r.mr*100).toFixed(0)+'%' : '—', 
+                parseFloat(r.cash.toFixed(2)), 
+                getBadgeText(r.gkRule), 
+                parseFloat(r.mo.toFixed(2)), 
+                opExcel
+            ]);
+            row.getCell(4).numFmt = '#,##0.0"萬"';
+            row.getCell(5).numFmt = '#,##0.0"萬"';
+            row.getCell(7).numFmt = '#,##0.0"萬"';
+            row.getCell(9).numFmt = '#,##0.0"萬"';
+            row.getCell(10).alignment = { wrapText: true, vertical: 'middle' };
+            if(r.ret >= 0) row.getCell(2).font = { color: { argb: 'FFEF4444' } }; else row.getCell(2).font = { color: { argb: 'FF10B981' } };
+            row.eachCell(c => {
+                c.border = { bottom: { style: 'thin', color: { argb: 'FFE8EAED' } } };
+                c.alignment = c.alignment || { vertical: 'middle' };
+            });
+        });
+        
+        const buf = await wb.xlsx.writeBuffer(); 
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(new Blob([buf])); 
+        link.download = `FIRE_Retirement_Report_${p.name}.xlsx`; 
+        link.click();
+
+    } catch (e) {
+        console.error("圖表匯出失敗:", e);
+        alert("匯出報表時發生錯誤，請稍後再試。");
+    } finally {
+        btn.innerHTML = '匯出 XLSX 全圖文報表';
+        btn.disabled = false;
+    }
 }
 </script>
 </body>
