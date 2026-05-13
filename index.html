@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIRE 退休財富計算機｜Ver 2.0.2 跨週期動態管理版</title>
+<title>FIRE 退休財富計算機｜Ver 2.0.3 跨週期動態管理版</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -32,11 +32,13 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .tip { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: #e5e7eb; border-radius: 50%; font-size: 10px; cursor: help; color: #6b7280; margin-left: 4px; position: relative; }
 .tip:hover::after { content: attr(data-tip); position: absolute; bottom: 135%; left: 50%; transform: translateX(-50%); background: #1a1d23; color: #fff; padding: 14px 16px; border-radius: 10px; font-size: 13px; width: max-content; max-width: 260px; line-height: 1.6; z-index: 1000; box-shadow: 0 8px 24px rgba(0,0,0,0.25); font-weight: 400; text-align: justify; white-space: normal; }
 .tip.align-right:hover::after { left: auto; right: -10px; transform: none; }
+.tip.align-left:hover::after { left: -10px; transform: none; }
 
 /* ===== LAYOUT ===== */
 .main-wrap { max-width: 1100px; margin: 0 auto; padding: 32px 16px; }
-.card { background: #fff; border: 1px solid #e8eaed; border-radius: 16px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
-.card-header { padding: 16px 20px; border-bottom: 1px solid #f0f1f3; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: #374151; background: #fafafa; }
+/* 修正溢斷：移除 overflow: hidden 以確保 Tooltip 完整顯示，並將圓角移至 Header */
+.card { background: #fff; border: 1px solid #e8eaed; border-radius: 16px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+.card-header { padding: 16px 20px; border-bottom: 1px solid #f0f1f3; display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: #374151; background: #fafafa; border-top-left-radius: 16px; border-top-right-radius: 16px;}
 .card-body { padding: 32px 24px; }
 
 .param-section { border-bottom: 1px dashed #e5e7eb; padding-bottom: 32px; margin-bottom: 32px; }
@@ -187,9 +189,9 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <h1>FIRE 退休財富計算機</h1>
-    <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 - <span class="version-tag">ver 2.0.2 made by 阿奇</span></h2>
+    <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 - <span class="version-tag">ver 2.0.3 made by 阿奇</span></h2>
     <div class="hero-desc">
-      「牛市鎖利增貸、熊市現金防禦、買借死傳承」打造的全天候財富沙盒，<br>透過 1000 次極端市場模擬，精算全方面抗通膨戰術。
+      「牛市鎖利增貸、熊市現金防禦、買借死傳承」<br>透過 1000 次極端市場模擬，精算全方面抗通膨戰術。
     </div>
   </div>
 </section>
@@ -203,11 +205,11 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
         <div class="section-label">👤 第一步：建立個人檔案與退休目標</div>
         <div class="inputs-row">
           <div class="field">
-            <label>您的稱呼 <span class="tip" data-tip="預防 XSS：所有輸入將被過濾為純文字。">?</span></label>
+            <label>您的稱呼</label>
             <div class="input-wrap"><input type="text" id="userName" placeholder="預設: 您"></div>
           </div>
           <div class="field">
-            <label>退休年份 <span class="tip" data-tip="報表起始年份">?</span></label>
+            <label>退休年份</label>
             <div class="input-wrap"><input type="number" id="startYear" value="2026" class="has-unit"><span class="input-unit">年</span></div>
           </div>
           <div class="field">
@@ -234,7 +236,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             <div class="input-wrap"><input type="number" id="debt" value="300" class="has-unit"><span class="input-unit">萬</span></div>
           </div>
           <div class="field">
-            <label>還債模式選擇 <span class="tip" data-tip="牛市獲利優先補滿預備金。若維持率低於目標，將與生活費合併淨額結算一次性賣股。">?</span></label>
+            <label>還債模式選擇 <span class="tip align-right" data-tip="牛市獲利優先補滿預備金。若維持率低於目標，將與生活費合併淨額結算一次性賣股。">?</span></label>
             <div class="input-wrap">
                 <select id="repayMode" onchange="updateRepayUI()">
                     <option value="" disabled selected>請選擇模式...</option>
@@ -280,7 +282,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             <div class="input-wrap"><input type="number" id="cash" value="150" class="has-unit"><span class="input-unit">萬</span></div>
           </div>
           <div class="field">
-            <label>通膨模式選擇</label>
+            <label>通膨模式選擇 <span class="tip align-right" data-tip="隨機波動：模擬真實世界的通膨起伏。滯脹模式：股市下跌時通膨反而上升的最惡劣情境。">?</span></label>
             <div class="input-wrap">
                 <select id="inflationMode">
                     <option value="fixed" selected>固定模式 (穩定)</option>
@@ -305,7 +307,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
         <div id="withdraw-logic-card" class="engine-toggle-card card-purple">
           <div class="engine-header" onclick="toggleSwitch('isWithdrawLogicEnabled')">
             <label style="font-weight: 800; color: #4f46e5; font-size: 17px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-              🛡️ 提領預算核算 (GK 引擎)
+              🛡️ 提領邏輯設定 <span class="tip" data-tip="固定比例：傳統FIRE的死板提領。GK動態護欄：根據市場牛熊自動加減薪，保護資產不被提早耗盡。">?</span>
             </label>
             <div class="sw"><input type="checkbox" id="isWithdrawLogicEnabled" onchange="updateEngineUI()"><span class="sw-track"></span></div>
           </div>
@@ -343,7 +345,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
                   <div class="field"><label>上限護欄 (保本)</label><div class="input-wrap"><input type="number" id="upperGuard" value="6.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
                   <div class="field"><label>下限護欄 (繁榮)</label><div class="input-wrap"><input type="number" id="lowerGuard" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
                   <div class="field">
-                    <label>免死金牌年數 <span class="tip" data-tip="退休後期的安全網。少於此值時不執行強制減薪。">?</span></label>
+                    <label>免死金牌年數 <span class="tip align-right" data-tip="退休後期的安全網。少於此值時不執行強制減薪。">?</span></label>
                     <div class="input-wrap"><input type="number" id="lateLifeYears" value="5" class="has-unit"><span class="input-unit">年</span></div>
                   </div>
                 </div>
@@ -354,7 +356,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
         <div id="pledge-card" class="engine-toggle-card card-purple">
           <div class="engine-header" onclick="toggleSwitch('isPledgeEnabled')">
             <label style="font-weight: 800; color: #4f46e5; font-size: 17px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-              🚀 質押流動性引擎 (優先來源)
+              🚀 啟動質押引擎 <span class="tip" data-tip="本計算機會優先檢視維持率餘裕，透過『質押』借出生活費以保留股票資產；若借款額度不足，再由提領系統補齊缺口。">?</span>
             </label>
             <div class="sw"><input type="checkbox" id="isPledgeEnabled" onchange="updateEngineUI()"><span class="sw-track"></span></div>
           </div>
@@ -366,7 +368,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
               <label id="reinvest-label" style="display:flex; align-items:center; gap:10px; font-weight:700; font-size:14px; cursor:pointer; color:#374151;">
                 <div class="sw"><input type="checkbox" id="reinvest" checked><span class="sw-track"></span></div> 達標增貸再投入
               </label>
-              <label style="display:flex; align-items:center; gap:10px; font-weight:800; font-size:14px; cursor:pointer; color:#ef4444; margin-left: auto;">
+              <label style="display:flex; align-items:center; gap:10px; font-weight:800; font-size:14px; cursor:pointer; color:#ef4444;">
                 <div class="sw"><input type="checkbox" id="bbdToggle" onchange="updateBBDUI()"><span class="sw-track"></span></div> 啟用買.借.死 (BBD) 策略
                 <span class="tip align-right" data-tip="以 GK 提領設定（初始預算率與護欄）作為精算基準，生活費 100% 由質押支應。不到斷頭或生存底線，絕不賣出任何一股。">?</span>
               </label>
@@ -375,7 +377,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             <div class="vertical-stack">
                 <div class="inputs-row">
                     <div class="field">
-                        <div class="sub-label-header">1. 質借年利率設定</div>
+                        <div class="sub-label-header">1. 質借年利率設定 <span class="tip align-right" data-tip="連動利率 (Pegged)：模擬真實升降息循環，當通膨上升時，質借利率也會隨之連動調升。">?</span></div>
                         <div class="input-wrap">
                             <select id="rateSelect" onchange="updateRateUI()">
                                 <option value="fixed">固定利率</option>
@@ -433,7 +435,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 
                 <div class="inputs-row" style="border-top:1px solid #f1f3f5; padding-top:15px;">
                     <div class="field">
-                        <label style="color:#ef4444; font-weight: 800;">3. 終極紅線：危險維持率 (斷頭警示)</label>
+                        <label style="color:#ef4444; font-weight: 800;">3. 終極紅線：危險維持率 (斷頭警示) <span class="tip align-right" data-tip="當市場大跌導致維持率低於此紅線，系統將強制斷頭賣股還債，若淨資產歸零或無法支付生活費，將直接判定模擬失敗。">?</span></label>
                         <div class="input-wrap"><input type="number" id="dangerMR" value="140" class="has-unit" style="border-color: #fecaca;"><span class="input-unit">%</span></div>
                     </div>
                 </div>
@@ -447,7 +449,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
         <div id="mc-card" class="engine-toggle-card card-green">
           <div class="engine-header" onclick="toggleSwitch('mc-toggle')">
             <label style="font-weight: 800; color: #16a34a; font-size: 17px; display:flex; align-items:center; gap:8px; cursor:pointer;">
-              🎲 蒙地卡羅模擬 (1000 次診斷)
+              🎲 蒙地卡羅模擬 (1000 次診斷) <span class="tip align-right" data-tip="系統將跑1000次不同的隨機市場路徑。只要不破產、不斷頭，且每年都能領到『生存底線』以上的月薪，即判定為成功。">?</span>
             </label>
             <div class="sw"><input type="checkbox" id="mc-toggle" onchange="updateEngineUI()"><span class="sw-track"></span></div>
           </div>
@@ -491,7 +493,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.0.2 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.0.3 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -532,18 +534,23 @@ function updateBBDUI() {
     const isBBD = $('bbdToggle').checked;
     const wLogic = $('isWithdrawLogicEnabled');
     const wMode = $('withdrawMode');
+    const repayMode = $('repayMode');
 
     if (isBBD) {
         wLogic.checked = true;
         wLogic.disabled = true;
         wMode.value = 'GK';
         wMode.disabled = true;
+        repayMode.value = 'NONE';
+        repayMode.disabled = true;
     } else {
         wLogic.disabled = false;
         wMode.disabled = false;
+        repayMode.disabled = false;
     }
     updateEngineUI();
     updateWithdrawUI();
+    updateRepayUI();
 }
 
 function setVol(v) { $('vol').value = v; }
@@ -625,7 +632,7 @@ function getP() {
 }
 
 /**
- * [V2.0.2 核心演算法] BBD 買借死與求生覆寫機制
+ * [V2.0.3 核心演算法] BBD 買借死與求生覆寫機制
  */
 function simPath(p, overrides) {
   let mv = p.mv, debt = p.debt, cash = p.cash;
@@ -966,13 +973,44 @@ async function exportUltimateXLSX() {
         console.error("圖表匯出失敗:", e);
     }
 
+    // 將個人資產分析報告寫入 Excel
+    startRow += 1;
+    ws.mergeCells(`A${startRow}:J${startRow}`);
+    const reportTitle = ws.getCell(`A${startRow}`);
+    reportTitle.value = '📋 個人資產分析報告';
+    reportTitle.font = { size: 14, bold: true, color: { argb: 'FFFFFFFF' } };
+    reportTitle.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4F46E5' } };
+    reportTitle.alignment = { vertical: 'middle', horizontal: 'center' };
+    ws.getRow(startRow).height = 25;
+    startRow++;
+
+    const rawStory = document.getElementById('analysis-content').innerHTML;
+    const storyText = rawStory.replace(/<br\s*\/?>/gi, '\n')
+                              .replace(/<\/p>/gi, '\n\n')
+                              .replace(/<[^>]+>/g, '')
+                              .replace(/&nbsp;/g, ' ')
+                              .trim();
+    
+    const paragraphs = storyText.split('\n\n');
+    paragraphs.forEach(pg => {
+        if(pg.trim() === '') return;
+        ws.mergeCells(`A${startRow}:J${startRow}`);
+        const pCell = ws.getCell(`A${startRow}`);
+        pCell.value = pg.trim();
+        pCell.alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+        let lines = Math.ceil(pg.length / 80); 
+        ws.getRow(startRow).height = lines * 18 + 10;
+        startRow++;
+    });
+    startRow += 1;
+
     const tableHeader = ['歲數', '報酬%', '利率%', '市值', '負債', '維持率', '備用金', 'GK狀態', '月領(萬)', '執行動作'];
     const hR = ws.getRow(startRow); hR.values = tableHeader; hR.font = { bold: true, color: { argb: 'FFFFFFFF' } };
     hR.eachCell(c => c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4F46E5' } });
     startRow++;
     
     rows.forEach(r => {
-        const opExcel = r.op.replace(/<br>/g, '\n').replace(/<[^>]+>/g, ''); // 清除 HTML tag 以適應 Excel
+        const opExcel = r.op.replace(/<br>/g, '\n').replace(/<[^>]+>/g, ''); 
         const row = ws.addRow([
             `${r.age} (${r.year})`, 
             (r.ret*100).toFixed(1)+'%', 
