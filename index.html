@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIRE 退休財富計算機｜Ver 2.0.7 跨週期動態管理版</title>
+<title>FIRE 退休財富計算機｜Ver 2.0.8 跨週期動態管理版</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <!-- 載入核心引擎：Chart.js (圖表), ExcelJS (報表), Html2Canvas (高畫質截圖) -->
@@ -85,20 +85,21 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
 .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
 
-/* DASHBOARD & ANIMATION */
+/* DASHBOARD & ANIMATION (非同步運鏡展開版) */
 #results-area { scroll-margin-top: 20px; }
-.results-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 1.5s cubic-bezier(0.25, 1, 0.5, 1); margin-top: 0; overflow: hidden; }
+.results-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 1s cubic-bezier(0.25, 1, 0.5, 1); margin-top: 0; overflow: hidden; }
 .results-wrapper.expanded { grid-template-rows: 1fr; margin-top: 24px; }
 .results-inner { overflow: hidden; min-height: 0; }
 
-.summary-box { background: #1a1d23; border-radius: 24px; padding: 36px; color: #fff; margin-bottom: 24px; }
-.summary-box h3 { font-size: 28px; margin-bottom: 28px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; font-weight: 800; }
-.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 24px; }
-.metric { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 20px; }
-.metric-label { font-size: 13px; color: #9ca3af; margin-bottom: 8px; font-weight: 600; letter-spacing: 0.5px; }
-.metric-value { font-family: 'DM Mono', monospace; font-size: 28px; font-weight: 500; }
+/* 瘦身計畫：縮減 padding 與字體 */
+.summary-box { background: #1a1d23; border-radius: 24px; padding: 24px 32px; color: #fff; margin-bottom: 20px; }
+.summary-box h3 { font-size: 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 16px; font-weight: 800; }
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+.metric { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 16px; }
+.metric-label { font-size: 13px; color: #9ca3af; margin-bottom: 6px; font-weight: 600; letter-spacing: 0.5px; }
+.metric-value { font-family: 'DM Mono', monospace; font-size: 24px; font-weight: 500; }
 
-.risk-indicator-wrap { display: flex; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
+.risk-indicator-wrap { display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap; }
 .risk-light { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); font-size: 13px; font-weight: 500; }
 .dot { width: 10px; height: 10px; border-radius: 50%; }
 .dot-green { background: #10b981; box-shadow: 0 0 10px #10b981; }
@@ -110,16 +111,17 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .tab-btn { padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; background: transparent; color: #4b5563; transition: .2s; white-space: nowrap;}
 .tab-btn.active { background: #fff; color: #1a1d23; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
-/* CHARTS */
-.charts-grid { display: grid; grid-template-columns: 2fr 1.1fr; gap: 24px; margin-bottom: 32px; }
+/* CHARTS 瘦身計畫：壓低圖表高度 */
+.charts-grid { display: grid; grid-template-columns: 2fr 1.1fr; gap: 20px; margin-bottom: 24px; }
 @media (max-width: 950px) { .charts-grid { grid-template-columns: 1fr; } }
-.chart-card { background: #fff; border: 1px solid #e8eaed; border-radius: 20px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; height: 400px; }
-.chart-inner { height: 300px; width: 100%; position: relative; }
+.chart-card { background: #fff; border: 1px solid #e8eaed; border-radius: 20px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); position: relative; height: 320px; }
+.chart-inner { height: 240px; width: 100%; position: relative; }
 .pie-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -55%); text-align: center; pointer-events: none; width: 60%; }
 .pie-val-label { font-size: 12px; color: #9ca3af; font-weight: 600; margin-bottom: 4px; }
 .pie-val-num { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 700; margin-bottom: 6px; }
 
-.dark-chart-container { margin: 30px 0; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); height: 350px; position: relative; }
+/* 扇形圖高度壓縮 */
+.dark-chart-container { margin: 20px 0; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); height: 280px; position: relative; }
 .dark-chart-title { position: absolute; top: 20px; left: 24px; color: #fff; font-size: 14px; font-weight: 700; z-index: 10; opacity: 0.8; letter-spacing: 1px;}
 
 /* ANALYSIS REPORT */
@@ -138,16 +140,16 @@ table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: f
 th { padding: 12px 6px; text-align: left; background: #f9fafb; color: #4b5563; font-weight: 700; border-bottom: 2px solid #e5e7eb; white-space: nowrap; }
 td { padding: 12px 6px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', monospace; vertical-align: middle; white-space: nowrap; overflow: hidden; }
 
-th:nth-child(1), td:nth-child(1) { width: 8%; }   /* 歲數 */
-th:nth-child(2), td:nth-child(2) { width: 6.5%; } /* 報酬 */
-th:nth-child(3), td:nth-child(3) { width: 6.5%; } /* 利率 */
-th:nth-child(4), td:nth-child(4) { width: 8.5%; } /* 市值 */
-th:nth-child(5), td:nth-child(5) { width: 8.5%; } /* 負債 */
-th:nth-child(6), td:nth-child(6) { width: 7.5%; } /* 維持率 */
-th:nth-child(7), td:nth-child(7) { width: 8.5%; } /* 備用金 */
-th:nth-child(8), td:nth-child(8) { width: 6.5%; } /* GK狀態 */
-th:nth-child(9), td:nth-child(9) { width: 8.5%; } /* 月領 */
-th:nth-child(10), td:nth-child(10) { width: 31%; white-space: normal; line-height: 1.6; font-size: 12px; } /* 執行動作 */
+th:nth-child(1), td:nth-child(1) { width: 8%; }   
+th:nth-child(2), td:nth-child(2) { width: 6.5%; } 
+th:nth-child(3), td:nth-child(3) { width: 6.5%; } 
+th:nth-child(4), td:nth-child(4) { width: 8.5%; } 
+th:nth-child(5), td:nth-child(5) { width: 8.5%; } 
+th:nth-child(6), td:nth-child(6) { width: 7.5%; } 
+th:nth-child(7), td:nth-child(7) { width: 8.5%; } 
+th:nth-child(8), td:nth-child(8) { width: 6.5%; } 
+th:nth-child(9), td:nth-child(9) { width: 8.5%; } 
+th:nth-child(10), td:nth-child(10) { width: 31%; white-space: normal; line-height: 1.6; font-size: 12px; } 
 
 /* BADGES & UNITS */
 .gk-badge { font-family: 'Noto Sans TC', sans-serif; font-weight: 700; font-size: 10px; padding: 3px 6px; border-radius: 4px; display: inline-block; }
@@ -192,9 +194,10 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 
 <section class="hero">
   <div class="hero-inner">
+    <!-- 標題絕對定位魔術：完美置中且懸浮版本號 -->
     <div style="position: relative; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px;">
         <h1>FIRE 退休財富計算機</h1>
-        <span style="position: absolute; left: 100%; bottom: 6px; margin-left: 12px; font-size: 14px; color: #9ca3af; white-space: nowrap; font-weight: 500;">ver 2.0.7 made by 阿奇</span>
+        <span style="position: absolute; left: 100%; bottom: 6px; margin-left: 12px; font-size: 14px; color: #9ca3af; white-space: nowrap; font-weight: 500;">ver 2.0.8 made by 阿奇</span>
     </div>
     <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 -</h2>
     <div class="hero-desc">
@@ -502,7 +505,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.0.7 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.0.8 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -642,7 +645,7 @@ function getP() {
 }
 
 /**
- * [V2.0.7 核心演算法] BBD 買借死與求生覆寫機制
+ * [V2.0.8 核心演算法] BBD 買借死與求生覆寫機制
  */
 function simPath(p, overrides) {
   let mv = p.mv, debt = p.debt, cash = p.cash;
@@ -766,7 +769,8 @@ function simPath(p, overrides) {
 
 function runSim() {
   const p = getP(); RISK_STATS = { bankrupt: 0, marginCall: 0, survival: 0 }; MC_RESULTS = null; 
-  isFirstRun = true; 
+  isFirstRun = true; // 重置狀態
+  
   if (!p.mc) {
     const res = simPath(p); ALL_PATHS = { default: res.history }; SUCCESS_RATE = res.survived ? 100 : 0;
     if (res.failType.bankrupt) RISK_STATS.bankrupt = 100;
@@ -797,6 +801,7 @@ function runSim() {
     ALL_PATHS = { p10: sims[99].history, p25: sims[249].history, p50: sims[499].history, p75: sims[749].history, p90: sims[899].history };
     CURRENT_TAB = "p50";
   }
+  
   renderDashboard();
 }
 
@@ -847,7 +852,6 @@ function renderDashboard() {
     <div class="${wrapperClass}" id="results-wrapper">
       <div class="results-inner">
         ${tabsHTML}
-        <!-- Html2Canvas 匯出抓取目標 1: export-summary -->
         <div class="summary-box" id="export-summary">
           <h3>🎯 跨週期模擬成功率：${SUCCESS_RATE}%</h3>
           <div class="metric-grid">
@@ -857,17 +861,15 @@ function renderDashboard() {
             <div class="metric"><div class="metric-label">末年平均月領</div><div class="metric-value val-green">$${fMo(last.wa)}萬</div></div>
           </div>
           ${p.mc ? `<div class="dark-chart-container"><div class="dark-chart-title">🌌 淨資產機率分布 (P10 / P50 / P90)</div><div class="chart-inner"><canvas id="fanChart" style="background-color: transparent;"></canvas></div></div>` : ''}
-          <div class="risk-indicator-wrap" style="margin-top:0;">
+          <div class="risk-indicator-wrap">
               <div class="risk-light"><div class="dot ${RISK_STATS.bankrupt > 10 ? 'dot-red' : 'dot-green'}"></div>🔴 破產風險：${RISK_STATS.bankrupt}%</div>
               <div class="risk-light"><div class="dot ${RISK_STATS.marginCall > 10 ? 'dot-red' : 'dot-yellow'}"></div>🟡 斷頭風險：${RISK_STATS.marginCall}%</div>
               <div class="risk-light"><div class="dot ${RISK_STATS.survival > 10 ? 'dot-red' : 'dot-blue'}"></div>🔵 生存風險：${RISK_STATS.survival}%</div>
           </div>
         </div>
         <div class="charts-grid" id="anchor-charts">
-          <!-- Html2Canvas 匯出抓取目標 2: export-line -->
-          <div class="chart-card" id="export-line"><div style="font-weight:700; color:#4b5563; margin-bottom:15px;">📊 戰術路徑 (${getTabName(CURRENT_TAB)})</div><div class="chart-inner" style="height:350px;"><canvas id="lineChart" style="background-color: white;"></canvas></div></div>
-          <!-- Html2Canvas 匯出抓取目標 3: export-pie -->
-          <div class="chart-card" id="export-pie"><div class="chart-inner" style="height:350px;"><canvas id="pieChart" style="background-color: white;"></canvas></div><div class="pie-center-text"><div class="pie-val-label">累計提領</div><div class="pie-val-num" style="color:#f59e0b">$${fM(totalW)}萬</div><div class="pie-val-label">期末淨額</div><div class="pie-val-num" style="color:#6366f1">$${fM(last.net)}萬</div></div></div>
+          <div class="chart-card" id="export-line"><div style="font-weight:700; color:#4b5563; margin-bottom:15px;">📊 戰術路徑 (${getTabName(CURRENT_TAB)})</div><div class="chart-inner"><canvas id="lineChart" style="background-color: white;"></canvas></div></div>
+          <div class="chart-card" id="export-pie"><div class="chart-inner"><canvas id="pieChart" style="background-color: white;"></canvas></div><div class="pie-center-text"><div class="pie-val-label">累計提領</div><div class="pie-val-num" style="color:#f59e0b">$${fM(totalW)}萬</div><div class="pie-val-label">期末淨額</div><div class="pie-val-num" style="color:#6366f1">$${fM(last.net)}萬</div></div></div>
         </div>
         <div class="table-card">
           <div class="table-header">📝 執行明細表 (${getTabName(CURRENT_TAB)})</div>
@@ -899,25 +901,37 @@ function renderDashboard() {
       </div>
     </div>
   `;
-  renderCharts(rows, p);
 
   if (isFirstRun) {
+      // 步驟 1: 起手式 - 卡片開始下拉，畫面開始滾動 (0.0s)
       setTimeout(() => {
           $('results-wrapper').classList.add('expanded');
+          
           setTimeout(() => {
               const chartsEl = $('anchor-charts');
               if (chartsEl) {
+                  // 精準對齊：滾動至圖表下緣 (減去視窗高度，加上緩衝區)
                   const targetY = chartsEl.getBoundingClientRect().bottom + window.scrollY - window.innerHeight + 40; 
                   window.scrollTo({ top: targetY, behavior: 'smooth' });
               }
-          }, 50);
+          }, 50); // 給 DOM 一點時間計算高度
+
+          // 步驟 2 & 3: 走位即將完成 - 喚醒 Chart.js 引擎開始畫圖 (0.85s)
+          setTimeout(() => {
+              renderCharts(rows, p);
+          }, 850); 
+          
           isFirstRun = false;
-      }, 100);
+      }, 50);
+  } else {
+      // 若只是切換 Tab，不重新滾動，直接畫圖 (保持動畫流暢感)
+      renderCharts(rows, p);
   }
 }
 
 function renderCharts(rows, p) {
-  const animConfig = { duration: 1500, easing: 'easeOutExpo' };
+  // 動畫參數：圖表生長耗時 1.1 秒 (總耗時 0.85s + 1.1s ≈ 1.95s 完美壓線)
+  const animConfig = { duration: 1100, easing: 'easeOutExpo' };
 
   if (LINE_CHART) LINE_CHART.destroy();
   const ctxL = $('lineChart').getContext('2d');
@@ -939,7 +953,7 @@ function renderCharts(rows, p) {
   PIE_CHART = new Chart(ctxP, {
     type: 'doughnut',
     data: { labels: ['累計提領', '期末淨額'], datasets: [{ data: [rows.reduce((a,b)=>a+b.wa,0), Math.max(0,rows[rows.length-1].net)], backgroundColor: ['#f59e0b', '#6366f1'], borderWidth: 0 }] },
-    options: { responsive: true, maintainAspectRatio: false, cutout: '78%', animation: { animateScale: true, animateRotate: true, duration: 1500, easing: 'easeOutExpo' }, plugins: { legend: { display: false } } }
+    options: { responsive: true, maintainAspectRatio: false, cutout: '78%', animation: { animateScale: true, animateRotate: true, duration: 1100, easing: 'easeOutExpo' }, plugins: { legend: { display: false } } }
   });
 
   if (p.mc && MC_RESULTS) {
@@ -981,7 +995,6 @@ async function exportUltimateXLSX() {
         
         let startRow = 2;
 
-        // 使用 html2canvas 擷取大卡片與圖表 (scale:2 保證高畫質)
         const summaryEl = document.getElementById('export-summary');
         if (summaryEl) {
             const canvasS = await html2canvas(summaryEl, { scale: 2, useCORS: true, backgroundColor: '#1a1d23' });
@@ -1009,7 +1022,7 @@ async function exportUltimateXLSX() {
             const w = 310; const h = w * (canvasP.height / canvasP.width);
             ws.addImage(imgIdP, { tl: { col: 6, row: startRow }, ext: { width: w, height: h } });
         }
-        startRow += 22; // 留白給折線圖
+        startRow += 20; 
 
         startRow += 1;
         ws.mergeCells(`A${startRow}:J${startRow}`);
