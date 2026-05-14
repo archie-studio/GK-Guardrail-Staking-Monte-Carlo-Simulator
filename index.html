@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIRE 退休財富計算機｜Ver 2.0.9 跨週期動態管理版</title>
+<title>FIRE 退休財富計算機｜Ver 2.1.0 跨週期動態管理版</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- 載入核心引擎：Chart.js (圖表), ExcelJS (報表), Html2Canvas (高畫質截圖) -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -24,7 +25,17 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 /* ===== HERO ===== */
 .hero { background: #fff; border-bottom: 1px solid #e8eaed; padding: 60px 16px; text-align: center; }
 .hero-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
-.hero h1 { font-size: clamp(32px, 6vw, 48px); font-weight: 800; color: #1a1d23; letter-spacing: -1px; margin: 0; }
+
+/* 標題與版本號 RWD 設定 */
+.title-wrapper { position: relative; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+.hero h1 { font-size: clamp(28px, 6vw, 48px); font-weight: 800; color: #1a1d23; letter-spacing: -1px; margin: 0; }
+.version-tag-text { position: absolute; left: 100%; bottom: 6px; margin-left: 12px; font-size: 14px; color: #9ca3af; white-space: nowrap; font-weight: 500; }
+
+@media (max-width: 768px) {
+    .title-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 16px; }
+    .version-tag-text { position: static; left: auto; bottom: auto; margin-left: 0; background: #f3f4f6; padding: 4px 12px; border-radius: 20px; font-size: 12px; border: 1px solid #e5e7eb; }
+}
+
 .hero h2 { font-size: 18px; font-weight: 600; color: #a78bfa; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 14px; text-align: center; width: 100%;}
 .hero-desc { color: #6b7280; font-size: 16px; max-width: 800px; margin: 0 auto; line-height: 1.8; text-align: center; }
 
@@ -90,6 +101,10 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .results-wrapper.expanded { grid-template-rows: 1fr; margin-top: 24px; }
 .results-inner { overflow: hidden; min-height: 0; }
 
+/* 隱形畫布模式：匯出時強制撐開容器 */
+.results-wrapper.export-mode .results-inner { width: 1200px !important; max-width: none !important; }
+.export-mode .charts-grid { grid-template-columns: 2fr 1.1fr !important; }
+
 /* 瘦身調校：極簡風儀表板 */
 .summary-box { background: #1a1d23; border-radius: 24px; padding: 24px 30px; color: #fff; margin-bottom: 20px; }
 .summary-box h3 { font-size: 22px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; font-weight: 800; }
@@ -128,11 +143,11 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .analysis-card h4 { font-size: 22px; color: #4f46e5; margin-bottom: 24px; font-weight: 800; border-bottom: 2px solid #c7d2fe; padding-bottom: 12px;}
 .analysis-text { font-size: 16px; color: #374151; line-height: 1.85; text-align: justify; }
 
-/* 表格優化 */
+/* 表格優化 (RWD 左右滑動) */
 .table-card { background: #fff; border: 1px solid #e8eaed; border-radius: 20px; overflow: hidden; margin-top: 32px; }
 .table-header { padding: 20px 24px; border-bottom: 1px solid #f0f1f3; font-weight: 800; color: #1a1d23; background: #fafafa; font-size: 17px;}
-.table-scroll { width: 100%; overflow: hidden; } 
-table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; } 
+.table-scroll { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; } 
+table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; min-width: 900px; } 
 th { padding: 12px 6px; text-align: left; background: #f9fafb; color: #4b5563; font-weight: 700; border-bottom: 2px solid #e5e7eb; white-space: nowrap; }
 td { padding: 12px 6px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', monospace; vertical-align: middle; white-space: nowrap; overflow: hidden; }
 
@@ -190,9 +205,9 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 
 <section class="hero">
   <div class="hero-inner">
-    <div style="position: relative; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px;">
+    <div class="title-wrapper">
         <h1>FIRE 退休財富計算機</h1>
-        <span style="position: absolute; left: 100%; bottom: 6px; margin-left: 12px; font-size: 14px; color: #9ca3af; white-space: nowrap; font-weight: 500;">ver 2.0.9 made by 阿奇</span>
+        <span class="version-tag-text">ver 2.1.0 made by 阿奇</span>
     </div>
     <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 -</h2>
     <div class="hero-desc">
@@ -500,7 +515,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.0.9 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.0 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">質押複利計算機</a></p>
 </footer>
 
 <script>
@@ -863,12 +878,10 @@ function renderDashboard() {
   `;
 
   if (isFirstRun) {
-      // 無縫接軌新劇本：同步啟動 (0s)
       setTimeout(() => {
-          $('results-wrapper').classList.add('expanded'); // 啟動攤開
-          renderCharts(rows, p); // 啟動圖表生長
+          $('results-wrapper').classList.add('expanded'); 
+          renderCharts(rows, p); 
           
-          // 計算瘦身後的黃金座標
           setTimeout(() => {
               const chartsEl = $('anchor-charts');
               if (chartsEl) {
@@ -928,6 +941,10 @@ function renderCharts(rows, p) {
 
 async function exportUltimateXLSX() {
     const btn = $('exportBtn'); btn.innerHTML = '⏳ 報表生成中，請稍候...'; btn.disabled = true;
+    
+    // 開啟「隱形畫布模式」強迫電腦版排版
+    $('results-wrapper').classList.add('export-mode');
+
     try {
         const p = getP(), rows = ALL_PATHS[CURRENT_TAB];
         const wb = new ExcelJS.Workbook(); const ws = wb.addWorksheet('退休精算報告', { views: [{ showGridLines: false }] });
@@ -936,6 +953,10 @@ async function exportUltimateXLSX() {
         head.font = { size: 16, bold: true, color: { argb: 'FFFFFFFF' } }; head.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1A1D23' } };
         head.alignment = { horizontal: 'center', vertical: 'middle' }; ws.getRow(1).height = 30;
         let startRow = 2;
+        
+        // 短暫延遲讓畫布撐開
+        await new Promise(r => setTimeout(r, 200));
+
         const summaryEl = document.getElementById('export-summary');
         if (summaryEl) {
             const canvasS = await html2canvas(summaryEl, { scale: 2, useCORS: true, backgroundColor: '#1a1d23' });
@@ -986,7 +1007,14 @@ async function exportUltimateXLSX() {
             row.eachCell(c => { c.border = { bottom: { style: 'thin', color: { argb: 'FFE8EAED' } } }; c.alignment = c.alignment || { vertical: 'middle' }; });
         });
         const buf = await wb.xlsx.writeBuffer(); const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob([buf])); link.download = `FIRE_Retirement_Report_${p.name}.xlsx`; link.click();
-    } catch (e) { console.error("圖表匯出失敗:", e); alert("匯出報表時發生錯誤，請稍後再試。"); } finally { btn.innerHTML = '匯出 XLSX 全圖文報表'; btn.disabled = false; }
+    } catch (e) { 
+        console.error("圖表匯出失敗:", e); alert("匯出報表時發生錯誤，請稍後再試。"); 
+    } finally { 
+        // 銷毀隱形畫布，恢復手機版排版
+        $('results-wrapper').classList.remove('export-mode');
+        btn.innerHTML = '匯出 XLSX 全圖文報表'; 
+        btn.disabled = false; 
+    }
 }
 </script>
 </body>
