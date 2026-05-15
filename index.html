@@ -1,9 +1,25 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-E2KYKR3V1Y"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-E2KYKR3V1Y');
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FIRE 退休財富計算機｜Ver 2.1.1 財務壓力測試版</title>
+
+<title>FIRE 退休計算機｜融合 GK 動態提領、股票質押與蒙地卡羅模擬</title>
+<meta name="description" content="專為台灣投資人打造的 FIRE 退休財富計算機。首創結合 GK 動態提領護欄、股票質押流動性引擎與 1000 次蒙地卡羅模擬壓力測試，精算你的退休成功率與買借死策略。">
+<meta name="keywords" content="質押計算機, GK動態提領計算機, 蒙地卡羅模擬計算機, FIRE, 財務自由, 退休金計算, 買借死">
+
+<meta property="og:title" content="FIRE 退休計算機｜融合 GK 動態提領、股票質押與蒙地卡羅模擬">
+<meta property="og:description" content="專為台灣投資人打造的 FIRE 退休財富計算機。首創結合 GK 動態提領護欄、股票質押流動性引擎與 1000 次蒙地卡羅模擬壓力測試，精算你的退休成功率與買借死策略。">
+<meta property="og:type" content="website">
+
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏖️</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -206,7 +222,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
   <div class="hero-inner">
     <div class="title-wrapper">
         <h1>FIRE 退休財富計算機</h1>
-        <span class="version-tag-text">ver 2.1.1 made by 阿奇</span>
+        <span class="version-tag-text">ver 2.1.2 made by 阿奇</span>
     </div>
     <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 -</h2>
     <div class="hero-desc">
@@ -514,7 +530,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.1 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">智慧複利計算機</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.2 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">智慧複利計算機</a></p>
 </footer>
 
 <script>
@@ -653,9 +669,6 @@ function getP() {
   };
 }
 
-/**
- * [V2.1.1 核心演算法] FIRE 動態財務壓力測試模型
- */
 function simPath(p, overrides) {
   let mv = p.mv, debt = p.debt, cash = p.cash;
   let wa = p.isW ? (p.wMode === 'GK' ? p.mv * p.initWR : p.mv * p.fixedWR) : 0;
@@ -731,7 +744,7 @@ function simPath(p, overrides) {
             }
             if (budgetNeeded > 0) {
                 mv -= budgetNeeded; 
-                if (isBBD) { bbdBroken = true; ops.push("⚠️ 底線防禦：備用金耗盡，啟動緊急賣股變現"); }
+                if (isBBD) { bbdBroken = true; ops.push("⚠️ 底線防禦：備用金耗盡，啟動緊急變現"); }
                 else { ops.push("🚑 最後防線：流動性耗盡，強制賣股變現"); }
                 budgetNeeded = 0;
             }
@@ -815,8 +828,8 @@ function generateStory(rows, p) {
   
   if (s_years.length > 0) events.push(`<strong>智慧護欄介入：</strong>在 <strong>${s_years[0]} 歲</strong> 觸發了動態減薪機制。這旨在市場低迷期保全資產母本，確保計畫永續。`);
   if (bridge_years.length > 0) events.push(`<strong>流動性橋接啟動：</strong>我們觀察到 <strong>${bridge_years[0]} 歲</strong> 時遭遇市場下跌，系統已暫停賣出持股，啟動質押額度支應生活費，成功避開低點實現損失。`);
-  if (p.isBBD && bbd_broken_years.length > 0) events.push(`<strong><span style="color:#ef4444;">⚠️ 【底線防禦機制觸發】</span>：</strong>在 <strong>${bbd_broken_years[0]} 歲</strong> 時，遭遇極端市場導致質押額度凍結且備用金耗盡。為維持最低生存底線，系統已啟動緊急賣股變現。建議您於初期規劃時提高「現金備用金」水位，以提升 BBD 策略的完整度。`);
-  if (risk_years.length > 0) events.push(`<strong>維持率跌破警示：</strong>注意 <strong>${risk_years[0]} 歲</strong> 時觸發了強制平倉 (斷頭) 賣出。建議適度調降目標維持率或增加初始備用金水位以提升財務韌性。`);
+  if (p.isBBD && bbd_broken_years.length > 0) events.push(`<strong><span style="color:#ef4444;">⚠️ 【底線防禦機制觸發】</span>：</strong>在 <strong>${bbd_broken_years[0]} 歲</strong> 時，遭遇極端市場導致質押額度凍結且備用金耗盡。為維持最低生存底線，系統已啟動緊急變現。建議您於初期規劃時提高「現金備用金」水位，以提升 BBD 策略的完整度。`);
+  if (risk_years.length > 0) events.push(`<strong>維持率跌破警示：</strong>注意 <strong>${risk_years[0]} 歲</strong> 時觸發了強制平倉賣出。建議適度調降目標維持率或增加初始備用金水位以提升財務韌性。`);
   
   if (events.length > 0) story += `<p><strong>【核心事件復盤】</strong><br>${events.join('<br><br>')}</p>`;
   
