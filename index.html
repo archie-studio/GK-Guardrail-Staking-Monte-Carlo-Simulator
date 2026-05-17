@@ -81,8 +81,12 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .input-wrap select:disabled { background: #f3f4f6; color: #9ca3af; cursor: not-allowed; }
 .input-unit { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #9ca3af; pointer-events: none; }
 
-/* 【關鍵升級】通膨上限格子的響應式軌道對齊 */
-#inflation-cap-field { grid-column: 4; display: none; animation: fadeIn .4s ease; }
+/* 【修復與微調】通膨上限格子的響應式軌道對齊與向下滑出動畫 */
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+#inflation-cap-field { grid-column: 4; display: none; animation: fadeInDown 0.4s ease; }
 @media (max-width: 900px) { #inflation-cap-field { grid-column: 2; } }
 @media (max-width: 480px) { #inflation-cap-field { grid-column: auto; } }
 
@@ -227,7 +231,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
   <div class="hero-inner">
     <div class="title-wrapper">
         <h1>FIRE 退休財富計算機</h1>
-        <span class="version-tag-text">ver 2.1.3 made by 阿奇</span>
+        <span class="version-tag-text">ver 2.1.4 made by 阿奇</span>
     </div>
     <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 -</h2>
     <div class="hero-desc">
@@ -483,7 +487,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 
                 <div class="inputs-row" style="border-top:1px solid #f1f3f5; padding-top:15px;">
                     <div class="field">
-                        <label style="color:#ef4444; font-weight: 800;">3. 終極紅線：維持率警戒 (強制平倉警示) <span class="tip align-right" data-tip="風控底線：當維持率低於此數值，系統將自动啟動強制平倉程序以償還部分負債，此舉可能導致模擬失敗。">?</span></label>
+                        <label style="color:#ef4444; font-weight: 800;">3. 終極紅線：維持率警戒 (強制平倉警示) <span class="tip align-right" data-tip="風控底線：當維持率低於此數值，系統將自動啟動強制平倉程序以償還部分負債，此舉可能導致模擬失敗。">?</span></label>
                         <div class="input-wrap"><input type="number" id="dangerMR" value="140" class="has-unit" style="border-color: #fecaca;"><span class="input-unit">%</span></div>
                     </div>
                 </div>
@@ -543,7 +547,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.3 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">智慧複利計算機</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.4 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">智慧複利計算機</a></p>
 </footer>
 
 <script>
@@ -640,14 +644,14 @@ function updateMRUI() {
     $('mr-custom-ui').style.display = (mode === 'custom') ? 'block' : 'none';
 }
 
-/* 【全新優化】通膨模式滑出控制機制 */
+/* 【修復：通膨模式滑出控制機制】 */
 function updateInflationUI() {
     const mode = $('inflationMode').value;
     const capField = $('inflation-cap-field');
     if (mode === 'random' || mode === 'inverse') {
-        capField.style.style.display = 'block';
+        capField.style.display = 'block'; // 修復了前一版的 style.style Bug
     } else {
-        capField.style.style.display = 'none';
+        capField.style.display = 'none';
     }
 }
 
@@ -665,7 +669,7 @@ function generateDynamicGrids() {
     }
 }
 
-/* 【全新優化】防呆攔截防禦網 */
+/* 防呆攔截防禦網 */
 function validateInputs(p) {
     if (isNaN(p.mv) || p.mv <= 0) {
         alert("【輸入欄位錯誤】您的「股票市值」必須大於 0 萬元。");
@@ -725,9 +729,6 @@ function getP() {
   };
 }
 
-/**
- * [V2.1.3 核心演算法] FIRE 動態財務壓力測試模型（具備通膨天花板與除零防護）
- */
 function simPath(p, overrides) {
   let mv = p.mv, debt = p.debt, cash = p.cash;
   let wa = p.isW ? (p.wMode === 'GK' ? p.mv * p.initWR : p.mv * p.fixedWR) : 0;
@@ -743,7 +744,6 @@ function simPath(p, overrides) {
     if(p.inflationMode === 'random') yInf += (Math.random() - 0.5) * 0.02;
     else if(p.inflationMode === 'inverse') yInf += (p.retR - ret) * 0.15;
     
-    // 【全新升級】執行非固定通膨模式下的天花板限速
     if (p.inflationMode !== 'fixed') {
         yInf = Math.min(p.inflationCap, yInf);
     }
@@ -791,7 +791,7 @@ function simPath(p, overrides) {
             if (r_sell > 0) {
                 let totalSell = r_sell + budgetNeeded;
                 mv -= totalSell; debt -= r_sell; budgetNeeded = 0;
-                ops.push(`⚖️ 高檔停利：合併結算生活與償債 (賣股 ${fM(totalSell)}<span class="unit-label">萬</span>)`);
+                ops.push(`⚖️ 高檔停利：合併執行動態償債 (變現 ${fM(totalSell)}<span class="unit-label">萬</span>)`);
             }
         }
         else {
@@ -818,7 +818,6 @@ function simPath(p, overrides) {
             if (fill > 0) { cash += fill; mv -= fill; ops.push(`♻️ 智慧補血：高點回補備用金 (+${fM(fill)})`); }
         }
         
-        // 【全新升級】強制平倉公式除以零風險防護
         let finalMR = debt > 0 ? mv / debt : 999;
         if (finalMR < p.dangerMR) {
             let forceSell = 0;
@@ -851,7 +850,6 @@ function simPath(p, overrides) {
 function runSim() {
   const p = getP(); 
   
-  // 啟動前端防呆攔截，不合規即中斷執行，不破壞圖表渲染
   if (!validateInputs(p)) return; 
   
   RISK_STATS = { bankrupt: 0, marginCall: 0, survival: 0 }; 
@@ -906,7 +904,7 @@ function generateStory(rows, p) {
   
   if (s_years.length > 0) events.push(`<strong>智慧護欄介入：</strong>在 <strong>${s_years[0]} 歲</strong> 觸發了動態減薪機制。這旨在市場低迷期保全資產母本，確保計畫永續。`);
   if (bridge_years.length > 0) events.push(`<strong>流動性橋接啟動：</strong>我們觀察到 <strong>${bridge_years[0]} 歲</strong> 時遭遇市場下跌，系統已暫停賣出持股，啟動質押額度支應生活費，成功避開低點實現損失。`);
-  if (p.isBBD && bbd_broken_years.length > 0) events.push(`<strong><span style="color:#ef4444;">⚠️ 【底線防禦機制觸發】</span>：</strong>在 <strong>${bbd_broken_years[0]} 歲</strong> 時，遭遇極端市場導致質押額度凍結且備用金耗盡。為維持最低生存底線，系統已啟動緊急賣股變現。建議您於初期規劃時提高「現金備用金」水位，以提升 BBD 策略的完整度。`);
+  if (p.isBBD && bbd_broken_years.length > 0) events.push(`<strong><span style="color:#ef4444;">⚠️ 【底線防禦機制觸發】</span>：</strong>在 <strong>${bbd_broken_years[0]} 歲</strong> 時，遭遇極端市場導致質押額度凍結且備用金耗盡。為維持最低生存底線，系統已啟動緊急變現。建議您於初期規劃時提高「現金備用金」水位，以提升 BBD 策略的完整度。`);
   if (risk_years.length > 0) events.push(`<strong>維持率跌破警示：</strong>注意 <strong>${risk_years[0]} 歲</strong> 時觸發了強制平倉賣出。建議適度調降目標維持率或增加初始備用金水位以提升財務韌性。`);
   
   if (events.length > 0) story += `<p><strong>【核心事件復盤】</strong><br>${events.join('<br><br>')}</p>`;
@@ -1016,7 +1014,7 @@ function renderCharts(rows, p) {
   const ctxP = $('pieChart').getContext('2d');
   PIE_CHART = new Chart(ctxP, {
     type: 'doughnut',
-    data: { labels: ['累計提領', '期期末淨額'], datasets: [{ data: [rows.reduce((a,b)=>a+b.wa,0), Math.max(0,rows[rows.length-1].net)], backgroundColor: ['#f59e0b', '#6366f1'], borderWidth: 0 }] },
+    data: { labels: ['累計提領', '期末淨額'], datasets: [{ data: [rows.reduce((a,b)=>a+b.wa,0), Math.max(0,rows[rows.length-1].net)], backgroundColor: ['#f59e0b', '#6366f1'], borderWidth: 0 }] },
     options: { responsive: true, maintainAspectRatio: false, cutout: '78%', animation: { animateScale: true, animateRotate: true, duration: 1500, easing: 'easeOutExpo' }, plugins: { legend: { display: false } } }
   });
 
