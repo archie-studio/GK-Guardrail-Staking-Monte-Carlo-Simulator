@@ -81,7 +81,7 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .input-wrap select:disabled { background: #f3f4f6; color: #9ca3af; cursor: not-allowed; }
 .input-unit { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #9ca3af; pointer-events: none; }
 
-/* 【修復與微調】通膨上限格子的響應式軌道對齊與向下滑出動畫 */
+/* 通膨上限格子的響應式軌道對齊與向下滑出動畫 */
 @keyframes fadeInDown {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -119,7 +119,7 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
 .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
 
-/* DASHBOARD & ANIMATION (無縫接軌版) */
+/* DASHBOARD & ANIMATION */
 #results-area { scroll-margin-top: 20px; }
 .results-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 1.5s cubic-bezier(0.25, 1, 0.5, 1); margin-top: 0; overflow: hidden; }
 .results-wrapper.expanded { grid-template-rows: 1fr; margin-top: 24px; }
@@ -231,7 +231,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
   <div class="hero-inner">
     <div class="title-wrapper">
         <h1>FIRE 退休財富計算機</h1>
-        <span class="version-tag-text">ver 2.1.4 made by 阿奇</span>
+        <span class="version-tag-text">ver 2.1.5 made by 阿奇</span>
     </div>
     <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 -</h2>
     <div class="hero-desc">
@@ -276,8 +276,8 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             <div class="input-wrap"><input type="number" id="mv" value="1300" class="has-unit"><span class="input-unit">萬</span></div>
           </div>
           <div class="field">
-            <label>目前負債 (質押金額)</label>
-            <div class="input-wrap"><input type="number" id="debt" value="300" class="has-unit"><span class="input-unit">萬</span></div>
+            <label>目前負債 (質押金額) <span class="tip" data-tip="大於 0 時，將強制啟動下方的質押引擎以計算利息。">?</span></label>
+            <div class="input-wrap"><input type="number" id="debt" value="0" class="has-unit" oninput="updateDebtUI()"><span class="input-unit">萬</span></div>
           </div>
           <div class="field">
             <label>還債模式選擇 <span class="tip align-right" data-tip="牛市獲利優先補滿預備金。若維持率低於目標，將與生活費合併淨額結算一次性賣股。">?</span></label>
@@ -547,7 +547,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.4 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">智慧複利計算機</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.5 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">智慧複利計算機</a></p>
 </footer>
 
 <script>
@@ -577,6 +577,19 @@ let isFirstRun = true;
 
 function toggleSwitch(id) { 
     if(!$(id).disabled) $(id).click(); 
+}
+
+/* 【方案二】監控負債數字，大於 0 強制開啟並鎖定質押引擎 */
+function updateDebtUI() {
+    const debtVal = parseFloat($('debt').value) || 0;
+    const pledgeToggle = $('isPledgeEnabled');
+    if (debtVal > 0) {
+        pledgeToggle.checked = true;
+        pledgeToggle.disabled = true;
+    } else {
+        pledgeToggle.disabled = false;
+    }
+    updateEngineUI();
 }
 
 function updateEngineUI() {
@@ -644,12 +657,11 @@ function updateMRUI() {
     $('mr-custom-ui').style.display = (mode === 'custom') ? 'block' : 'none';
 }
 
-/* 【修復：通膨模式滑出控制機制】 */
 function updateInflationUI() {
     const mode = $('inflationMode').value;
     const capField = $('inflation-cap-field');
     if (mode === 'random' || mode === 'inverse') {
-        capField.style.display = 'block'; // 修復了前一版的 style.style Bug
+        capField.style.display = 'block';
     } else {
         capField.style.display = 'none';
     }
@@ -669,7 +681,6 @@ function generateDynamicGrids() {
     }
 }
 
-/* 防呆攔截防禦網 */
 function validateInputs(p) {
     if (isNaN(p.mv) || p.mv <= 0) {
         alert("【輸入欄位錯誤】您的「股票市值」必須大於 0 萬元。");
@@ -702,7 +713,7 @@ function validateInputs(p) {
 
 window.onload = function() { 
   $('isPledgeEnabled').checked = false; $('mc-toggle').checked = false; $('isWithdrawLogicEnabled').checked = false; $('bbdToggle').checked = false;
-  updateBBDUI(); updateEngineUI(); updateWithdrawUI(); updateRepayUI(); updateRateUI(); updateMRUI(); generateDynamicGrids(); updateInflationUI();
+  updateBBDUI(); updateDebtUI(); updateWithdrawUI(); updateRepayUI(); updateRateUI(); updateMRUI(); generateDynamicGrids(); updateInflationUI();
 }
 
 function getP() {
@@ -770,12 +781,15 @@ function simPath(p, overrides) {
 
     if (p.isP) {
         let currentMR = debt > 0 ? mv / debt : 999;
+        
         if (ret >= 0 && currentMR >= curTargetMR) {
-            if (isBBD || p.isW) {
+            // 【邏輯B修正】確保不論是否開啟提領，有資金缺口就依據設定代償利息
+            if (budgetNeeded > 0) {
                 let projectedMR = (debt + budgetNeeded) > 0 ? mv / (debt + budgetNeeded) : 999;
                 if (projectedMR >= p.dangerMR) {
                     debt += budgetNeeded; budgetNeeded = 0;
-                    ops.push(isBBD ? "👑 BBD 智慧管理：質押代償預算 (一股不賣)" : "💳 順週期執行：質押代償生活預算");
+                    if (p.isW || isBBD) ops.push(isBBD ? "👑 BBD 智慧管理：質押代償預算 (一股不賣)" : "💳 順週期執行：質押代償生活預算");
+                    else ops.push("💳 借新還舊：質押代償年度利息");
                 }
             }
             if (p.reinvest && (p.repayMode === 'NONE' || p.repayMode === 'RATIO')) {
@@ -795,7 +809,7 @@ function simPath(p, overrides) {
             }
         }
         else {
-            if (cash > 0) {
+            if (cash > 0 && budgetNeeded > 0) {
                 let bailout = Math.min(cash, budgetNeeded); cash -= bailout; budgetNeeded -= bailout;
                 ops.push(`🛡️ 逆週期防禦：動用現金備用金 (-${fM(bailout)})`);
             }
@@ -829,7 +843,7 @@ function simPath(p, overrides) {
             if (forceSell > 0) { mv -= forceSell; debt -= forceSell; ops.push(`🚨 維持率破線：執行強制平倉 ${fM(forceSell)}<span class="unit-label">萬</span>`); }
         }
     } else {
-        if (ret < 0 && cash > 0) {
+        if (ret < 0 && cash > 0 && wa > 0) {
             let bailout = Math.min(cash, wa); cash -= bailout; wa -= bailout; ops.push(`🛡️ 現金防禦：動用備用金 (-${fM(bailout)})`);
         }
         mv -= wa; 
