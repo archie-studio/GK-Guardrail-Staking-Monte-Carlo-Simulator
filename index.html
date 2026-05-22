@@ -35,11 +35,29 @@
 html { scroll-behavior: smooth; font-size: 16px; }
 body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6f8; color: #1a1d23; min-height: 100vh; line-height: 1.6; }
 
-/* ===== HEADER ===== */
+/* ===== HEADER & SIDEBAR (生態系導覽升級) ===== */
 .site-header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.header-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+.header-left { display: flex; align-items: center; gap: 16px; }
+.hamburger-btn { background: transparent; border: none; cursor: pointer; color: #4b5563; display: flex; align-items: center; justify-content: center; padding: 4px; transition: .2s; border-radius: 6px; }
+.hamburger-btn:hover { background: #f3f4f6; color: #1a1d23; }
+.header-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; transition: opacity .2s; }
+.header-brand:hover { opacity: 0.8; }
 .brand-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
 .brand-name { font-weight: 700; font-size: 15px; }
+
+/* SIDEBAR MENU */
+.sidebar-overlay { position: fixed; inset: 0; background: rgba(26, 29, 35, 0.4); backdrop-filter: blur(2px); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+.sidebar-menu { position: fixed; top: 0; left: -300px; width: 280px; height: 100vh; background: #fff; z-index: 1001; box-shadow: 4px 0 24px rgba(0,0,0,0.1); transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); display: flex; flex-direction: column; }
+.sidebar-menu.active { transform: translateX(300px); }
+.sidebar-header { padding: 20px 24px; border-bottom: 1px solid #e8eaed; display: flex; align-items: center; justify-content: space-between; font-weight: 800; font-size: 16px; color: #1a1d23; }
+.close-sidebar-btn { background: transparent; border: none; font-size: 24px; color: #9ca3af; cursor: pointer; transition: .2s; }
+.close-sidebar-btn:hover { color: #ef4444; }
+.sidebar-nav { padding: 20px 12px; display: flex; flex-direction: column; gap: 8px; }
+.sidebar-link { text-decoration: none; color: #4b5563; padding: 14px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 12px; transition: .2s; }
+.sidebar-link:hover { background: #f3f4f6; color: #1a1d23; }
+.sidebar-link.active { background: #f5f3ff; color: #4f46e5; }
+.sidebar-footer { margin-top: auto; padding: 24px; font-size: 12px; color: #9ca3af; text-align: center; border-top: 1px solid #e8eaed; }
 
 /* ===== HERO ===== */
 .hero { background: #fff; border-bottom: 1px solid #e8eaed; padding: 60px 16px; text-align: center; }
@@ -216,6 +234,26 @@ th:nth-child(10), td:nth-child(10) { width: 31%; white-space: normal; line-heigh
 .seo-item h3 { font-size: 19px; font-weight: 800; color: #1a1d23; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
 .seo-item p { font-size: 15.5px; color: #4b5563; line-height: 1.85; text-align: justify; }
 
+/* ===== MODAL (全螢幕技術白皮書彈出視窗) ===== */
+.modal-overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; padding: 20px; }
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+.modal-box { background: #fff; border-radius: 20px; width: 100%; max-width: 850px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); transform: translateY(20px) scale(0.95); transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
+.modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
+.modal-header { padding: 24px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; background: #fafafa; border-top-left-radius: 20px; border-top-right-radius: 20px; }
+.modal-title { font-size: 18px; font-weight: 800; color: #1a1d23; display: flex; align-items: center; gap: 10px; }
+.modal-close { background: #f3f4f6; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 20px; color: #4b5563; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: .2s; }
+.modal-close:hover { background: #ef4444; color: #fff; }
+.modal-body { padding: 32px 32px 48px 32px; overflow-y: auto; text-align: justify; }
+
+/* MODAL 內部白皮書排版優化 */
+.wp-section { margin-bottom: 32px; }
+.wp-section:last-child { margin-bottom: 0; }
+.wp-section h5 { font-size: 16px; font-weight: 800; color: #4f46e5; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.wp-section p { font-size: 14.5px; color: #374151; margin-bottom: 12px; line-height: 1.8; }
+.wp-formula-box { background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #e5e7eb; font-size: 15px; color: #111827; margin: 16px 0; text-align: center; overflow-x: auto; }
+.wp-list { font-size: 14.5px; color: #374151; margin-left: 20px; margin-bottom: 16px; line-height: 1.8; }
+.wp-list li { margin-bottom: 8px; }
+
 /* FOOTER */
 footer { background: #fff; border-top: 1px solid #e8eaed; color: #6b7280; padding: 40px 16px; text-align: center; font-size: 14px; }
 footer a { color: #667eea; text-decoration: none; font-weight: 700; }
@@ -224,18 +262,39 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </head>
 <body>
 
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="sidebar-menu" id="sidebarMenu">
+  <div class="sidebar-header">
+    投資工具生態系
+    <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
+  </div>
+  <div class="sidebar-nav">
+    <a href="#" class="sidebar-link active"><span>🏖️</span> FIRE 退休計算機 (本站)</a>
+    <a href="https://archie-studio.github.io/archie-lab.github.io/" class="sidebar-link"><span>📈</span> 定期定額複利 (含質押)</a>
+    <a href="https://archie-studio.github.io/loan-calc.html/" class="sidebar-link"><span>💳</span> 定期定額複利 (含信貸)</a>
+  </div>
+  <div class="sidebar-footer">
+    © 2026 Archie Lab Tools
+  </div>
+</div>
+
 <header class="site-header">
-  <a href="#" class="header-brand">
-    <div class="brand-icon" style="color:white; font-weight:bold;">GK</div>
-    <div class="brand-name">Archie Lab <span>投資工具系列</span></div>
-  </a>
+  <div class="header-left">
+    <button class="hamburger-btn" onclick="toggleSidebar()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+    <a href="#" class="header-brand">
+      <div class="brand-icon" style="color:white; font-weight:bold;">GK</div>
+      <div class="brand-name">Archie Lab <span>投資工具系列</span></div>
+    </a>
+  </div>
 </header>
 
 <section class="hero">
   <div class="hero-inner">
     <div class="title-wrapper">
         <h1>FIRE 退休財富計算機</h1>
-        <span class="version-tag-text">ver 2.1.6 made by 阿奇</span>
+        <span class="version-tag-text">ver 2.1.7 made by 阿奇</span>
     </div>
     <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 -</h2>
     <div class="hero-desc">
@@ -549,63 +608,65 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
     </div>
 
     <div style="text-align: center; margin-top: 40px;">
-      <button id="toggleWhitepaperBtn" onclick="toggleWhitepaper()" style="background: #f3f4f6; color: #4b5563; border: 1.5px solid #d1d5db; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: .2s; display: inline-flex; align-items: center; gap: 8px;">
-        <span>🔬 檢視風控動態財務模型與核心數學公式 (技術白皮書)</span>
-        <svg id="wp-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s; transform: rotate(0deg);"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      <button onclick="openWhitepaperModal()" style="background: #fff; color: #4f46e5; border: 1.5px solid #d4d4ff; padding: 14px 28px; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; transition: all .2s; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);">
+        🔬 檢視核心數學模型與演算法白皮書
       </button>
-    </div>
-
-    <div id="whitepaper-container" style="display: none; margin-top: 32px; padding: 32px; background: #fafafa; border: 1.5px solid #e5e7eb; border-radius: 16px; text-align: justify; animation: fadeInDown 0.4s ease;">
-      
-      <div style="border-bottom: 2px solid #e5e7eb; padding-bottom: 12px; margin-bottom: 24px;">
-        <h4 style="font-size: 18px; font-weight: 800; color: #1a1d23;">ARCHIE LAB 風控動態財務模型：官方技術規範</h4>
-        <p style="font-size: 13px; color: #9ca3af; margin-top: 4px;">本規範闡述系統於每一模擬年度 (Year $y$) 執行之演算法決策樹與底層數學模型。</p>
-      </div>
-
-      <div style="margin-bottom: 28px;">
-        <h5 style="font-size: 15px; font-weight: 700; color: #4f46e5; margin-bottom: 10px;">階層一：名目生活預算與通膨天花板限速</h5>
-        <p style="font-size: 14px; color: #4b5563; margin-bottom: 12px;">系統依據所選之通膨模式動態調整。若開啟「滯脹模式」，單年通膨率 $I_y$ 將隨市場報酬反向劇震，但受限於通膨天花板限制：</p>
-        <div style="background:#fff; padding:12px; border-radius:8px; border:1px solid #e5e7eb; font-family:'DM Mono', monospace; font-size:14px; color:#1a1d23; margin-bottom:12px; text-align:center;">
-          $$I_y = \min\left(\text{p.inflationCap}, \text{p.inflation} + (\text{p.retR} - R_y) \times 0.15\right)$$
-        </div>
-        <p style="font-size: 14px; color: #4b5563; margin-bottom: 12px;">隨後檢視當期提領率 $WR_{cur} = \frac{W_y}{MV_y}$ 是否觸發 GK 動態護欄：</p>
-        <ul style="font-size: 14px; color: #4b5563; margin-left: 20px; margin-bottom: 12px; line-height: 1.8;">
-          <li>若 $WR_{cur} > \text{p.upperGuard}$ (觸發減薪上限)：名目預算精算為 $W_y = W_{y-1} \times (1 - \text{p.adjRate})$</li>
-          <li>若 $WR_{cur} < \text{p.lowerGuard}$ (觸發加薪下限)：名目預算精算為 $W_y = W_{y-1} \times (1 + \text{p.adjRate})$</li>
-        </ul>
-        <p style="font-size: 14px; color: #4b5563;">最終名目預算強制受限於絕對生存底線與最高上限：$$\max\left(\text{p.survivalFloor} \times 12, \min\left(\text{p.maxCeiling} \times 12, W_y\right)\right)$$</p>
-      </div>
-
-      <div style="margin-bottom: 28px;">
-        <h5 style="font-size: 15px; font-weight: 700; color: #4f46e5; margin-bottom: 10px;">階層二：年度總資金缺口與動態清算路徑</h5>
-        <p style="font-size: 14px; color: #4b5563; margin-bottom: 12px;">年度總資金需求定義為生活預算與負債利息之總和：$B_y = W_y + (D_{y-1} \times \text{curRate})$。系統依據實際維持率 $MR_{cur} = \frac{MV_y}{D_{y-1}}$ 與目標維持率之關係分流清算：</p>
-        <ul style="font-size: 14px; color: #4b5563; margin-left: 20px; margin-bottom: 12px; line-height: 1.8;">
-          <li><strong>路徑 A (順週期融資)</strong>：若 $MR_{cur} \ge \text{curTargetMR}$，資金缺口完全資本化計入負債（$D_y = D_{y-1} + B_y$）。若增貸功能開啟，系統精算最大化再投入股市之超額資產活化額度：
-            <div style="background:#fff; padding:12px; border-radius:8px; border:1px solid #e5e7eb; margin:8px 0; text-align:center;">$$Borrow = \frac{MV_y - \text{curTargetMR} \times D_y}{\text{curTargetMR} - 1 + (\text{p.preD} ? \text{curRate} : 0)}$$</div>
-          </li>
-          <li><strong>路徑 B (高檔結算停利)</strong>：若市場上漲但維持率不足，系統採取合併結算：
-            <div style="background:#fff; padding:12px; border-radius:8px; border:1px solid #e5e7eb; margin:8px 0; text-align:center;">$$TotalSell = \frac{\text{curTargetMR} \times D_{y-1} - MV_y + B_y}{\text{curTargetMR} - 1} + B_y$$</div>
-            股票市值扣除 $TotalSell$，負債本金成功調降。
-          </li>
-          <li><strong>路徑 C (逆週期防禦鏈)</strong>：若遭遇大盤回撤，系統嚴格執行清算消耗順序：<br><span style="color:#6b7280; font-weight:500;">優先消耗現金備用金 $\rightarrow$ 現金用罄允許維持率範圍內質押橋接 $\rightarrow$ 強制凍結增貸並啟動最低限度賣股變現。</span></li>
-        </ul>
-      </div>
-
-      <div>
-        <h5 style="font-size: 15px; font-weight: 700; color: #4f46e5; margin-bottom: 10px;">階層三：期末風控雷達與智慧補血機制</h5>
-        <p style="font-size: 14px; color: #4b5563; margin-bottom: 12px;">當期末實際維持率跌破風控終極紅線 ($\text{p.dangerMR}$) 時，系統強制啟動斷頭平倉程序：</p>
-        <div style="background:#fff; padding:12px; border-radius:8px; border:1px solid #e5e7eb; font-family:'DM Mono', monospace; font-size:14px; color:#1a1d23; margin-bottom:12px; text-align:center;">
-          $$\text{ForceSell} = \frac{\text{p.dangerMR} \times D_y - MV_y}{\text{p.dangerMR} - 1}$$
-        </div>
-        <p style="font-size: 14px; color: #4b5563;">反之，若年度市場報酬為正，系統執行盈餘撥配，在不增加任何負債的前提下，將多頭獲利的 $\min(MV_y \times 0.05, \text{預備金缺口})$ 自動存入現金庫存，完成防禦防護罩之回補。</p>
-      </div>
-
     </div>
   </div>
 </section>
 
+<div class="modal-overlay" id="wpModalOverlay" onclick="closeWhitepaperModal(event)">
+  <div class="modal-box" id="wpModalBox">
+    <div class="modal-header">
+      <div class="modal-title"><span>🔬</span> ARCHIE LAB 風控動態財務模型</div>
+      <button class="modal-close" onclick="closeWhitepaperModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size: 14px; color: #9ca3af; margin-bottom: 24px;">本規範闡述系統於每一模擬年度 (Year $y$) 執行之演算法決策樹與底層數學模型。</p>
+
+      <div class="wp-section">
+        <h5>1. 名目生活預算與通膨天花板限速</h5>
+        <p>單年通膨率 $I_y$ 將隨市場報酬反向劇震 (若開啟滯脹模式)，受限於通膨天花板限制：</p>
+        <div class="wp-formula-box">
+          $$I_y = \min\left(\text{p.inflationCap}, \text{p.inflation} + (\text{p.retR} - R_y) \times 0.15\right)$$
+        </div>
+        <p>檢視當期提領率 $WR_{cur} = \frac{W_y}{MV_y}$ 是否觸發 GK 動態護欄：</p>
+        <ul class="wp-list">
+          <li>若 $WR_{cur} > \text{p.upperGuard}$ (觸發減薪上限)：預算精算為 $W_y = W_{y-1} \times (1 - \text{p.adjRate})$</li>
+          <li>若 $WR_{cur} < \text{p.lowerGuard}$ (觸發加薪下限)：預算精算為 $W_y = W_{y-1} \times (1 + \text{p.adjRate})$</li>
+        </ul>
+        <p>最終名目預算強制受限於絕對生存底線與最高上限：$$\max\left(\text{p.survivalFloor} \times 12, \min\left(\text{p.maxCeiling} \times 12, W_y\right)\right)$$</p>
+      </div>
+
+      <div class="wp-section">
+        <h5>2. 年度總資金缺口與動態清算路徑</h5>
+        <p>年度總資金需求為生活預算與負債利息總和：$B_y = W_y + (D_{y-1} \times \text{curRate})$。系統依據實際維持率 $MR_{cur} = \frac{MV_y}{D_{y-1}}$ 分流清算：</p>
+        <ul class="wp-list">
+          <li><strong>路徑 A (順週期融資)</strong>：若 $MR_{cur} \ge \text{curTargetMR}$，資金缺口完全資本化計入負債（$D_y = D_{y-1} + B_y$）。最大化超額資產活化額度：
+            <div class="wp-formula-box">$$Borrow = \frac{MV_y - \text{curTargetMR} \times D_y}{\text{curTargetMR} - 1 + (\text{p.preD} ? \text{curRate} : 0)}$$</div>
+          </li>
+          <li><strong>路徑 B (高檔結算停利)</strong>：若市場上漲但維持率不足，系統採取合併結算，股票市值扣除 $TotalSell$，負債本金成功調降：
+            <div class="wp-formula-box">$$TotalSell = \frac{\text{curTargetMR} \times D_{y-1} - MV_y + B_y}{\text{curTargetMR} - 1} + B_y$$</div>
+          </li>
+          <li><strong>路徑 C (逆週期防禦鏈)</strong>：嚴格執行清算消耗順序：<br><span style="color:#6b7280; font-weight:500;">優先消耗現金備用金 $\rightarrow$ 現金用罄允許維持率範圍內質押橋接 $\rightarrow$ 強制凍結增貸並啟動最低限度賣股變現。</span></li>
+        </ul>
+      </div>
+
+      <div class="wp-section">
+        <h5>3. 期末風控雷達與智慧補血機制</h5>
+        <p>當期末實際維持率跌破風控終極紅線 ($\text{p.dangerMR}$) 時，系統強制啟動斷頭平倉程序：</p>
+        <div class="wp-formula-box">
+          $$\text{ForceSell} = \frac{\text{p.dangerMR} \times D_y - MV_y}{\text{p.dangerMR} - 1}$$
+        </div>
+        <p>反之，若年度市場報酬為正，系統執行盈餘撥配，在不增加任何負債的前提下，將多頭獲利的 $\min(MV_y \times 0.05, \text{預備金缺口})$ 自動存入現金庫存，完成防禦防護罩之回補。</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.6 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">智慧複利計算機</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.7 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">投資工具生態系</a></p>
 </footer>
 
 <script>
@@ -637,25 +698,28 @@ function toggleSwitch(id) {
     if(!$(id).disabled) $(id).click(); 
 }
 
-/* 【全新增量】技術白皮書折疊面板開關控制器 */
-function toggleWhitepaper() {
-    const container = $('whitepaper-container');
-    const arrow = $('wp-arrow');
-    const btn = $('toggleWhitepaperBtn');
-    
-    if (container.style.display === 'none') {
-        container.style.display = 'block';
-        arrow.style.transform = 'rotate(180deg)';
-        btn.style.borderColor = '#4f46e5';
-        btn.style.color = '#4f46e5';
-        btn.style.background = '#f5f3ff';
+/* --- SIDEBAR 控制邏輯 --- */
+function toggleSidebar() {
+    const sidebar = $('sidebarMenu');
+    const overlay = $('sidebarOverlay');
+    if (sidebar.classList.contains('active')) {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
     } else {
-        container.style.display = 'none';
-        arrow.style.transform = 'rotate(0deg)';
-        btn.style.borderColor = '#d1d5db';
-        btn.style.color = '#4b5563';
-        btn.style.background = '#f3f4f6';
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
     }
+}
+
+/* --- MODAL 白皮書控制邏輯 --- */
+function openWhitepaperModal() {
+    $('wpModalOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden'; // 防止背景滾動
+}
+function closeWhitepaperModal(e) {
+    if (e && e.target !== $('wpModalOverlay') && e.target !== document.querySelector('.modal-close')) return;
+    $('wpModalOverlay').classList.remove('active');
+    document.body.style.overflow = 'auto'; // 恢復背景滾動
 }
 
 /* 【方案二】監控負債數字，大於 0 強制開啟並鎖定質押引擎 */
@@ -969,10 +1033,14 @@ function runSim() {
     RISK_STATS.marginCall = (RISK_STATS.marginCall/10).toFixed(1);
     RISK_STATS.survival = (RISK_STATS.survival/10).toFixed(1);
     MC_RESULTS = { p10_net: sims[99].history.map(r => Math.max(0, r.net)), p50_net: sims[499].history.map(r => Math.max(0, r.net)), p90_net: sims[899].history.map(r => Math.max(0, r.net)), labels: sims[0].history.map(r => r.year + ' (' + r.age + '歲)') };
-    ALL_PATHS = { p10: sims[99].history, p25: sims[249].history, p50: sims[499].history, p75: sims[749].history, p90: sims[899].history };
+    ALL_PATHS = { p10: sims[99].history, p25: sims[249].history, p50: calculations_p50(sims), p75: sims[749].history, p90: sims[899].history };
     CURRENT_TAB = "p50";
   }
   renderDashboard();
+}
+
+function calculations_p50(sims) {
+    return sims[499].history;
 }
 
 function setTab(t) { CURRENT_TAB = t; isFirstRun = false; renderDashboard(); }
