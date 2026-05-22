@@ -25,6 +25,10 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 <style>
 /* ===== RESET & BASE ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -175,7 +179,7 @@ table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: f
 th { padding: 12px 6px; text-align: left; background: #f9fafb; color: #4b5563; font-weight: 700; border-bottom: 2px solid #e5e7eb; white-space: nowrap; }
 td { padding: 12px 6px; border-bottom: 1px solid #f0f1f3; font-family: 'DM Mono', monospace; vertical-align: middle; white-space: nowrap; overflow: hidden; }
 
-th:nth-child(1), td:nth-child(1) { width: 8%; }   
+th:nth-child(1), td:nth-child(1) { width: 8%; }    
 th:nth-child(2), td:nth-child(2) { width: 6.5%; } 
 th:nth-child(3), td:nth-child(3) { width: 6.5%; } 
 th:nth-child(4), td:nth-child(4) { width: 8.5%; } 
@@ -231,7 +235,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
   <div class="hero-inner">
     <div class="title-wrapper">
         <h1>FIRE 退休財富計算機</h1>
-        <span class="version-tag-text">ver 2.1.5 made by 阿奇</span>
+        <span class="version-tag-text">ver 2.1.6 made by 阿奇</span>
     </div>
     <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 -</h2>
     <div class="hero-desc">
@@ -543,11 +547,65 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
     <div class="seo-item">
       <p><strong>3. 報酬順序風險 (SRR) 智慧防禦</strong><br>透過動態加減薪與多層級備用金屏障，系統能顯著提升計畫在退休初期遭遇大幅市場回撤時的韌性，確保財務計畫的長期永續性。</p>
     </div>
+
+    <div style="text-align: center; margin-top: 40px;">
+      <button id="toggleWhitepaperBtn" onclick="toggleWhitepaper()" style="background: #f3f4f6; color: #4b5563; border: 1.5px solid #d1d5db; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: .2s; display: inline-flex; align-items: center; gap: 8px;">
+        <span>🔬 檢視風控動態財務模型與核心數學公式 (技術白皮書)</span>
+        <svg id="wp-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transition: transform 0.3s; transform: rotate(0deg);"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+    </div>
+
+    <div id="whitepaper-container" style="display: none; margin-top: 32px; padding: 32px; background: #fafafa; border: 1.5px solid #e5e7eb; border-radius: 16px; text-align: justify; animation: fadeInDown 0.4s ease;">
+      
+      <div style="border-bottom: 2px solid #e5e7eb; padding-bottom: 12px; margin-bottom: 24px;">
+        <h4 style="font-size: 18px; font-weight: 800; color: #1a1d23;">ARCHIE LAB 風控動態財務模型：官方技術規範</h4>
+        <p style="font-size: 13px; color: #9ca3af; margin-top: 4px;">本規範闡述系統於每一模擬年度 (Year $y$) 執行之演算法決策樹與底層數學模型。</p>
+      </div>
+
+      <div style="margin-bottom: 28px;">
+        <h5 style="font-size: 15px; font-weight: 700; color: #4f46e5; margin-bottom: 10px;">階層一：名目生活預算與通膨天花板限速</h5>
+        <p style="font-size: 14px; color: #4b5563; margin-bottom: 12px;">系統依據所選之通膨模式動態調整。若開啟「滯脹模式」，單年通膨率 $I_y$ 將隨市場報酬反向劇震，但受限於通膨天花板限制：</p>
+        <div style="background:#fff; padding:12px; border-radius:8px; border:1px solid #e5e7eb; font-family:'DM Mono', monospace; font-size:14px; color:#1a1d23; margin-bottom:12px; text-align:center;">
+          $$I_y = \min\left(\text{p.inflationCap}, \text{p.inflation} + (\text{p.retR} - R_y) \times 0.15\right)$$
+        </div>
+        <p style="font-size: 14px; color: #4b5563; margin-bottom: 12px;">隨後檢視當期提領率 $WR_{cur} = \frac{W_y}{MV_y}$ 是否觸發 GK 動態護欄：</p>
+        <ul style="font-size: 14px; color: #4b5563; margin-left: 20px; margin-bottom: 12px; line-height: 1.8;">
+          <li>若 $WR_{cur} > \text{p.upperGuard}$ (觸發減薪上限)：名目預算精算為 $W_y = W_{y-1} \times (1 - \text{p.adjRate})$</li>
+          <li>若 $WR_{cur} < \text{p.lowerGuard}$ (觸發加薪下限)：名目預算精算為 $W_y = W_{y-1} \times (1 + \text{p.adjRate})$</li>
+        </ul>
+        <p style="font-size: 14px; color: #4b5563;">最終名目預算強制受限於絕對生存底線與最高上限：$$\max\left(\text{p.survivalFloor} \times 12, \min\left(\text{p.maxCeiling} \times 12, W_y\right)\right)$$</p>
+      </div>
+
+      <div style="margin-bottom: 28px;">
+        <h5 style="font-size: 15px; font-weight: 700; color: #4f46e5; margin-bottom: 10px;">階層二：年度總資金缺口與動態清算路徑</h5>
+        <p style="font-size: 14px; color: #4b5563; margin-bottom: 12px;">年度總資金需求定義為生活預算與負債利息之總和：$B_y = W_y + (D_{y-1} \times \text{curRate})$。系統依據實際維持率 $MR_{cur} = \frac{MV_y}{D_{y-1}}$ 與目標維持率之關係分流清算：</p>
+        <ul style="font-size: 14px; color: #4b5563; margin-left: 20px; margin-bottom: 12px; line-height: 1.8;">
+          <li><strong>路徑 A (順週期融資)</strong>：若 $MR_{cur} \ge \text{curTargetMR}$，資金缺口完全資本化計入負債（$D_y = D_{y-1} + B_y$）。若增貸功能開啟，系統精算最大化再投入股市之超額資產活化額度：
+            <div style="background:#fff; padding:12px; border-radius:8px; border:1px solid #e5e7eb; margin:8px 0; text-align:center;">$$Borrow = \frac{MV_y - \text{curTargetMR} \times D_y}{\text{curTargetMR} - 1 + (\text{p.preD} ? \text{curRate} : 0)}$$</div>
+          </li>
+          <li><strong>路徑 B (高檔結算停利)</strong>：若市場上漲但維持率不足，系統採取合併結算：
+            <div style="background:#fff; padding:12px; border-radius:8px; border:1px solid #e5e7eb; margin:8px 0; text-align:center;">$$TotalSell = \frac{\text{curTargetMR} \times D_{y-1} - MV_y + B_y}{\text{curTargetMR} - 1} + B_y$$</div>
+            股票市值扣除 $TotalSell$，負債本金成功調降。
+          </li>
+          <li><strong>路徑 C (逆週期防禦鏈)</strong>：若遭遇大盤回撤，系統嚴格執行清算消耗順序：<br><span style="color:#6b7280; font-weight:500;">優先消耗現金備用金 $\rightarrow$ 現金用罄允許維持率範圍內質押橋接 $\rightarrow$ 強制凍結增貸並啟動最低限度賣股變現。</span></li>
+        </ul>
+      </div>
+
+      <div>
+        <h5 style="font-size: 15px; font-weight: 700; color: #4f46e5; margin-bottom: 10px;">階層三：期末風控雷達與智慧補血機制</h5>
+        <p style="font-size: 14px; color: #4b5563; margin-bottom: 12px;">當期末實際維持率跌破風控終極紅線 ($\text{p.dangerMR}$) 時，系統強制啟動斷頭平倉程序：</p>
+        <div style="background:#fff; padding:12px; border-radius:8px; border:1px solid #e5e7eb; font-family:'DM Mono', monospace; font-size:14px; color:#1a1d23; margin-bottom:12px; text-align:center;">
+          $$\text{ForceSell} = \frac{\text{p.dangerMR} \times D_y - MV_y}{\text{p.dangerMR} - 1}$$
+        </div>
+        <p style="font-size: 14px; color: #4b5563;">反之，若年度市場報酬為正，系統執行盈餘撥配，在不增加任何負債的前提下，將多頭獲利的 $\min(MV_y \times 0.05, \text{預備金缺口})$ 自動存入現金庫存，完成防禦防護罩之回補。</p>
+      </div>
+
+    </div>
   </div>
 </section>
 
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.5 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">智慧複利計算機</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.6 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">智慧複利計算機</a></p>
 </footer>
 
 <script>
@@ -577,6 +635,27 @@ let isFirstRun = true;
 
 function toggleSwitch(id) { 
     if(!$(id).disabled) $(id).click(); 
+}
+
+/* 【全新增量】技術白皮書折疊面板開關控制器 */
+function toggleWhitepaper() {
+    const container = $('whitepaper-container');
+    const arrow = $('wp-arrow');
+    const btn = $('toggleWhitepaperBtn');
+    
+    if (container.style.display === 'none') {
+        container.style.display = 'block';
+        arrow.style.transform = 'rotate(180deg)';
+        btn.style.borderColor = '#4f46e5';
+        btn.style.color = '#4f46e5';
+        btn.style.background = '#f5f3ff';
+    } else {
+        container.style.display = 'none';
+        arrow.style.transform = 'rotate(0deg)';
+        btn.style.borderColor = '#d1d5db';
+        btn.style.color = '#4b5563';
+        btn.style.background = '#f3f4f6';
+    }
 }
 
 /* 【方案二】監控負債數字，大於 0 強制開啟並鎖定質押引擎 */
@@ -783,7 +862,6 @@ function simPath(p, overrides) {
         let currentMR = debt > 0 ? mv / debt : 999;
         
         if (ret >= 0 && currentMR >= curTargetMR) {
-            // 【邏輯B修正】確保不論是否開啟提領，有資金缺口就依據設定代償利息
             if (budgetNeeded > 0) {
                 let projectedMR = (debt + budgetNeeded) > 0 ? mv / (debt + budgetNeeded) : 999;
                 if (projectedMR >= p.dangerMR) {
