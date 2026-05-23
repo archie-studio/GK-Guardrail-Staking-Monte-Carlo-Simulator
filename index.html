@@ -97,6 +97,9 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 @media (max-width: 480px) { .inputs-row { grid-template-columns: 1fr; } }
 
 .field label { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #6b7280; margin-bottom: 8px; }
+
+/* 🌟 BUG 修復核心：加入 position: relative 讓子元素單位找到定位基準 */
+.input-wrap { position: relative; } 
 .input-wrap input, .input-wrap select { width: 100%; border: 1.5px solid #e8eaed; border-radius: 10px; padding: 10px 14px; font-size: 15px; font-family: 'DM Mono', 'Noto Sans TC', sans-serif; outline: none; transition: .2s; background: #fff; appearance: none; }
 .input-wrap input.has-unit { padding-right: 38px; }
 .input-wrap input:focus, .input-wrap select:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.12); }
@@ -287,7 +290,6 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
     </button>
     <a href="#" class="header-brand">
       <div class="brand-icon" style="color:white; font-weight:bold;">GK</div>
-      <!-- 絕對增量修改1：更新標題文字 -->
       <div class="brand-name">Archie Lab <span>投資工具</span></div>
     </a>
   </div>
@@ -297,7 +299,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
   <div class="hero-inner">
     <div class="title-wrapper">
         <h1>FIRE 退休財富計算機</h1>
-        <span class="version-tag-text">ver 2.1.8 made by 阿奇</span>
+        <span class="version-tag-text">ver 2.1.9 made by 阿奇</span>
     </div>
     <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 -</h2>
     <div class="hero-desc">
@@ -627,7 +629,6 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
     </div>
     <div class="modal-body">
       
-      <!-- 絕對增量修改2：融合「私人銀行財顧版」的白話文案 -->
       <div class="wp-highlight-box">
         <h5>💡 系統風控動態財務模型：白話運作規範</h5>
         <p style="font-size: 14.5px; color: #475569; line-height: 1.8; margin-bottom: 16px;">
@@ -685,7 +686,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </div>
 
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.8 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">投資工具生態系</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.9 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">投資工具生態系</a></p>
 </footer>
 
 <script>
@@ -733,15 +734,14 @@ function toggleSidebar() {
 /* --- MODAL 白皮書控制邏輯 --- */
 function openWhitepaperModal() {
     $('wpModalOverlay').classList.add('active');
-    document.body.style.overflow = 'hidden'; // 防止背景滾動
+    document.body.style.overflow = 'hidden'; 
 }
 function closeWhitepaperModal(e) {
     if (e && e.target !== $('wpModalOverlay') && e.target !== document.querySelector('.modal-close')) return;
     $('wpModalOverlay').classList.remove('active');
-    document.body.style.overflow = 'auto'; // 恢復背景滾動
+    document.body.style.overflow = 'auto'; 
 }
 
-/* 【方案二】監控負債數字，大於 0 強制開啟並鎖定質押引擎 */
 function updateDebtUI() {
     const debtVal = parseFloat($('debt').value) || 0;
     const pledgeToggle = $('isPledgeEnabled');
