@@ -32,8 +32,8 @@
 <style>
 /* ===== RESET & BASE ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; font-size: 16px; }
-body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6f8; color: #1a1d23; min-height: 100vh; line-height: 1.6; }
+html { scroll-behavior: smooth; font-size: 16px; overflow-x: hidden; }
+body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6f8; color: #1a1d23; min-height: 100vh; line-height: 1.6; overflow-x: hidden; }
 
 /* ===== HEADER & SIDEBAR (生態系導覽升級) ===== */
 .site-header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
@@ -253,6 +253,8 @@ th:nth-child(10), td:nth-child(10) { width: 31%; white-space: normal; line-heigh
 .wp-formula-box { background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #e5e7eb; font-size: 15px; color: #111827; margin: 16px 0; text-align: center; overflow-x: auto; }
 .wp-list { font-size: 14.5px; color: #374151; margin-left: 20px; margin-bottom: 16px; line-height: 1.8; }
 .wp-list li { margin-bottom: 8px; }
+.wp-highlight-box { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 32px; }
+.wp-highlight-box h5 { color: #1e293b; font-size: 16px; margin-bottom: 12px; font-weight: 800; }
 
 /* FOOTER */
 footer { background: #fff; border-top: 1px solid #e8eaed; color: #6b7280; padding: 40px 16px; text-align: center; font-size: 14px; }
@@ -285,7 +287,8 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
     </button>
     <a href="#" class="header-brand">
       <div class="brand-icon" style="color:white; font-weight:bold;">GK</div>
-      <div class="brand-name">Archie Lab <span>投資工具系列</span></div>
+      <!-- 絕對增量修改1：更新標題文字 -->
+      <div class="brand-name">Archie Lab <span>投資工具</span></div>
     </a>
   </div>
 </header>
@@ -294,7 +297,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
   <div class="hero-inner">
     <div class="title-wrapper">
         <h1>FIRE 退休財富計算機</h1>
-        <span class="version-tag-text">ver 2.1.7 made by 阿奇</span>
+        <span class="version-tag-text">ver 2.1.8 made by 阿奇</span>
     </div>
     <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 -</h2>
     <div class="hero-desc">
@@ -615,6 +618,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
   </div>
 </section>
 
+<!-- 全螢幕彈出視窗 (Modal) -->
 <div class="modal-overlay" id="wpModalOverlay" onclick="closeWhitepaperModal(event)">
   <div class="modal-box" id="wpModalBox">
     <div class="modal-header">
@@ -622,7 +626,22 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
       <button class="modal-close" onclick="closeWhitepaperModal()">&times;</button>
     </div>
     <div class="modal-body">
-      <p style="font-size: 14px; color: #9ca3af; margin-bottom: 24px;">本規範闡述系統於每一模擬年度 (Year $y$) 執行之演算法決策樹與底層數學模型。</p>
+      
+      <!-- 絕對增量修改2：融合「私人銀行財顧版」的白話文案 -->
+      <div class="wp-highlight-box">
+        <h5>💡 系統風控動態財務模型：白話運作規範</h5>
+        <p style="font-size: 14.5px; color: #475569; line-height: 1.8; margin-bottom: 16px;">
+          本計算機並非傳統的「單純靜態利息計算機」，而是一個整合「借貸流動性」與「動態支出控管」的風險壓力測試沙盒。它將您的退休資產視為一個動態平衡的資產負債表，核心運作邏輯如下：
+        </p>
+        <ul class="wp-list" style="margin-bottom: 0;">
+          <li><strong>動態預算校準（GK護欄）</strong>：當市場大漲導致提領率過低時，執行「繁榮加薪」；反之若遭遇市場回撤，啟動「保護性減薪」，將資金消耗速度鎖死在生存底線之上，保全資本母本。</li>
+          <li><strong>多頭市值的資本化（買借死策略）</strong>：當「實際維持率」高於「目標維持率」時，系統將<strong>停止任何處分資產（賣股）</strong>的行為。所需生活預算與利息將 <strong>100% 透過質押貸款代償</strong>，建構資本利得稅盾，免疫摩擦成本。</li>
+          <li><strong>空頭維持率的梯階消耗（防禦鏈）</strong>：極端熊市下，為防強制平倉，依序執行：<br>$$\text{現金儲備優先消耗} \rightarrow \text{安全水位內流動性橋接} \rightarrow \text{最低限度防守性賣股}$$</li>
+          <li><strong>智慧資本回補</strong>：市場重回多頭時，自動提撥正報酬的 5% 撥入現金庫存，優先回補救命預備金，且不增加任何債務。</li>
+        </ul>
+      </div>
+
+      <p style="font-size: 14px; color: #9ca3af; margin-bottom: 24px; border-top: 1px solid #e5e7eb; padding-top: 24px;">以下為系統於每一模擬年度 (Year $y$) 執行之底層數學模型與公式：</p>
 
       <div class="wp-section">
         <h5>1. 名目生活預算與通膨天花板限速</h5>
@@ -666,7 +685,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </div>
 
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.7 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">投資工具生態系</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.8 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">投資工具生態系</a></p>
 </footer>
 
 <script>
