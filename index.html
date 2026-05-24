@@ -12,11 +12,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>FIRE 退休計算機｜融合 GK 動態提領、股票質押與蒙地卡羅模擬</title>
+<title>FIRE 退休提領計算機｜融合 GK 動態提領、股票質押與蒙地卡羅模擬</title>
 <meta name="description" content="專為台灣投資人打造的 FIRE 退休財富計算機。首創結合 GK 動態提領護欄、股票質押流動性引擎與 1000 次蒙地卡羅模擬壓力測試，精算你的退休成功率與買借死策略。">
 <meta name="keywords" content="質押計算機, GK動態提領計算機, 蒙地卡羅模擬計算機, FIRE, 財務自由, 退休金計算, 買借死">
 
-<meta property="og:title" content="FIRE 退休計算機｜融合 GK 動態提領、股票質押與蒙地卡羅模擬">
+<meta property="og:title" content="FIRE 退休提領計算機｜融合 GK 動態提領、股票質押與蒙地卡羅模擬">
 <meta property="og:description" content="專為台灣投資人打造的 FIRE 退休財富計算機。首創結合 GK 動態提領護欄、股票質押流動性引擎與 1000 次蒙地卡羅模擬壓力測試，精算你的退休成功率與買借死策略。">
 <meta property="og:type" content="website">
 
@@ -32,26 +32,27 @@
 <style>
 /* ===== RESET & BASE ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; font-size: 16px; overflow-x: hidden; }
-body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6f8; color: #1a1d23; min-height: 100vh; line-height: 1.6; overflow-x: hidden; }
+/* 修正：移除 html, body 的 overflow-x: hidden，解放 sticky 置頂功能 */
+html { scroll-behavior: smooth; font-size: 16px; }
+body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6f8; color: #1a1d23; min-height: 100vh; line-height: 1.6; }
 
 /* ===== HEADER & SIDEBAR (生態系導覽升級) ===== */
-.site-header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.site-header { background: #fff; border-bottom: 1px solid #e8eaed; padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 9999; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
 .header-left { display: flex; align-items: center; gap: 16px; }
 .hamburger-btn { background: transparent; border: none; cursor: pointer; color: #4b5563; display: flex; align-items: center; justify-content: center; padding: 4px; transition: .2s; border-radius: 6px; }
 .hamburger-btn:hover { background: #f3f4f6; color: #1a1d23; }
 .header-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; transition: opacity .2s; }
 .header-brand:hover { opacity: 0.8; }
-.brand-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-.brand-name { font-weight: 700; font-size: 15px; }
+.brand-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: white; font-weight: bold;}
+.brand-name { font-weight: 700; font-size: 15px; white-space: nowrap;}
 
 /* SIDEBAR MENU */
-.sidebar-overlay { position: fixed; inset: 0; background: rgba(26, 29, 35, 0.4); backdrop-filter: blur(2px); z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+.sidebar-overlay { position: fixed; inset: 0; background: rgba(26, 29, 35, 0.4); backdrop-filter: blur(2px); z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
 .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
-.sidebar-menu { position: fixed; top: 0; left: -300px; width: 280px; height: 100vh; background: #fff; z-index: 1001; box-shadow: 4px 0 24px rgba(0,0,0,0.1); transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); display: flex; flex-direction: column; }
+.sidebar-menu { position: fixed; top: 0; left: -300px; width: 280px; height: 100vh; background: #fff; z-index: 10001; box-shadow: 4px 0 24px rgba(0,0,0,0.1); transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); display: flex; flex-direction: column; }
 .sidebar-menu.active { transform: translateX(300px); }
-.sidebar-header { padding: 20px 24px; border-bottom: 1px solid #e8eaed; display: flex; align-items: center; justify-content: space-between; font-weight: 800; font-size: 16px; color: #1a1d23; }
-.close-sidebar-btn { background: transparent; border: none; font-size: 24px; color: #9ca3af; cursor: pointer; transition: .2s; }
+.sidebar-header { padding: 20px 24px; border-bottom: 1px solid #e8eaed; display: flex; align-items: center; justify-content: space-between; font-weight: 800; font-size: 16px; color: #1a1d23; white-space: nowrap;}
+.close-sidebar-btn { background: transparent; border: none; font-size: 24px; color: #9ca3af; cursor: pointer; transition: .2s; padding: 0;}
 .close-sidebar-btn:hover { color: #ef4444; }
 .sidebar-nav { padding: 20px 12px; display: flex; flex-direction: column; gap: 8px; }
 .sidebar-link { text-decoration: none; color: #4b5563; padding: 14px 16px; border-radius: 12px; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 12px; transition: .2s; }
@@ -59,22 +60,14 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .sidebar-link.active { background: #f5f3ff; color: #4f46e5; }
 .sidebar-footer { margin-top: auto; padding: 24px; font-size: 12px; color: #9ca3af; text-align: center; border-top: 1px solid #e8eaed; }
 
-/* ===== HERO ===== */
-.hero { background: #fff; border-bottom: 1px solid #e8eaed; padding: 60px 16px; text-align: center; }
+/* ===== HERO (壓縮排版) ===== */
+.hero { background: #fff; border-bottom: 1px solid #e8eaed; padding: 30px 16px; text-align: center; }
 .hero-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
-
-/* 標題與版本號 RWD 設定 */
-.title-wrapper { position: relative; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 12px; }
-.hero h1 { font-size: clamp(28px, 6vw, 48px); font-weight: 800; color: #1a1d23; letter-spacing: -1px; margin: 0; }
-.version-tag-text { position: absolute; left: 100%; bottom: 6px; margin-left: 12px; font-size: 14px; color: #9ca3af; white-space: nowrap; font-weight: 500; }
-
-@media (max-width: 768px) {
-    .title-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 16px; }
-    .version-tag-text { position: static; left: auto; bottom: auto; margin-left: 0; background: #f3f4f6; padding: 4px 12px; border-radius: 20px; font-size: 12px; border: 1px solid #e5e7eb; }
-}
-
-.hero h2 { font-size: 18px; font-weight: 600; color: #a78bfa; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 14px; text-align: center; width: 100%;}
-.hero-desc { color: #6b7280; font-size: 16px; max-width: 800px; margin: 0 auto; line-height: 1.8; text-align: center; }
+.title-wrapper { margin-bottom: 8px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; }
+.hero h1 { font-size: clamp(24px, 4vw, 36px); font-weight: 800; color: #1a1d23; letter-spacing: -1px; margin: 0; }
+.hero-subtitle { font-size: clamp(15px, 2vw, 20px); font-weight: 600; color: #a78bfa; margin: 0; }
+.hero-desc { color: #6b7280; font-size: 15px; max-width: 850px; margin: 0 auto; line-height: 1.6; text-align: center; }
+.version-tag-text { font-size: 12px; color: #9ca3af; background: #f3f4f6; padding: 4px 12px; border-radius: 20px; font-weight: 500; border: 1px solid #e5e7eb; display: inline-block; margin-left: 8px; vertical-align: middle; }
 
 /* 提示詞 */
 .tip { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: #e5e7eb; border-radius: 50%; font-size: 10px; cursor: help; color: #6b7280; margin-left: 4px; position: relative; }
@@ -96,9 +89,7 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 @media (max-width: 900px) { .inputs-row { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px) { .inputs-row { grid-template-columns: 1fr; } }
 
-.field label { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #6b7280; margin-bottom: 8px; }
-
-/* 🌟 BUG 修復核心：加入 position: relative 讓子元素單位找到定位基準 */
+.field label { display: flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #6b7280; margin-bottom: 8px; white-space: nowrap;}
 .input-wrap { position: relative; } 
 .input-wrap input, .input-wrap select { width: 100%; border: 1.5px solid #e8eaed; border-radius: 10px; padding: 10px 14px; font-size: 15px; font-family: 'DM Mono', 'Noto Sans TC', sans-serif; outline: none; transition: .2s; background: #fff; appearance: none; }
 .input-wrap input.has-unit { padding-right: 38px; }
@@ -225,10 +216,7 @@ th:nth-child(10), td:nth-child(10) { width: 31%; white-space: normal; line-heigh
 .dynamic-field label { font-size: 10px; color: #9ca3af; font-weight: 700; text-align: center; }
 .dynamic-field input { padding: 6px; font-size: 12px; border-radius: 6px; border: 1.5px solid #e8eaed; width: 100%; text-align: center; }
 
-.sub-label-header { font-size: 13px; font-weight: 700; margin-top: 15px; margin-bottom: 8px; color: #6b7280; display: flex; align-items: center; gap: 4px; }
-
 .vertical-stack { display: flex; flex-direction: column; gap: 20px; width: 100%; }
-.full-width-field { width: 100% !important; max-width: 100% !important; }
 
 /* SEO SECTION */
 .seo-section { background: #fff; border-top: 1px solid #e8eaed; padding: 60px 16px; margin-top: 48px; }
@@ -238,7 +226,7 @@ th:nth-child(10), td:nth-child(10) { width: 31%; white-space: normal; line-heigh
 .seo-item p { font-size: 15.5px; color: #4b5563; line-height: 1.85; text-align: justify; }
 
 /* ===== MODAL (全螢幕技術白皮書彈出視窗) ===== */
-.modal-overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; padding: 20px; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(17, 24, 39, 0.7); backdrop-filter: blur(4px); z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; padding: 20px; }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
 .modal-box { background: #fff; border-radius: 20px; width: 100%; max-width: 850px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); transform: translateY(20px) scale(0.95); transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
 .modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
@@ -274,7 +262,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
     <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
   </div>
   <div class="sidebar-nav">
-    <a href="#" class="sidebar-link active"><span>🏖️</span> FIRE 退休計算機 (本站)</a>
+    <a href="#" class="sidebar-link active"><span>🏖️</span> FIRE 退休提領計算機 (本站)</a>
     <a href="https://archie-studio.github.io/archie-lab.github.io/" class="sidebar-link"><span>📈</span> 定期定額複利 (含質押)</a>
     <a href="https://archie-studio.github.io/loan-calc.html/" class="sidebar-link"><span>💳</span> 定期定額複利 (含信貸)</a>
   </div>
@@ -289,7 +277,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     </button>
     <a href="#" class="header-brand">
-      <div class="brand-icon" style="color:white; font-weight:bold;">GK</div>
+      <div class="brand-icon">GK</div>
       <div class="brand-name">Archie Lab <span>投資工具</span></div>
     </a>
   </div>
@@ -298,12 +286,12 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 <section class="hero">
   <div class="hero-inner">
     <div class="title-wrapper">
-        <h1>FIRE 退休財富計算機</h1>
-        <span class="version-tag-text">ver 2.1.9 made by 阿奇</span>
+        <h1>FIRE 退休提領計算機</h1>
+        <span class="hero-subtitle">- 搭載 GK 動態提領＆質押增貸系統的蒙地卡羅沙盒 -</span>
     </div>
-    <h2>- 搭載 GK 動態提領 × 質押套利引擎 的蒙地卡羅沙盒 -</h2>
     <div class="hero-desc">
-      「牛市鎖利增貸、熊市現金防禦、買借死傳承」<br>透過 1000 次極端市場模擬，精算全方面抗通膨戰術。
+      「牛市鎖利增貸、熊市現金防禦、買借死傳承」透過 1000 次極端市場模擬，精算全方面抗通膨戰術。
+      <span class="version-tag-text">ver 2.1.10 made by 阿奇</span>
     </div>
   </div>
 </section>
@@ -432,13 +420,13 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             <div class="sw"><input type="checkbox" id="isWithdrawLogicEnabled" onchange="updateEngineUI()"><span class="sw-track"></span></div>
           </div>
           <div class="engine-content" id="withdraw-logic-content">
-             <div class="inputs-row">
+             <div class="inputs-row" style="margin-bottom:20px;">
                 <div class="field">
                     <label>預算核算模式</label>
                     <div class="input-wrap">
                         <select id="withdrawMode" onchange="updateWithdrawUI()">
-                            <option value="GK">GK 動態護欄 (智慧動態調整)</option>
-                            <option value="FIXED">固定比例 (傳統 FIRE)</option>
+                            <option value="GK">GK 動態護欄</option>
+                            <option value="FIXED">固定比例</option>
                         </select>
                     </div>
                 </div>
@@ -446,9 +434,6 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
                     <label>年度預算比例 (%)</label>
                     <div class="input-wrap"><input type="number" id="fixedWithdrawRate" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
                 </div>
-             </div>
-
-             <div class="inputs-row" style="margin-top:20px;">
                 <div class="field">
                     <label>生存底線 (地板月領)</label>
                     <div class="input-wrap"><input type="number" id="survivalFloor" value="3.0" step="0.1" class="has-unit"><span class="input-unit">萬</span></div>
@@ -459,15 +444,13 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
                 </div>
              </div>
 
-             <div id="gk-params" style="margin-top: 20px;">
-                <div class="inputs-row">
-                  <div class="field"><label>初始預算率 (%)</label><div class="input-wrap"><input type="number" id="initWithdrawRate" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
-                  <div class="field"><label>上限護欄 (保本)</label><div class="input-wrap"><input type="number" id="upperGuard" value="6.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
-                  <div class="field"><label>下限護欄 (繁榮)</label><div class="input-wrap"><input type="number" id="lowerGuard" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
-                  <div class="field">
+             <div id="gk-params" class="inputs-row">
+                <div class="field"><label>初始預算率 (%)</label><div class="input-wrap"><input type="number" id="initWithdrawRate" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
+                <div class="field"><label>上限護欄 (保本)</label><div class="input-wrap"><input type="number" id="upperGuard" value="6.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
+                <div class="field"><label>下限護欄 (繁榮)</label><div class="input-wrap"><input type="number" id="lowerGuard" value="4.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div></div>
+                <div class="field">
                     <label>免死金牌年數 <span class="tip align-right" data-tip="規劃後期安全網：剩餘模擬年數少於此值時，系統將不執行強制性減薪。">?</span></label>
                     <div class="input-wrap"><input type="number" id="lateLifeYears" value="5" class="has-unit"><span class="input-unit">年</span></div>
-                  </div>
                 </div>
              </div>
           </div>
@@ -495,9 +478,9 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
             </div>
 
             <div class="vertical-stack">
-                <div class="inputs-row">
+                <div class="inputs-row" style="margin-bottom: 20px;">
                     <div class="field">
-                        <div class="sub-label-header">1. 質借年利率設定 <span class="tip align-right" data-tip="連動利率 (Pegged)：智慧模擬利率循環，當環境通膨上升時，質借利率會同步調升。">?</span></div>
+                        <label>1. 質借年利率設定 <span class="tip align-right" data-tip="連動利率 (Pegged)：智慧模擬利率循環，當環境通膨上升時，質借利率會同步調升。">?</span></label>
                         <div class="input-wrap">
                             <select id="rateSelect" onchange="updateRateUI()">
                                 <option value="fixed">固定利率</option>
@@ -506,25 +489,21 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
                             </select>
                         </div>
                     </div>
-                </div>
-
-                <div id="rate-fixed-ui" class="inputs-row">
-                    <div class="field">
+                    
+                    <div id="rate-fixed-ui" class="field">
                         <label>質借年利率 (%)</label>
                         <div class="input-wrap"><input type="number" id="pledgeRate" value="3.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
                     </div>
-                </div>
 
-                <div id="rate-pegged-ui" class="inputs-row" style="display:none;">
-                    <div class="field">
+                    <div id="rate-pegged-ui-1" class="field" style="display:none;">
                         <label>基礎利率</label>
                         <div class="input-wrap"><input type="number" id="rateBase" value="3.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
                     </div>
-                    <div class="field">
+                    <div id="rate-pegged-ui-2" class="field" style="display:none;">
                         <label>利率下限 (Floor)</label>
                         <div class="input-wrap"><input type="number" id="rateFloor" value="2.5" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
                     </div>
-                    <div class="field">
+                    <div id="rate-pegged-ui-3" class="field" style="display:none;">
                         <label>利率上限 (Cap)</label>
                         <div class="input-wrap"><input type="number" id="rateCap" value="8.0" step="0.1" class="has-unit"><span class="input-unit">%</span></div>
                     </div>
@@ -532,9 +511,9 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 
                 <div id="rate-custom-ui" style="display:none;"><div id="custom-rate-grid" class="dynamic-grid"></div></div>
 
-                <div class="inputs-row">
+                <div class="inputs-row" style="margin-bottom: 20px;">
                     <div class="field">
-                        <div class="sub-label-header">2. 風控邊界 (維持率)</div>
+                        <label>2. 風控邊界 (維持率)</label>
                         <div class="input-wrap">
                             <select id="mrSelect" onchange="updateMRUI()">
                                 <option value="fixed">固定維持率</option>
@@ -542,10 +521,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
                             </select>
                         </div>
                     </div>
-                </div>
-
-                <div id="mr-fixed-ui" class="inputs-row">
-                    <div class="field">
+                    <div id="mr-fixed-ui" class="field">
                         <label>目標維持率 (%)</label>
                         <div class="input-wrap"><input type="number" id="targetMR" value="300" class="has-unit"><span class="input-unit">%</span></div>
                     </div>
@@ -555,7 +531,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 
                 <div class="inputs-row" style="border-top:1px solid #f1f3f5; padding-top:15px;">
                     <div class="field">
-                        <label style="color:#ef4444; font-weight: 800;">3. 終極紅線：維持率警戒 (強制平倉警示) <span class="tip align-right" data-tip="風控底線：當維持率低於此數值，系統將自動啟動強制平倉程序以償還部分負債，此舉可能導致模擬失敗。">?</span></label>
+                        <label style="color:#ef4444; font-weight: 800;">3. 終極紅線：維持率警戒 <span class="tip align-right" data-tip="風控底線：當維持率低於此數值，系統將自動啟動強制平倉程序以償還部分負債，此舉可能導致模擬失敗。">?</span></label>
                         <div class="input-wrap"><input type="number" id="dangerMR" value="140" class="has-unit" style="border-color: #fecaca;"><span class="input-unit">%</span></div>
                     </div>
                 </div>
@@ -591,7 +567,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
       </div>
       
       <div class="export-wrap" style="text-align: center;">
-        <button class="btn-primary" onclick="runSim()" id="runBtn">🚀 生成專業財務診斷報告</button>
+        <button class="btn-primary" onclick="runSim()" id="runBtn">開始退休試算</button>
       </div>
     </div>
   </div>
@@ -620,7 +596,6 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
   </div>
 </section>
 
-<!-- 全螢幕彈出視窗 (Modal) -->
 <div class="modal-overlay" id="wpModalOverlay" onclick="closeWhitepaperModal(event)">
   <div class="modal-box" id="wpModalBox">
     <div class="modal-header">
@@ -686,7 +661,7 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 </div>
 
 <footer>
-  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.9 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">投資工具生態系</a></p>
+  <p>© 2026 Archie Studio · FIRE 退休系統 Ver 2.1.10 · <a href="https://archie-studio.github.io/archie-lab.github.io/" target="_blank">投資工具生態系</a></p>
 </footer>
 
 <script>
@@ -787,8 +762,13 @@ function setVol(v) { $('vol').value = v; }
 
 function updateWithdrawUI() {
     const mode = $('withdrawMode').value;
-    $('gk-params').style.display = (mode === 'GK') ? 'block' : 'none';
-    $('fixed-rate-input').style.display = (mode === 'FIXED') ? 'block' : 'none';
+    if (mode === 'GK') {
+        $('gk-params').style.display = 'grid'; // 恢復網格排列
+        $('fixed-rate-input').style.display = 'none';
+    } else {
+        $('gk-params').style.display = 'none';
+        $('fixed-rate-input').style.display = 'block';
+    }
 }
 
 function updateRepayUI() {
@@ -808,14 +788,16 @@ function updateRepayUI() {
 
 function updateRateUI() {
     const mode = $('rateSelect').value;
-    $('rate-fixed-ui').style.display = (mode === 'fixed') ? 'grid' : 'none';
-    $('rate-pegged-ui').style.display = (mode === 'pegged') ? 'grid' : 'none';
+    $('rate-fixed-ui').style.display = (mode === 'fixed') ? 'block' : 'none';
+    $('rate-pegged-ui-1').style.display = (mode === 'pegged') ? 'block' : 'none';
+    $('rate-pegged-ui-2').style.display = (mode === 'pegged') ? 'block' : 'none';
+    $('rate-pegged-ui-3').style.display = (mode === 'pegged') ? 'block' : 'none';
     $('rate-custom-ui').style.display = (mode === 'custom') ? 'block' : 'none';
 }
 
 function updateMRUI() {
     const mode = $('mrSelect').value;
-    $('mr-fixed-ui').style.display = (mode === 'fixed') ? 'grid' : 'none';
+    $('mr-fixed-ui').style.display = (mode === 'fixed') ? 'block' : 'none';
     $('mr-custom-ui').style.display = (mode === 'custom') ? 'block' : 'none';
 }
 
