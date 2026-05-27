@@ -64,9 +64,9 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
 .hero-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
 .title-wrapper { margin-bottom: 8px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; }
 .hero h1 { font-size: clamp(24px, 4vw, 36px); font-weight: 800; color: #1a1d23; letter-spacing: -1px; margin: 0; }
-.hero-subtitle { font-size: clamp(15px, 2vw, 20px); font-weight: 600; color: #a78bfa; margin: 0; }
+.hero-subtitle { font-size: clamp(17px, 2.8vw, 24px); font-weight: 700; color: #a78bfa; margin: 0; letter-spacing: 0.5px; }
 .hero-desc { color: #6b7280; font-size: 15px; max-width: 850px; margin: 0 auto; line-height: 1.6; text-align: center; }
-.version-tag-text { font-size: 12px; color: #9ca3af; background: #f3f4f6; padding: 4px 12px; border-radius: 20px; font-weight: 500; border: 1px solid #e5e7eb; display: inline-block; margin-left: 8px; vertical-align: middle; }
+.version-tag-text { font-size: 13px; color: #9ca3af; font-weight: 500; display: inline-block; margin-left: 8px; vertical-align: middle; }
 
 /* 提示詞 */
 .tip { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: #e5e7eb; border-radius: 50%; font-size: 10px; cursor: help; color: #6b7280; margin-left: 4px; position: relative; }
@@ -100,9 +100,7 @@ body { font-family: 'Noto Sans TC', -apple-system, sans-serif; background: #f5f6
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }
-#inflation-cap-field { grid-column: 4; display: none; animation: fadeInDown 0.4s ease; }
-@media (max-width: 900px) { #inflation-cap-field { grid-column: 2; } }
-@media (max-width: 480px) { #inflation-cap-field { grid-column: auto; } }
+#inflation-cap-field { animation: fadeInDown 0.4s ease; }
 
 /* ENGINE TOGGLE CARDS */
 .engine-toggle-card { background: #f9fafb; border: 1.5px solid #e8eaed; border-radius: 16px; padding: 20px; margin-bottom: 20px; transition: .3s; }
@@ -343,11 +341,15 @@ footer a { color: #667eea; text-decoration: none; font-weight: 700; }
 
         <div class="inputs-row">
           <div class="field">
+            <label>年度管理費率 <span class="tip" data-tip="每年從總資產中扣除的內扣費用或顧問費。">?</span></label>
+            <div class="input-wrap"><input type="number" id="mgtFee" value="0.05" step="0.01" class="has-unit"><span class="input-unit">%</span></div>
+          </div>
+          <div class="field">
             <label>通膨模式選擇 <span class="tip align-right" data-tip="隨機波動：模擬真實世界的通膨起伏。滯脹模式：股市下跌時通膨反而上升的最惡劣情境。">?</span></label>
             <div class="input-wrap">
                 <select id="inflationMode" onchange="updateInflationUI()">
-                    <option value="fixed" selected>固定模式 (穩定)</option>
-                    <option value="random">隨機波動 (正常波動)</option>
+                    <option value="fixed">固定模式 (穩定)</option>
+                    <option value="random" selected>隨機波動 (正常波動)</option>
                     <option value="inverse">滯脹模式 (與股市反向)</option>
                 </select>
             </div>
@@ -811,7 +813,10 @@ function updateRepayUI() {
     
     // 預設釋放質押引擎所有欄位
     $('reinvest-label').style.display = 'flex';
-    $('mr-select-field-wrapper').style.display = 'block';
+    
+    // 修復 Grid 網格顯示長度異常 Bug
+    $('mr-select-field-wrapper').style.display = '';
+    
     $('mr-fixed-ui').style.display = ($('mrSelect').value === 'fixed') ? 'block' : 'none';
     
     wLogic.disabled = false;
@@ -837,7 +842,7 @@ function updateRepayUI() {
     } 
     else if (mode === 'AMOUNT') {
         $('repay-amount-input').style.display = 'block';
-        $('repay-power-section').style.display = 'block';
+        $('repay-power-section').style.display = '';
         $('isPledgeEnabled').checked = true;
         pledgeToggle.disabled = true;
         // 還債至金額：進入減槓桿防禦期，強制封印任何質借套利與再投入行為
@@ -910,7 +915,7 @@ function updateInflationUI() {
     const mode = $('inflationMode').value;
     const capField = $('inflation-cap-field');
     if (mode === 'random' || mode === 'inverse') {
-        capField.style.display = 'block';
+        capField.style.display = '';
     } else {
         capField.style.display = 'none';
     }
@@ -975,6 +980,7 @@ function getP() {
   return {
     name, startYear: parseInt($('startYear').value), startAge: parseInt($('startAge').value),
     mv: parseFloat($('mv').value), debt: parseFloat($('debt').value), cash: parseFloat($('cash').value), cashMax: parseFloat($('cash').value),
+    mgtFee: parseFloat($('mgtFee').value) / 100,
     years: yLen, adjRate: 0.10, isW: $('isWithdrawLogicEnabled').checked, wMode: $('withdrawMode').value,
     fixedWR: parseFloat($('fixedWithdrawRate').value) / 100, initWR: parseFloat($('initWithdrawRate').value) / 100,
     survivalFloor: parseFloat($('survivalFloor').value), maxCeiling: parseFloat($('maxCeiling').value),
@@ -1000,7 +1006,12 @@ function simPath(p, overrides) {
   for (let y = 1; y <= p.years; y++) {
     let bbdBroken = false;
     const ret = overrides ? overrides[y-1] : p.retR;
+    
+    // 市場報酬結算
     mv *= (1 + ret);
+    
+    // 年度內扣管理費/顧問費結算
+    mv -= mv * p.mgtFee;
 
     let yInf = p.inflation;
     if(p.inflationMode === 'random') yInf += (Math.random() - 0.5) * 0.02;
